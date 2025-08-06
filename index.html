@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense & Income Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Daily Expense & Income Tracker</h1>
+
+  <form id="entryForm">
+    <input type="date" id="date" required />
+    <input type="text" id="desc" placeholder="Description" required />
+    <input type="number" id="amount" placeholder="Amount" required />
+    <select id="type">
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </select>
+    <button type="submit">Add Entry</button>
+  </form>
+
+  <div class="summary" id="balance">Balance: ₹0.00</div>
+
+  <hr />
+  <label>Import JSON File: <input type="file" onchange="importJSON(event)" accept=".json"></label>
+  <br />
+  <button onclick="exportJSON()">Save/Export to records.json</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <script src="script.js"></script>
+</body>
+</html>
