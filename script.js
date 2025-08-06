@@ -41,6 +41,7 @@ function renderTable() {
   });
 
   balanceDiv.textContent = `Balance : ₹ ${balance.toFixed(2)}`;
+  setToday();
 }
 
 document.getElementById("entryForm").addEventListener("submit", function (e) {
@@ -103,9 +104,12 @@ function importJSON(event) {
   };
   reader.readAsText(file);
 }
+function setToday() {
+  const dateInput = document.getElementById('date');
+const today = new Date().toISOString().split('T')[0];
+dateInput.value = today;
+}
 // Set today's date as default in the date input
 window.addEventListener('DOMContentLoaded', () => {
-  const dateInput = document.getElementById('date');
-  const today = new Date().toISOString().split('T')[0];
-  dateInput.value = today;
+  setToday();
 });
