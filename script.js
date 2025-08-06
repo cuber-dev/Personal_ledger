@@ -106,6 +106,18 @@ function importJSON(event) {
   };
   reader.readAsText(file);
 }
+function exportToExcel() {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.table_to_sheet(document.querySelector('table'));
+  XLSX.utils.book_append_sheet(wb, ws, "Records");
+  XLSX.writeFile(wb, "records.xlsx");
+}
+async function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.autoTable({ html: 'table' });
+  doc.save("records.pdf");
+}
 function setToday() {
   const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
