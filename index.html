@@ -23,10 +23,13 @@
   <div class="summary" id="balance">Balance: ₹0.00</div>
 
   <hr />
-  <label>Import JSON File: <input type="file" onchange="importJSON(event)" accept=".json"></label>
-  <br />
-  <button onclick="exportJSON()">Save/Export to records.json</button>
+  <label>Import JSON File: </label>
+  <input type="file" onchange="importJSON(event)" accept=".json">
 
+  <br />
+  <button class="export-btn" onclick="exportJSON()">Save/Export to records.json</button>
+<br />
+  <div class="table-wrapper">
   <table>
     <thead>
       <tr>
@@ -39,6 +42,7 @@
     </thead>
     <tbody id="tableBody"></tbody>
   </table>
+</div>
 
   <script src="script.js"></script>
 </body>
