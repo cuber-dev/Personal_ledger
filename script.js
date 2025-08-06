@@ -99,3 +99,9 @@ function importJSON(event) {
   };
   reader.readAsText(file);
 }
+// Set today's date as default in the date input
+window.addEventListener('DOMContentLoaded', () => {
+  const dateInput = document.getElementById('date');
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.value = today;
+});

@@ -1,14 +1,8 @@
 [
   {
     "date": "2025-08-01",
-    "desc": "Received from Dad",
-    "amount": 26000,
+    "desc": "Default",
+    "amount": 0,
     "type": "income"
-  },
-  {
-    "date": "2025-08-02",
-    "desc": "Bought groceries",
-    "amount": 1200,
-    "type": "expense"
   }
 ]
