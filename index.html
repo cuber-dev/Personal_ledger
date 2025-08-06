@@ -31,10 +31,14 @@
 
   <hr />
   <label>Import JSON File: </label>
-  <input type="file" onchange="importJSON(event)" accept=".json">
+  <input type="file" id="file-input" onchange="importJSON(event)" accept=".json">
 
   <br />
-  <button class="export-btn" onclick="exportJSON()">Save/Export to records.json</button>
+  <br />
+
+  <label>Export or download File: </label>
+
+  <button class="export-btn" onclick="exportJSON()">Save/Export as JSON</button>
   <button class="export-btn" onclick="exportToExcel()">Export to Excel</button>
 <button  class="export-btn" onclick="exportToPDF()">Export to PDF</button>
 <br />

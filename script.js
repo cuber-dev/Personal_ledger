@@ -96,6 +96,14 @@ function importJSON(event) {
   if (!file) return;
   name = file.name.split(".")[0];
   fileName = name;
+    
+  // Show heading
+  const heading = document.getElementById("fileHeading");
+  heading.style.display = "block";
+  heading.textContent = `Using ${fileName}`;
+  
+  // Here you would read and render the file data into the table
+  // Assume you also compute the closing balance
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
