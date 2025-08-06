@@ -17,6 +17,7 @@ function renderTable() {
   const balanceDiv = document.getElementById("balance");
   table.innerHTML = "";
   let balance = 0;
+ ledger.sort((a, b) => new Date(a.date) - new Date(b.date));
 
   ledger.forEach((entry, index) => {
     if (entry.type === "income") balance += entry.amount;
@@ -108,6 +109,7 @@ function importJSON(event) {
   reader.onload = function(e) {
     try {
       ledger = JSON.parse(e.target.result);
+ ledger.sort((a, b) => new Date(a.date) - new Date(b.date));
       renderTable();
     } catch (error) {
       alert("Invalid JSON file.");
