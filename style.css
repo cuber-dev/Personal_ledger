@@ -162,6 +162,10 @@ tr:nth-child(even) {
 .actions button:hover {
   background-color: var(--hover-color);
 }
+.actions .delete-btn {
+  color: white;
+  background: red;
+}
 
 /* Responsive tweaks */
 @media (max-width: 600px) {
@@ -181,4 +185,14 @@ tr:nth-child(even) {
   button {
     width: 100%;
   }
+}
+
+.income-label {
+  color: green;
+  font-weight: bold;
+}
+
+.expense-label {
+  color: red;
+  font-weight: bold;
 }

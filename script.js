@@ -29,10 +29,12 @@ function renderTable() {
       <td>${entry.date}</td>
       <td>${entry.desc}</td>
       <td>${entry.type}</td>
-      <td>₹${entry.amount.toFixed(2)}</td>
+      <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
+   ${entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
+</td>
       <td class="actions">
         <button onclick="editEntry(${index})">Edit</button>
-        <button onclick="deleteEntry(${index})">Delete</button>
+        <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
       </td>
     `;
     table.appendChild(row);
