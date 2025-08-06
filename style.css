@@ -53,6 +53,10 @@ form button {
   transition: border 0.3s ease;
   width: 100%;
 }
+form .submit {
+  margin: 0;
+  margin-top : 1.3rem;
+}
 
 form input:focus,
 form select:focus {
