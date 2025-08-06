@@ -10,6 +10,8 @@
   <h1>Daily Expense & Income Tracker</h1>
 
   <form id="entryForm">
+    <div class="inputs-container">
+      
     <input type="date" id="date" required/>
     <input type="text" id="desc" placeholder="Description" required />
     <input type="number" id="amount" placeholder="Amount" required />
@@ -17,10 +19,12 @@
       <option value="income">Income</option>
       <option value="expense">Expense</option>
     </select>
+    </div>
+
     <button type="submit">Add Entry</button>
   </form>
 
-  <div class="summary" id="balance">Balance: ₹0.00</div>
+  <div class="summary" id="balance">Balance : ₹0.00</div>
 
   <hr />
   <label>Import JSON File: </label>
@@ -33,6 +37,8 @@
   <table>
     <thead>
       <tr>
+        <th>Sl.No</th>
+
         <th>Date</th>
         <th>Description</th>
         <th>Type</th>

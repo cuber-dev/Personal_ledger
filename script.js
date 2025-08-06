@@ -24,6 +24,8 @@ function renderTable() {
 
     const row = document.createElement("tr");
     row.innerHTML = `
+    <td>${index + 1}</td>
+
       <td>${entry.date}</td>
       <td>${entry.desc}</td>
       <td>${entry.type}</td>
@@ -36,7 +38,7 @@ function renderTable() {
     table.appendChild(row);
   });
 
-  balanceDiv.textContent = `Balance: ₹${balance.toFixed(2)}`;
+  balanceDiv.textContent = `Balance : ₹ ${balance.toFixed(2)}`;
 }
 
 document.getElementById("entryForm").addEventListener("submit", function (e) {
