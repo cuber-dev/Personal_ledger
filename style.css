@@ -30,6 +30,17 @@ h1 {
 #fileHeading {
   font-size: 1.5rem;
 }
+#note {
+  margin: 40px auto;
+  padding: 20px;
+  background-color: var(--secondary-color);
+  border: 5px solid var(--border-color);
+  border-left: 6px solid var(--accent-color);
+  border-radius: 5px;
+  color: var(--text-color);
+  font-size: 15px;
+  width : max-content;
+}
 form {
   background: var(--bg-color);
   padding: 20px;
