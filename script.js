@@ -32,6 +32,8 @@ function renderTable() {
       <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
    ${entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
 </td>
+      <td>${balance.toFixed(2)}</td>
+
       <td class="actions">
         <button onclick="editEntry(${index})">Edit</button>
         <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
