@@ -27,7 +27,10 @@ h1 {
   margin-bottom: 30px;
   color: var(--primary-color);
 }
-
+#fileHeading {
+  margin: 20px 0;
+  font-size: 1.5rem;
+}
 form {
   background: var(--bg-color);
   padding: 20px;

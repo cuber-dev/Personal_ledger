@@ -108,15 +108,53 @@ function importJSON(event) {
   reader.readAsText(file);
 }
 function exportToExcel() {
+  const table = document.querySelector('table');
   const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.table_to_sheet(document.querySelector('table'));
+  const ws = XLSX.utils.table_to_sheet(table);
+
+  // Calculate closing balance
+  let closingBalance = 0;
+  ledger.forEach(entry => {
+    if (entry.type === "income") closingBalance += entry.amount;
+    else closingBalance -= entry.amount;
+  });
+
+  // Add closing balance row after table
+  const rowIndex = XLSX.utils.decode_range(ws['!ref']).e.r + 2;
+  const cellRef = `A${rowIndex + 1}`;
+  ws[cellRef] = {
+    v: `Closing Balance: ₹ ${closingBalance.toFixed(2)}`,
+    t: 's',
+    s: {
+      font: { bold: true, sz: 14 }
+    }
+  };
+
   XLSX.utils.book_append_sheet(wb, ws, "Records");
   XLSX.writeFile(wb, fileName + ".xlsx");
 }
 async function exportToPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
+  
+  // Table first
   doc.autoTable({ html: 'table' });
+  
+  // Calculate closing balance
+  let closingBalance = 0;
+  ledger.forEach(entry => {
+    if (entry.type === "income") closingBalance += entry.amount;
+    else closingBalance -= entry.amount;
+  });
+  
+  // Format as currency string
+  const formattedBalance = `₹ ${closingBalance.toFixed(2)}`;
+  
+  // Set font and add closing balance cleanly
+  doc.setFontSize(16);
+  doc.setFont(undefined, 'bold');
+  doc.text(`Closing Balance: ${formattedBalance}`, 14, doc.lastAutoTable.finalY + 20);
+  
   doc.save(fileName + ".pdf");
 }
 function setToday() {
