@@ -1,6 +1,6 @@
 let ledger = [];
 let editingIndex = null;
-
+let fileName = "records";
 window.onload = async function () {
   try {
     const response = await fetch("records.json");
@@ -86,7 +86,7 @@ function exportJSON() {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = "records.json";
+  anchor.download = fileName + ".json";
   anchor.click();
   URL.revokeObjectURL(url);
 }
@@ -94,7 +94,8 @@ function exportJSON() {
 function importJSON(event) {
   const file = event.target.files[0];
   if (!file) return;
-
+  name = file.name.split(".")[0];
+  fileName = name;
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
@@ -110,13 +111,13 @@ function exportToExcel() {
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.table_to_sheet(document.querySelector('table'));
   XLSX.utils.book_append_sheet(wb, ws, "Records");
-  XLSX.writeFile(wb, "records.xlsx");
+  XLSX.writeFile(wb, fileName + ".xlsx");
 }
 async function exportToPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.autoTable({ html: 'table' });
-  doc.save("records.pdf");
+  doc.save(fileName + ".pdf");
 }
 function setToday() {
   const dateInput = document.getElementById('date');
