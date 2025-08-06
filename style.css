@@ -20,12 +20,15 @@ body {
   padding: 20px;
   margin: 0 auto;
   max-width: 900px;
+  line-height: 1.3rem;
 }
 
 h1 {
   text-align: center;
   margin-bottom: 30px;
   color: var(--primary-color);
+  line-height: 2.5rem;
+
 }
 #fileHeading {
   font-size: 1.5rem;
@@ -40,6 +43,9 @@ h1 {
   color: var(--text-color);
   font-size: 15px;
   width : max-content;
+  max-width: 100%;
+  word-wrap : break-word;
+   word-break: break-word;
 }
 form {
   background: var(--bg-color);
@@ -215,4 +221,30 @@ tr:nth-child(even) {
 .expense-label {
   color: var(--danger-color);
   font-weight: bold;
+}
+
+
+.nav-docs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: #f3f3f3;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.nav-docs a {
+  text-decoration: none;
+  color: #007acc;
+  font-weight: bold;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+ul {
+  padding-left: 1.5rem;
+  list-style: disc;
 }

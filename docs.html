@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense Tracker - Documentation</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>📘 Expense Tracker - User Guide</h1>
+    <p>This page explains how to use the daily income & expense tracker effectively.</p>
+
+    <nav class="nav-docs">
+      <strong>Quick Links:</strong>
+      <a href="./index.html">Back to Home</a>
+
+      <a href="#add-entry">Add Entry</a>
+      <a href="#edit-entry">Edit Entry</a>
+      <a href="#delete-entry">Delete Entry</a>
+      <a href="#import-export">Import/Export</a>
+      <a href="#view-balance">View Balance</a>
+      
+    </nav>
+
+    <section id="add-entry">
+      <h2>➕ Add Entry</h2>
+      <ul>
+        <li>Choose a <strong>date</strong> (defaults to today).</li>
+        <li>Enter a <strong>description</strong> (e.g., "Bus fare", "Received from Dad").</li>
+        <li>Input the <strong>amount</strong>.</li>
+        <li>Select either <strong>Income</strong> or <strong>Expense</strong>.</li>
+        <li>Click <strong>"Add / Update"</strong> to save the record.</li>
+      </ul>
+    </section>
+
+    <section id="edit-entry">
+      <h2>✏️ Edit Entry</h2>
+      <ul>
+        <li>Click the <strong>Edit</strong> button beside the transaction.</li>
+        <li>The form above will auto-fill with that data.</li>
+        <li>Make changes and click <strong>"Add / Update"</strong>.</li>
+      </ul>
+    </section>
+
+    <section id="delete-entry">
+      <h2>🗑️ Delete Entry</h2>
+      <ul>
+        <li>Click the <strong>Delete</strong> button beside the entry to remove it permanently.</li>
+      </ul>
+    </section>
+
+    <section id="import-export">
+      <h2>📁 Import / Export</h2>
+      <ul>
+        <li>Use the file input button to <strong>import</strong> a JSON file containing saved records.</li>
+        <li>Use the <strong>"Export JSON"</strong> button to <strong>download</strong> your current data.</li>
+      </ul>
+    </section>
+
+    <section id="view-balance">
+      <h2>💰 View Balance</h2>
+      <p>
+        The balance section at the top shows your current net amount:
+        <strong>All income - All expenses.</strong>
+      </p>
+    </section>
+
+    <footer>
+      <hr />
+      <p>Made by Nandhu | Fully offline & secure | Data stored via JSON file.</p>
+    </footer>
+  </div>
+</body>
+</html>
