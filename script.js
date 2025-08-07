@@ -256,7 +256,7 @@ function applyFilters() {
   });
   
   renderTable(filtered);
-  renderCharts(ledger);
+  renderCharts(filtered);
 
 }
 function clearFilters() {
