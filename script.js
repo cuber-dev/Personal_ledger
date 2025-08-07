@@ -256,6 +256,8 @@ function applyFilters() {
   });
   
   renderTable(filtered);
+  renderCharts(ledger);
+
 }
 function clearFilters() {
   document.getElementById('searchDesc').value = '';
@@ -264,6 +266,8 @@ function clearFilters() {
   document.getElementById('endDate').value = '';
   
   renderTable(ledger);
+  renderCharts(ledger);
+
 }
 
 
