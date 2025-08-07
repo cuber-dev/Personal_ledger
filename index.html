@@ -12,7 +12,12 @@
 <body>
   <h1>Daily Expense & Income Tracker</h1>
   <button id="themeToggle" class="export-btn">🌙 Toggle Dark Mode</button>
-<h2 id="fileHeading" >Using Untitled Ledger</h2>
+<div class="filename-container">
+  <label for="filename">Ledger Name:</label>
+  <input type="text" id="filename" placeholder="Untitled" oninput="updateFileHeading()" />
+</div>
+
+<h2 id="fileHeading">Using <span id="ledgerName">Untitled</span> Ledger</h2>
   <form id="entryForm">
     <div class="inputs-container">
       

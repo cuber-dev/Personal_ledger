@@ -338,3 +338,32 @@ body.dark-mode {
   --danger-color: #ef5350;        /* Gentle red */
 }
 
+.filename-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem auto;
+  text-align: center;
+}
+
+.filename-container label {
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+#filename {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+#filename:focus {
+  border-color: var(--primary-color);
+}
