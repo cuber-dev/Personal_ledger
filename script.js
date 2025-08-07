@@ -2,46 +2,7 @@ let ledger = [];
 let editingIndex = null;
 let fileName = "Untitled Ledger";
 
-/*
-function renderTable(data = ledger) {
-  const table = document.getElementById("tableBody");
-  const balanceDiv = document.getElementById("balance");
-  table.innerHTML = "";
-  let balance = 0;
-  
-  // Always sort the full ledger for consistency
-  ledger.sort((a, b) => new Date(a.date) - new Date(b.date));
-  
-  // Sort filtered data separately if needed
-  const displayData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
-  
-  displayData.forEach((entry, index) => {
-    if (entry.type === "income") balance += entry.amount;
-    else balance -= entry.amount;
-    
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${entry.date}</td>
-      <td>${entry.desc}</td>
-      <td>${entry.type}</td>
-      <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
-        ${entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
-      </td>
-      <td>${balance.toFixed(2)}</td>
-      <td class="actions">
-        <button onclick="editEntry(${index})">Edit</button>
-        <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
-      </td>
-    `;
-    table.appendChild(row);
-  });
-  
-  balanceDiv.textContent = `Balance : ₹ ${balance.toFixed(2)}`;
-  setToday();
-  saveToLocalStorage();
 
-} */
 function renderTable(data = ledger) {
   const table = document.getElementById("tableBody");
   const balanceDiv = document.getElementById("balance");
@@ -158,9 +119,11 @@ function importJSON(event) {
   const file = event.target.files[0];
   if (!file) return;
   name = file.name.split(".")[0];
-    
+  
   // Show heading
   updateFileHeading(name);
+  saveToLocalStorage();
+
   // Here you would read and render the file data into the table
   // Assume you also compute the closing balance
   const reader = new FileReader();
@@ -273,10 +236,13 @@ function clearFilters() {
 
 function saveToLocalStorage() {
   localStorage.setItem("ledgerData", JSON.stringify(ledger));
+  localStorage.setItem("fileName",fileName);
 }
 window.onload = async function() {
   const savedData = localStorage.getItem("ledgerData");
-  
+  const name = localStorage.getItem("fileName");
+  if (name) fileName = name;
+  updateFileHeading(name);
   if (savedData) {
     ledger = JSON.parse(savedData);
     if (ledger.length === 0) {
@@ -309,6 +275,7 @@ function updateFileHeading(file = null) {
   const name = file || heading.value.trim();
   document.getElementById("ledgerName").textContent = name || "Untitled";
   fileName =name;
+  saveToLocalStorage();
   if(file) heading.value = name
 }
 function saveLastState() {
