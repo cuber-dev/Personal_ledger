@@ -8,6 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <h1>Daily Expense & Income Tracker</h1>
@@ -106,7 +107,22 @@
   <div class="summary-box balance-summary">Final Balance: ₹ <span id="finalBalance">0.00</span></div>
 </div>
  </div>
-
+<h2 style="text-align: center;">Visual Insights</h2>
+<div id="chartContainer" style="max-width: 960px; margin: 2rem auto; display: flex; flex-direction: column; gap: 2rem;">
+  
+  <div class="chart-card">
+    <canvas id="pieChart"></canvas>
+  </div>
+  
+  <div class="chart-card">
+    <canvas id="barChart"></canvas>
+  </div>
+  
+  <div class="chart-card">
+    <canvas id="lineChart"></canvas>
+  </div>
+  
+</div>
 <div id="note">
   <strong>Note:</strong> Please download the file as <strong>JSON</strong> after entry of transactions to import it again later. for more information please read the <a href="./docs.html">Documentation</a>
 

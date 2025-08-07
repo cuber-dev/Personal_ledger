@@ -97,6 +97,8 @@ function renderTable(data = ledger) {
   
   setToday();
   saveToLocalStorage();
+  renderCharts(ledger);
+
 }
 document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -127,6 +129,7 @@ function editEntry(index) {
   editingIndex = index;
   saveToLocalStorage();
   saveLastState();
+  renderCharts(ledger);
 
 }
 
@@ -137,6 +140,7 @@ function deleteEntry(index) {
     renderTable();
   }
 saveToLocalStorage();
+  renderCharts(ledger);
 
 }
 
@@ -171,7 +175,8 @@ function importJSON(event) {
   };
   reader.readAsText(file);
   saveToLocalStorage();
-  
+  renderCharts(ledger);
+
 
 }
 function exportToExcel() {
@@ -292,6 +297,8 @@ window.onload = async function() {
     renderTable();
     saveToLocalStorage();
   }
+  renderCharts(ledger);
+
 };
 function updateFileHeading(file = null) {
   const heading =document.getElementById("filename");
@@ -325,3 +332,105 @@ function redoChange() {
     alert("Nothing to redo");
   }
 }
+
+
+
+let pieChart, barChart, lineChart;
+
+function renderCharts(data = ledger) {
+  const ctxPie = document.getElementById("pieChart").getContext("2d");
+  const ctxBar = document.getElementById("barChart").getContext("2d");
+  const ctxLine = document.getElementById("lineChart").getContext("2d");
+
+  let totalIncome = 0;
+  let totalExpense = 0;
+  let balance = 0;
+  let monthlyTotals = {};
+  let balanceOverTime = [];
+
+  const sortedData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  sortedData.forEach(entry => {
+    const month = new Date(entry.date).toISOString().slice(0, 7); // YYYY-MM
+    if (!monthlyTotals[month]) monthlyTotals[month] = { income: 0, expense: 0 };
+
+    if (entry.type === "income") {
+      totalIncome += entry.amount;
+      monthlyTotals[month].income += entry.amount;
+      balance += entry.amount;
+    } else {
+      totalExpense += entry.amount;
+      monthlyTotals[month].expense += entry.amount;
+      balance -= entry.amount;
+    }
+
+    balanceOverTime.push({ date: entry.date, balance });
+  });
+
+  // Destroy old charts if exist
+  pieChart?.destroy();
+  barChart?.destroy();
+  lineChart?.destroy();
+
+  pieChart = new Chart(ctxPie, {
+    type: "pie",
+    data: {
+      labels: ["Income", "Expense"],
+      datasets: [{
+        data: [totalIncome, totalExpense],
+        backgroundColor: ["#4caf50", "#f44336"]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { title: { display: true, text: "Income vs Expense" } }
+    }
+  });
+
+  barChart = new Chart(ctxBar, {
+    type: "bar",
+    data: {
+      labels: Object.keys(monthlyTotals),
+      datasets: [
+        {
+          label: "Income",
+          data: Object.values(monthlyTotals).map(m => m.income),
+          backgroundColor: "#4caf50"
+        },
+        {
+          label: "Expense",
+          data: Object.values(monthlyTotals).map(m => m.expense),
+          backgroundColor: "#f44336"
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { title: { display: true, text: "Monthly Totals" } },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+
+  lineChart = new Chart(ctxLine, {
+    type: "line",
+    data: {
+      labels: balanceOverTime.map(item => item.date),
+      datasets: [{
+        label: "Balance Over Time",
+        data: balanceOverTime.map(item => item.balance),
+        borderColor: "#2196f3",
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { title: { display: true, text: "Balance Trend" } },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+

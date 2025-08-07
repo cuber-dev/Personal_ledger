@@ -415,3 +415,16 @@ body.dark-mode {
   display: flex;
   gap : 1rem;
 }
+
+.chart-card {
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  max-height: 400px;
+}
