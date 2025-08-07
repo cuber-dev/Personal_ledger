@@ -12,7 +12,7 @@ window.onload = async function () {
   } catch (err) {
   }
 };
-
+/*
 function renderTable(data = ledger) {
   const table = document.getElementById("tableBody");
   const balanceDiv = document.getElementById("balance");
@@ -51,6 +51,61 @@ function renderTable(data = ledger) {
   setToday();
   saveToLocalStorage();
 
+} */
+function renderTable(data = ledger) {
+  const table = document.getElementById("tableBody");
+  const balanceDiv = document.getElementById("balance");
+  const totalIncomeSpan = document.getElementById("totalIncome");
+  const totalExpenseSpan = document.getElementById("totalExpense");
+  const finalBalanceSpan = document.getElementById("finalBalance");
+  
+  table.innerHTML = "";
+  let balance = 0;
+  let totalIncome = 0;
+  let totalExpense = 0;
+  
+  // Always sort the full ledger for consistency
+  ledger.sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  // Sort filtered data separately if needed
+  const displayData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  displayData.forEach((entry, index) => {
+    if (entry.type === "income") {
+      balance += entry.amount;
+      totalIncome += entry.amount;
+    } else {
+      balance -= entry.amount;
+      totalExpense += entry.amount;
+    }
+    
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${entry.date}</td>
+      <td>${entry.desc}</td>
+      <td>${entry.type}</td>
+      <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
+        ${entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
+      </td>
+      <td>${balance.toFixed(2)}</td>
+      <td class="actions">
+        <button onclick="editEntry(${index})">Edit</button>
+        <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
+      </td>
+    `;
+    table.appendChild(row);
+  });
+  
+  balanceDiv.textContent = `Balance : ₹ ${balance.toFixed(2)}`;
+  
+  // Update the summary section
+  totalIncomeSpan.textContent = totalIncome.toFixed(2);
+  totalExpenseSpan.textContent = totalExpense.toFixed(2);
+  finalBalanceSpan.textContent = balance.toFixed(2);
+  
+  setToday();
+  saveToLocalStorage();
 }
 document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -236,5 +291,5 @@ function updateFileHeading(file = null) {
   const name = file || heading.value.trim();
   document.getElementById("ledgerName").textContent = name || "Untitled";
   fileName =name;
-  if(file) heading.value = name;
+  if(file) heading.value = name
 }

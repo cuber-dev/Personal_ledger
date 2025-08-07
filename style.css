@@ -367,3 +367,46 @@ body.dark-mode {
 #filename:focus {
   border-color: var(--primary-color);
 }
+.summary-container{
+  background-color: var(--bg-color);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+ padding : 1rem 1.2rem;
+ margin : 1.5rem 0;
+ border-radius: .5rem;
+
+}
+#summarySection {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1.5rem auto;
+  max-width: 800px;
+}
+
+.summary-box {
+  flex: 1 1 250px;
+  background-color: var(--secondary-color);
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-color);
+  transition: transform 0.3s ease;
+}
+
+.summary-box:hover {
+  transform: translateY(-4px);
+}
+
+.income-summary {
+  border-left: 5px solid #27ae60; /* Green border */
+}
+
+.expense-summary {
+  border-left: 5px solid #c0392b; /* Red border */
+}
+
+.balance-summary {
+  border-left: 5px solid #2980b9; /* Blue border */
+}
