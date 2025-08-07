@@ -3,36 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Expense Tracker - Documentation</title>
+  <title>Ledger App - Documentation</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <button id="themeToggle" class="export-btn">🌙 Toggle Dark Mode</button>
 
   <div class="container">
-    <h1>📘 Expense Tracker - User Guide</h1>
+    <h1>📘 Personal Ledger App - User Guide</h1>
 
-    <p>This page explains how to use the daily income & expense tracker effectively.</p>
+    <p>This page explains how to use your daily income & expense ledger with all its powerful features.</p>
 
     <nav class="nav-docs">
       <strong>Quick Links:</strong>
       <a href="./index.html">Back to Home</a>
-
       <a href="#add-entry">Add Entry</a>
       <a href="#edit-entry">Edit Entry</a>
       <a href="#delete-entry">Delete Entry</a>
-      <a href="#import-export">Import/Export</a>
+      <a href="#import-export">Import / Export</a>
       <a href="#view-balance">View Balance</a>
-      
+      <a href="#undo-redo">Undo / Redo</a>
+      <a href="#closing-balance">Closing Balance</a>
+      <a href="#charts">Charts</a>
+      <a href="#dark-mode">Dark Mode</a>
+      <a href="#version">Version Info</a>
     </nav>
 
     <section id="add-entry">
       <h2>➕ Add Entry</h2>
       <ul>
-        <li>Choose a <strong>date</strong> (defaults to today).</li>
-        <li>Enter a <strong>description</strong> (e.g., "Bus fare", "Received from Dad").</li>
+        <li>Choose a <strong>date</strong> (defaults to today automatically).</li>
+        <li>Enter a <strong>description</strong> (e.g., "Bus fare", "Salary").</li>
         <li>Input the <strong>amount</strong>.</li>
-        <li>Select either <strong>Income</strong> or <strong>Expense</strong>.</li>
+        <li>Select <strong>Income</strong> or <strong>Expense</strong>.</li>
         <li>Click <strong>"Add / Update"</strong> to save the record.</li>
       </ul>
     </section>
@@ -40,41 +43,92 @@
     <section id="edit-entry">
       <h2>✏️ Edit Entry</h2>
       <ul>
-        <li>Click the <strong>Edit</strong> button beside the transaction.</li>
-        <li>The form above will auto-fill with that data.</li>
-        <li>Make changes and click <strong>"Add / Update"</strong>.</li>
+        <li>Click the <strong>Edit</strong> button beside any transaction.</li>
+        <li>The form auto-fills with the selected data.</li>
+        <li>Make necessary changes and click <strong>"Add / Update"</strong>.</li>
       </ul>
     </section>
 
     <section id="delete-entry">
       <h2>🗑️ Delete Entry</h2>
       <ul>
-        <li>Click the <strong>Delete</strong> button beside the entry to remove it permanently.</li>
+        <li>Click the <strong>Delete</strong> button beside any transaction.</li>
+        <li>This will permanently remove the record from your ledger.</li>
       </ul>
     </section>
 
     <section id="import-export">
       <h2>📁 Import / Export</h2>
       <ul>
-        <li>Use the file input button to <strong>import</strong> a JSON file containing saved records.</li>
-        <li>Use the <strong>"Export JSON"</strong> button to <strong>download</strong> your current data.</li>
+        <li><strong>Import:</strong> Click the file input to load a `.json` file and continue from a previous session.</li>
+        <li><strong>Export:</strong> Choose between <strong>JSON, Excel, or PDF</strong> formats for backup or sharing.</li>
+        <li>You can also give a <strong>custom filename</strong> before exporting.</li>
       </ul>
     </section>
 
     <section id="view-balance">
       <h2>💰 View Balance</h2>
       <p>
-        The balance section at the top shows your current net amount:
-        <strong>All income - All expenses.</strong>
+        A summary card at the top shows your total <strong>Income</strong>, <strong>Expenses</strong>, and <strong>Current Balance</strong>.
       </p>
+    </section>
+
+    <section id="undo-redo">
+      <h2>↩️ Undo / Redo</h2>
+      <ul>
+        <li>Click the <strong>Undo</strong> button to revert your last change.</li>
+        <li>Click <strong>Redo</strong> to bring it back again.</li>
+        <li>This helps prevent accidental deletions or changes.</li>
+      </ul>
+    </section>
+
+    <section id="closing-balance">
+      <h2>📉 Closing Balance</h2>
+      <ul>
+        <li>Each row displays the <strong>closing balance</strong> after that transaction.</li>
+        <li>This gives you a real-time snapshot of your funds after every entry.</li>
+      </ul>
+    </section>
+
+    <section id="charts">
+      <h2>📊 Visual Charts</h2>
+      <ul>
+        <li>Scroll down to see bar, pie, and line charts representing your financial activity.</li>
+        <li>Charts auto-update as you add, edit, or delete entries.</li>
+      </ul>
+    </section>
+
+    <section id="dark-mode">
+      <h2>🌙 Dark Mode</h2>
+      <ul>
+        <li>Click the <strong>Toggle Dark Mode</strong> button to switch themes.</li>
+        <li>The app uses <strong>CSS variables</strong> to adjust colors dynamically.</li>
+        <li>All charts and text adjust properly to improve readability.</li>
+      </ul>
+    </section>
+
+    <section id="version">
+      <h2>📌 Version Info & Changelog</h2>
+      <p><strong>Current Version:</strong> <code>v1.6.0</code></p>
+      <ul>
+        <li>✅ Added: Closing balance per transaction</li>
+        <li>✅ Added: Export to PDF and Excel</li>
+        <li>✅ Added: Undo & Redo functionality</li>
+        <li>✅ Added: Auto-save using Local Storage</li>
+        <li>✅ Added: Visual charts (bar, pie, line)</li>
+        <li>✅ Added: Custom filename for export</li>
+        <li>✅ Enhanced: Dark mode support for all UI and chart elements</li>
+        <li>🔧 Fixed: Text visibility issues in dark mode</li>
+        <li>🔧 Fixed: Ledger reset logic on empty state</li>
+      </ul>
     </section>
 
     <footer>
       <hr />
-      <p>Made by Nandhu | Fully offline & secure | Data stored via JSON file.</p>
+      <p>Made by Nandhu | Fully offline & secure | Data stored via JSON</p>
     </footer>
   </div>
-  <script src="utilitys.js"></script>
 
+  <script src="utilitys.js"></script>
 </body>
 </html>
