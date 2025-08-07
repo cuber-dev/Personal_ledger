@@ -1,12 +1,14 @@
 let ledger = [];
 let editingIndex = null;
-let fileName = "records";
+let fileName = "Untitled Ledger";
 window.onload = async function () {
   try {
     const response = await fetch("records.json");
     if (!response.ok) throw new Error("Failed to load JSON");
     ledger = await response.json();
     renderTable();
+    saveToLocalStorage();
+
   } catch (err) {
   }
 };
@@ -47,6 +49,8 @@ function renderTable(data = ledger) {
   
   balanceDiv.textContent = `Balance : ₹ ${balance.toFixed(2)}`;
   setToday();
+  saveToLocalStorage();
+
 }
 document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -74,6 +78,8 @@ function editEntry(index) {
   document.getElementById("amount").value = entry.amount;
   document.getElementById("type").value = entry.type;
   editingIndex = index;
+  saveToLocalStorage();
+
 }
 
 function deleteEntry(index) {
@@ -81,6 +87,7 @@ function deleteEntry(index) {
     ledger.splice(index, 1);
     renderTable();
   }
+saveToLocalStorage();
 }
 
 function exportJSON() {
@@ -117,6 +124,8 @@ function importJSON(event) {
     }
   };
   reader.readAsText(file);
+  saveToLocalStorage();
+
 }
 function exportToExcel() {
   const table = document.querySelector('table');
@@ -177,8 +186,7 @@ dateInput.value = today;
 window.addEventListener('DOMContentLoaded', () => {
   setToday();
 });
-
-
+ 
 function applyFilters() {
   const desc = document.getElementById('searchDesc').value.toLowerCase();
   const type = document.getElementById('filterType').value;
@@ -203,3 +211,26 @@ function clearFilters() {
   
   renderTable(ledger);
 }
+
+
+function saveToLocalStorage() {
+  localStorage.setItem("ledgerData", JSON.stringify(ledger));
+}
+window.onload = async function() {
+  const savedData = localStorage.getItem("ledgerData");
+  
+  if (savedData) {
+    ledger = JSON.parse(savedData);
+    renderTable();
+  } else {
+    try {
+      const response = await fetch("records.json");
+      if (!response.ok) throw new Error("Failed to load JSON");
+      ledger = await response.json();
+      renderTable();
+      saveToLocalStorage();
+    } catch (err) {
+      console.error("Error loading records.json:", err);
+    }
+  }
+};
