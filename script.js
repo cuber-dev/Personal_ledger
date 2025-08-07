@@ -415,3 +415,5 @@ function downloadChart(chartId) {
   link.download = `${fileName || "chart"}_${chartId}.png`;
   link.click();
 }
+
+
