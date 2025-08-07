@@ -111,38 +111,11 @@ function exportJSON() {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = fileName + ".json";
+  anchor.download = currentLedgerKey + ".json";
   anchor.click();
   URL.revokeObjectURL(url);
 }
 /*
-function importJSON(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  name = file.name.split(".")[0];
-  
-  // Show heading
-  updateFileHeading(name);
-  saveToLocalStorage();
-
-  // Here you would read and render the file data into the table
-  // Assume you also compute the closing balance
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      ledger = JSON.parse(e.target.result);
- ledger.sort((a, b) => new Date(a.date) - new Date(b.date));
-      renderTable();
-    } catch (error) {
-      alert("Invalid JSON file.");
-    }
-  };
-  reader.readAsText(file);
-  saveToLocalStorage();
-  renderCharts(ledger);
-
-
-}*/
 function importJSON(event) {
   const file = event.target.files[0];
   console.log(file)
@@ -187,6 +160,54 @@ function importJSON(event) {
   
   reader.readAsText(file);
 }
+*/
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      const baseName = file.name.replace(/\.json$/, '');
+      let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+      ledgers = [...new Set(ledgers)];
+      
+      if (ledgers.includes(baseName)) {
+        let newName = prompt(`A ledger named "${baseName}" already exists. Enter a different name:`);
+        if (!newName || ledgers.includes(newName)) {
+          alert("Import cancelled or name already exists.");
+          return;
+        }
+        currentLedgerKey = newName;
+        fileName = newName;
+      } else {
+        currentLedgerKey = baseName;
+        fileName = baseName;
+      }
+      
+      localStorage.setItem(currentLedgerKey, JSON.stringify(importedData));
+      if (!ledgers.includes(currentLedgerKey)) {
+        ledgers.push(currentLedgerKey);
+        localStorage.setItem("ledgers", JSON.stringify(ledgers));
+      }
+      
+      localStorage.setItem("currentLedgerKey", currentLedgerKey);
+      ledger = importedData;
+      document.getElementById("filename").value = fileName;
+      
+      updateLedgerSelect();
+      renderTable();
+      renderCharts(ledger);
+      
+    } catch (err) {
+      alert("Invalid JSON file.");
+      console.error(err);
+    }
+  };
+  
+  reader.readAsText(file);
+}
 function exportToExcel() {
   const table = document.querySelector('table');
   const wb = XLSX.utils.book_new();
@@ -211,7 +232,7 @@ function exportToExcel() {
   };
 
   XLSX.utils.book_append_sheet(wb, ws, "Records");
-  XLSX.writeFile(wb, fileName + ".xlsx");
+  XLSX.writeFile(wb, currentLedgerKey + ".xlsx");
 }
 async function exportToPDF() {
   const { jsPDF } = window.jspdf;
@@ -235,7 +256,7 @@ async function exportToPDF() {
   doc.setFont(undefined, 'bold');
   doc.text(`Closing Balance: ${formattedBalance}`, 14, doc.lastAutoTable.finalY + 20);
   
-  doc.save(fileName + ".pdf");
+  doc.save(currentLedgerKey + ".pdf");
 }
 function setToday() {
   const dateInput = document.getElementById('date');
@@ -420,8 +441,10 @@ function downloadChart(chartId) {
   link.click();
 }
 
-
-
+document.getElementById("filename").addEventListener("input", function() {
+  fileName = this.value; // Update global var
+});
+/*
 function updateLedgerSelect() {
   const select = document.getElementById("ledgerSelect");
   const ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
@@ -437,9 +460,35 @@ function updateLedgerSelect() {
   });
 document.getElementById("filename").value = currentLedgerKey;
 
+}*/
+function updateLedgerSelect() {
+  const select = document.getElementById("ledgerSelect");
+  let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+  
+  // ✅ Remove duplicates
+  ledgers = [...new Set(ledgers)];
+  
+  // ✅ Save cleaned list
+  localStorage.setItem("ledgers", JSON.stringify(ledgers));
+  
+  // ✅ Clear existing options
+  select.innerHTML = "";
+  
+  // ✅ Re-populate options
+  ledgers.forEach(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    if (name === currentLedgerKey) option.selected = true;
+    select.appendChild(option);
+  });
+  
+  // ✅ Update global var + UI
+  fileName = currentLedgerKey;
+  document.getElementById("filename").value = currentLedgerKey;
 }
-
 // 🆕 Create New Ledger
+/*
 function createNewLedger() {
   
   if (!ledgerName) {
@@ -477,7 +526,44 @@ function createNewLedger() {
   renderTable();
   renderCharts(ledger);
 }
-
+*/
+function createNewLedger() {
+  const ledgerName = prompt("Enter new ledger name:");
+  if (!ledgerName) {
+    alert("Please enter a valid ledger name.");
+    return;
+  }
+  
+  let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+  ledgers = [...new Set(ledgers)];
+  
+  if (ledgers.includes(ledgerName)) {
+    alert("A ledger with that name already exists. Choose a different name.");
+    return;
+  }
+  
+  const newLedger = [{
+    date: getCurrentDate(),
+    desc: "Opening Balance",
+    type: "Income",
+    amount: 0
+  }];
+  
+  ledgers.push(ledgerName);
+  localStorage.setItem("ledgers", JSON.stringify(ledgers));
+  localStorage.setItem(ledgerName, JSON.stringify(newLedger));
+  
+  currentLedgerKey = ledgerName;
+  fileName = ledgerName;
+  document.getElementById("filename").value = fileName;
+  
+  localStorage.setItem("currentLedgerKey", currentLedgerKey);
+  ledger = newLedger;
+  
+  updateLedgerSelect();
+  renderTable();
+  renderCharts(ledger);
+}
 // 📥 Change selected ledger
 document.getElementById("ledgerSelect").addEventListener("change", function(e) {
   const selected = e.target.value;
@@ -494,6 +580,7 @@ document.getElementById("ledgerSelect").addEventListener("change", function(e) {
 });
 
 // ▶️ Init on load
+/*
 window.onload = function() {
   const savedLedgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
   currentLedgerKey = localStorage.getItem("currentLedgerKey") || savedLedgers[0] || "Untitled";
@@ -518,7 +605,42 @@ window.onload = function() {
   renderTable();
   renderCharts(ledger);
 };
+*/
+window.onload = function() {
+  let savedLedgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
 
+  // Remove duplicates
+  savedLedgers = [...new Set(savedLedgers)];
+
+  // Save cleaned version
+  localStorage.setItem("ledgers", JSON.stringify(savedLedgers));
+
+  // If no ledgers, create only one "Untitled"
+  if (savedLedgers.length === 0) {
+    const defaultLedger = [{
+      date: getCurrentDate(),
+      desc: "Opening Balance",
+      type: "Income",
+      amount: 0
+    }];
+    const defaultName = "Untitled";
+    savedLedgers.push(defaultName);
+    localStorage.setItem("ledgers", JSON.stringify(savedLedgers));
+    localStorage.setItem(defaultName, JSON.stringify(defaultLedger));
+    localStorage.setItem("currentLedgerKey", defaultName);
+  }
+
+  // Load the current ledger
+  currentLedgerKey = localStorage.getItem("currentLedgerKey") || "Untitled";
+  ledger = JSON.parse(localStorage.getItem(currentLedgerKey) || "[]");
+
+  fileName = currentLedgerKey;
+  document.getElementById("filename").value = fileName;
+
+  updateLedgerSelect();
+  renderTable();
+  renderCharts(ledger);
+};
 // 🧠 Bind + New Ledger button
 document.getElementById("newLedgerBtn").addEventListener("click", createNewLedger);
 
@@ -527,3 +649,32 @@ function getCurrentDate() {
   return new Date().toISOString().split("T")[0];
 }
 
+document.getElementById("filename").addEventListener("change", function() {
+  const newName = this.value.trim();
+  if (!newName) return alert("Filename can't be empty.");
+  if (newName === currentLedgerKey) return; // No change
+  
+  let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+  if (ledgers.includes(newName)) {
+    alert("Ledger name already exists.");
+    this.value = currentLedgerKey;
+    return;
+  }
+  
+  // Rename in localStorage
+  const data = localStorage.getItem(currentLedgerKey);
+  localStorage.setItem(newName, data);
+  localStorage.removeItem(currentLedgerKey);
+  
+  // Update ledger list
+  ledgers = ledgers.map(name => name === currentLedgerKey ? newName : name);
+  localStorage.setItem("ledgers", JSON.stringify(ledgers));
+  
+  // Update key trackers
+  currentLedgerKey = newName;
+  fileName = newName;
+  localStorage.setItem("currentLedgerKey", newName);
+  
+  // Update UI
+  updateLedgerSelect();
+});
