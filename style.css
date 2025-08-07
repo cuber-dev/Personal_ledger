@@ -32,6 +32,10 @@ h1 {
   line-height: 2.3rem;
 
 }
+
+.heading{
+  margin-top : 0;
+}
 h2{
   text-align: center;
   line-height: 2.5rem;
@@ -54,6 +58,13 @@ h2{
   word-wrap : break-word;
    word-break: break-word;
 }
+.white-card{
+  background: var(--bg-color);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(106, 13, 173, 0.1); /* subtle purple shadow */
+  margin-bottom: 20px;
+}
 form {
   background: var(--bg-color);
   padding: 20px;
@@ -72,7 +83,8 @@ form .inputs-container {
 
 form input,
 form select,
-form button {
+form button ,
+input,select{
   padding: 10px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -102,7 +114,11 @@ form button {
 form button:hover {
   background-color: var(--hover-color);
 }
-
+.export-container {
+  display :flex;
+  flex-wrap: wrap;
+  gap:0 1rem;
+}
 /* Balance summary */
 .summary {
   margin-top: 10px;
@@ -142,7 +158,7 @@ button:hover {
 }
 
 .export-btn,.import-btn {
-  margin: 1rem 0;
+  margin: .5rem 0;
   padding: 12px 18px;
   max-width: 12rem;
 
@@ -349,19 +365,12 @@ body.dark-mode {
   text-align: center;
 }
 
-.filename-container label {
+.filename-container label ,label{
   font-weight: bold;
   color: var(--text-color);
 }
 
 #filename {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  outline: none;
   transition: border 0.3s ease;
 }
 
@@ -371,7 +380,7 @@ body.dark-mode {
 .summary-container{
   background-color: var(--bg-color);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
- padding : 1rem 1.2rem;
+ padding : 1.5rem 1.2rem;
  margin : 1.5rem 0;
  border-radius: .5rem;
 }
@@ -428,4 +437,31 @@ body.dark-mode {
 .chart-card canvas {
   width: 100% !important;
   max-height: 400px;
+}
+
+.entry-section {
+  padding: 1rem;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+
+.primary-button {
+  background-color: var(--primary-color, #8000cc);
+  color: white;
+  border: none;
+  padding: 0.9rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.primary-button:hover {
+  opacity: 0.9;
+}
+
+.toggle {
+  margin: 1rem auto;
+  display: block;
+  
 }

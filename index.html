@@ -35,14 +35,27 @@
 </head>
 <body>
   <h1>Vault Ledger</h1>
-  <button id="themeToggle" class="export-btn">🌙 Toggle Dark Mode</button>
-<div class="filename-container">
-  <label for="filename">Ledger Name:</label>
-  <input type="text" id="filename" placeholder="Untitled" maxlength="26" oninput="updateFileHeading()" />
-</div>
+  <button id="themeToggle" class="export-btn toggle">🌙 Toggle Dark Mode</button>
 
+ <div class="entry-section white-card">
+  <div class="form-row">
+    <label for="ledgerName">Ledger Name:</label>
+    <input type="text" id="filename" placeholder="Untitled" value="Untitled" maxlength="26" oninput="updateFileHeading()" />
+  </div>
+  
+  <div class="form-row">
+    <label for="ledgerSelect">Select Ledger:</label>
+    <select id="ledgerSelect">
+      <option value="">Untitled</option>
+    </select>
+  </div>
+  
+  <button class="primary-button" id="newLedgerBtn">+ New Ledger</button>
+</div>
 <h2 id="fileHeading">Using <span id="ledgerName">Untitled</span> Ledger</h2>
   <form id="entryForm">
+    <label for="desc">Add Transaction:</label>
+
     <div class="inputs-container">
       
     <input type="date" id="date" required/>
@@ -60,16 +73,21 @@
   <div class="summary" id="balance">Balance : ₹0.00</div>
 
   <hr />
+  <label>Import JSON File: </label>
+
 <label for="file-input" class="import-label">📂 Import JSON</label>
 <input type="file" class="import-btn" id="file-input" onchange="importJSON(event)" accept=".json" hidden />
   <br />
   <br />
 
   <label>Export or download File: </label>
-
+<div class="export-container">
+  
   <button class="export-btn" onclick="exportJSON()">Save/Export as JSON</button>
   <button class="export-btn" onclick="exportToExcel()">Export to Excel</button>
 <button  class="export-btn" onclick="exportToPDF()">Export to PDF</button>
+</div>
+
 <!-- Filter Section -->
 <div id="filterSection" class="filter-section">
   <label><strong>Filter:</strong></label>
@@ -123,7 +141,7 @@
 </div>
  <div class="summary-container">
    
- <h2 >Summary</h2>
+ <h2 class="heading" >Summary</h2>
 <div id="summarySection">
   <div class="summary-box income-summary">Total Income: ₹ <span id="totalIncome">0.00</span></div>
   <div class="summary-box expense-summary">Total Expenses: ₹ <span id="totalExpense">0.00</span></div>
@@ -155,11 +173,11 @@
 </div>
   <script src="script.js"></script>
   <script src="utilitys.js"></script>
-<script>
+<!-- <script>
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js")
       .then(() => console.log("Service Worker Registered"));
   }
-</script>
+</script> -->
 </body>
 </html>

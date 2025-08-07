@@ -1,7 +1,7 @@
 let ledger = [];
 let editingIndex = null;
-let fileName = "Untitled Ledger";
-
+let fileName = "Untitled";
+let currentLedgerKey = "";
 
 function renderTable(data = ledger) {
   const table = document.getElementById("tableBody");
@@ -232,13 +232,17 @@ function clearFilters() {
   renderCharts(ledger);
 
 }
-
+/*
 
 function saveToLocalStorage() {
   localStorage.setItem("ledgerData", JSON.stringify(ledger));
   localStorage.setItem("fileName",fileName);
+}*/
+function saveToLocalStorage() {
+  localStorage.setItem(currentLedgerKey, JSON.stringify(ledger));
+  localStorage.setItem("fileName_" + currentLedgerKey, fileName);
 }
-window.onload = async function() {
+/*window.onload = async function() {
   const savedData = localStorage.getItem("ledgerData");
   const name = localStorage.getItem("fileName");
   if (name) fileName = name;
@@ -269,7 +273,7 @@ window.onload = async function() {
   }
   renderCharts(ledger);
 
-};
+};*/
 function updateFileHeading(file = null) {
   const heading =document.getElementById("filename");
   const name = file || heading.value.trim();
@@ -416,4 +420,111 @@ function downloadChart(chartId) {
   link.click();
 }
 
+
+// 🔁 Update <select> options
+function updateLedgerSelect() {
+  const select = document.getElementById("ledgerSelect");
+  const ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+  
+  ledgers.forEach(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    if (name === currentLedgerKey) {
+      option.selected = true;
+    }
+    select.appendChild(option);
+  });
+}
+
+// 🆕 Create New Ledger
+function createNewLedger() {
+  const ledgerName = document.getElementById("filename").value.trim() || "Untitled";
+  
+  if (!ledgerName) {
+    alert("Please enter a valid ledger name.");
+    return;
+  }
+  
+  let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+  
+  if (ledgers.includes(ledgerName)) {
+    alert("Ledger already exists.");
+    return;
+  }
+  
+  // Add ledger to list
+  ledgers.push(ledgerName);
+  localStorage.setItem("ledgers", JSON.stringify(ledgers));
+  
+  // Create initial entry
+  const newLedger = [{
+    date: getCurrentDate(),
+    desc: "Opening Balance",
+    type: "Income",
+    amount: 0
+  }];
+  localStorage.setItem(ledgerName, JSON.stringify(newLedger));
+  
+  // Set active ledger
+  currentLedgerKey = ledgerName;
+  localStorage.setItem("currentLedgerKey", currentLedgerKey);
+  ledger = newLedger;
+  
+  updateLedgerSelect();
+  renderTable();
+  renderCharts(ledger);
+}
+
+// 📥 Change selected ledger
+document.getElementById("ledgerSelect").addEventListener("change", function(e) {
+  const selected = e.target.value;
+  if (!selected) return;
+  const ledgerName = document.getElementById("filename");
+  ledgerName.value = selected;
+
+  const data = JSON.parse(localStorage.getItem(selected) || "[]");
+  currentLedgerKey = selected;
+  localStorage.setItem("currentLedgerKey", currentLedgerKey);
+  ledger = data;
+  
+  renderTable();
+  renderCharts(ledger);
+});
+
+// ▶️ Init on load
+window.onload = function() {
+  const savedLedgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+  currentLedgerKey = localStorage.getItem("currentLedgerKey") || savedLedgers[0] || "Untitled";
+  
+  if (!savedLedgers.includes(currentLedgerKey)) {
+    savedLedgers.push(currentLedgerKey);
+    localStorage.setItem("ledgers", JSON.stringify(savedLedgers));
+  }
+  const ledgerName = document.getElementById("filename");
+  ledgerName.value = currentLedgerKey;
+
+  ledger = JSON.parse(localStorage.getItem(currentLedgerKey) || "[]");
+  if (ledger.length === 0) {
+    ledger.push({
+      date: getCurrentDate(),
+      type: "Income",
+      desc: "Opening balance",
+      amount: 0
+    });
+    localStorage.setItem(currentLedgerKey, JSON.stringify(ledger));
+  }
+  
+  updateLedgerSelect();
+  renderTable();
+  renderCharts(ledger);
+};
+
+// 🧠 Bind + New Ledger button
+document.getElementById("newLedgerBtn").addEventListener("click", createNewLedger);
+
+// 🕒 Helper: get today's date in yyyy-mm-dd
+function getCurrentDate() {
+  return new Date().toISOString().split("T")[0];
+}
 
