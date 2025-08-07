@@ -1,17 +1,7 @@
 let ledger = [];
 let editingIndex = null;
 let fileName = "Untitled Ledger";
-window.onload = async function () {
-  try {
-    const response = await fetch("records.json");
-    if (!response.ok) throw new Error("Failed to load JSON");
-    ledger = await response.json();
-    renderTable();
-    saveToLocalStorage();
 
-  } catch (err) {
-  }
-};
 /*
 function renderTable(data = ledger) {
   const table = document.getElementById("tableBody");
@@ -238,7 +228,7 @@ function setToday() {
   const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
 dateInput.value = today;
-  
+  return today;
 
 }
 // Set today's date as default in the date input
@@ -280,20 +270,29 @@ window.onload = async function() {
   
   if (savedData) {
     ledger = JSON.parse(savedData);
+    if (ledger.length === 0) {
+      // If the saved data is empty, insert opening balance
+      ledger = [{
+        "date": new Date().toISOString().split("T")[0],
+        "desc": "Opening balance",
+        "amount": 0,
+        "type": "income"
+      }];
+      saveToLocalStorage(); // Save this new default
+    }
     renderTable();
   } else {
-    try {
-      const response = await fetch("records.json");
-      if (!response.ok) throw new Error("Failed to load JSON");
-      ledger = await response.json();
-      renderTable();
-      saveToLocalStorage();
-    } catch (err) {
-      console.error("Error loading records.json:", err);
-    }
+    // No saved data at all
+    ledger = [{
+      "date": new Date().toISOString().split("T")[0],
+      "desc": "Opening balance",
+      "amount": 0,
+      "type": "income"
+    }];
+    renderTable();
+    saveToLocalStorage();
   }
 };
-
 function updateFileHeading(file = null) {
   const heading =document.getElementById("filename");
   const name = file || heading.value.trim();
