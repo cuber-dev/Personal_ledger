@@ -3,15 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Expense & Income Tracker</title>
+  <title>Vault Ledger</title>
+  
+  <!-- Description -->
+  <meta name="description" content="Track your expenses, income, and closing balances easily with this personal ledger web app. Import/Export data, visualize with charts, and stay in control of your finances." />
+  
+  <!-- Author -->
+  <meta name="author" content="Nandhu Adepu" />
+  
+  <!-- Keywords -->
+  <meta name="keywords" content="personal ledger, expense tracker, money manager, finance tracker, budget app, ledger app, income expense, financial app" />
+  
+  <!-- Theme color (for mobile browsers) -->
+  <meta name="theme-color" content="#6a0dad" />
+  
+  <!-- Open Graph (Facebook & social media preview) -->
+  <meta property="og:title" content="My Personal Ledger" />
+  <meta property="og:description" content="A sleek, private, and easy-to-use web app to manage your daily finances with charts and export features." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cuber-dev.github.io/Personal_ledger/" />
+  <meta property="og:image" content="logo.png" />
+  
+  <!-- Favicon -->
+  <link rel="icon" href="logo.png" type="image/x-icon" />
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1>Daily Expense & Income Tracker</h1>
+  <h1>Vault Ledger</h1>
   <button id="themeToggle" class="export-btn">🌙 Toggle Dark Mode</button>
 <div class="filename-container">
   <label for="filename">Ledger Name:</label>
