@@ -108,18 +108,21 @@
 </div>
  </div>
 <h2 style="text-align: center;">Visual Insights</h2>
-<div id="chartContainer" style="max-width: 960px; margin: 2rem auto; display: flex; flex-direction: column; gap: 2rem;">
+<div id="chartContainer" class="chart-container">
   
   <div class="chart-card">
     <canvas id="pieChart"></canvas>
+    <button onclick="downloadChart('pieChart')" class="export-btn">Download Pie Chart</button>
   </div>
   
   <div class="chart-card">
     <canvas id="barChart"></canvas>
+    <button onclick="downloadChart('barChart')" class="export-btn">Download Bar Chart</button>
   </div>
   
   <div class="chart-card">
     <canvas id="lineChart"></canvas>
+    <button onclick="downloadChart('lineChart')" class="export-btn">Download Line Chart</button>
   </div>
   
 </div>

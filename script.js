@@ -405,3 +405,13 @@ function renderCharts(data = ledger) {
   });
 }
 
+function downloadChart(chartId) {
+  const canvas = document.getElementById(chartId);
+  if (!canvas) return;
+  
+  const image = canvas.toDataURL("image/png");
+  const link = document.createElement("a");
+  link.href = image;
+  link.download = `${fileName || "chart"}_${chartId}.png`;
+  link.click();
+}

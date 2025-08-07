@@ -374,14 +374,12 @@ body.dark-mode {
  padding : 1rem 1.2rem;
  margin : 1.5rem 0;
  border-radius: .5rem;
-
 }
 #summarySection {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
-  margin: 1.5rem auto;
   max-width: 800px;
 }
 
@@ -423,6 +421,8 @@ body.dark-mode {
   border-radius: 12px;
   padding: 1rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  margin : 1rem 0;
+
 }
 
 .chart-card canvas {
