@@ -42,7 +42,36 @@
   <button class="export-btn" onclick="exportJSON()">Save/Export as JSON</button>
   <button class="export-btn" onclick="exportToExcel()">Export to Excel</button>
 <button  class="export-btn" onclick="exportToPDF()">Export to PDF</button>
+<!-- Filter Section -->
+<div id="filterSection" class="filter-section">
+  <label><strong>Filter:</strong></label>
+  <div class="filter-row">
+
+  <input type="text" id="searchDesc" placeholder="Search Description" />
+  </div>
+
+  <div class="filter-row">
+    <select id="filterType">
+      <option value="">All Types</option>
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </select>
+  </div>
+  
+  <div class="filter-row">
+    <input type="date" id="startDate" />
+    <input type="date" id="endDate" />
+    </div>
+  <div class="filter-row">
+
+    <button onclick="applyFilters()">🔍 Filter</button>
+    <button onclick="clearFilters()">❌ Clear</button>
+    </div>
+
+</div>
 <br />
+<h2>Ledger</h2>
+
   <div class="table-wrapper">
   <table>
     <thead>
