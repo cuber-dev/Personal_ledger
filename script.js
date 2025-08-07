@@ -10,41 +10,7 @@ window.onload = async function () {
   } catch (err) {
   }
 };
-/*
- function renderTable(data = ledger) {
-  const table = document.getElementById("tableBody");
-  const balanceDiv = document.getElementById("balance");
-  table.innerHTML = "";
-  let balance = 0;
- ledger.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  ledger.forEach((entry, index) => {
-    if (entry.type === "income") balance += entry.amount;
-    else balance -= entry.amount;
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
-    <td>${index + 1}</td>
-
-      <td>${entry.date}</td>
-      <td>${entry.desc}</td>
-      <td>${entry.type}</td>
-      <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
-   ${entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
-</td>
-      <td>${balance.toFixed(2)}</td>
-
-      <td class="actions">
-        <button onclick="editEntry(${index})">Edit</button>
-        <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
-      </td>
-    `;
-    table.appendChild(row);
-  });
-
-  balanceDiv.textContent = `Balance : ₹ ${balance.toFixed(2)}`;
-  setToday();
-} */
 function renderTable(data = ledger) {
   const table = document.getElementById("tableBody");
   const balanceDiv = document.getElementById("balance");

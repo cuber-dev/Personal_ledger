@@ -133,15 +133,17 @@ button {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+ width: 100%;
 }
 
 button:hover {
   background-color: var(--hover-color);
 }
 
-.export-btn {
+.export-btn,.import-btn {
   margin: 1rem 0;
   padding: 12px 18px;
+  max-width: 12rem;
 
 }
 
@@ -197,7 +199,25 @@ tr:nth-child(even) {
   background-color: var(--danger-color);
   color: white;
 }
+.import-label {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: var(--accent-color);
+  color: #fff;
 
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  width : 100%;
+  max-width: 12rem;
+
+}
+
+.import-label:hover {
+  background-color: var(--hover-color);
+}
 /* Responsive tweaks */
 @media (max-width: 600px) {
   body {
@@ -216,6 +236,11 @@ tr:nth-child(even) {
   button {
     width: 100%;
   }
+  .export-btn,
+.import-btn,.import-label {
+  max-width: 100%;
+  
+}
 }
 
 /* Conditional colors for amounts */

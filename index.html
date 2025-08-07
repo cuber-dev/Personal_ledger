@@ -31,9 +31,8 @@
   <div class="summary" id="balance">Balance : ₹0.00</div>
 
   <hr />
-  <label>Import JSON File: </label>
-  <input type="file" id="file-input" onchange="importJSON(event)" accept=".json">
-
+<label for="file-input" class="import-label">📂 Import JSON</label>
+<input type="file" class="import-btn" id="file-input" onchange="importJSON(event)" accept=".json" hidden />
   <br />
   <br />
 
