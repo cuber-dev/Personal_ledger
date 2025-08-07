@@ -67,6 +67,7 @@ function renderTable(data = ledger) {
   // Always sort the full ledger for consistency
   ledger.sort((a, b) => new Date(a.date) - new Date(b.date));
   
+
   // Sort filtered data separately if needed
   const displayData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
   
@@ -109,6 +110,7 @@ function renderTable(data = ledger) {
 }
 document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.preventDefault();
+  saveLastState();
   const date = document.getElementById("date").value;
   const desc = document.getElementById("desc").value;
   const amount = parseFloat(document.getElementById("amount").value);
@@ -134,15 +136,18 @@ function editEntry(index) {
   document.getElementById("type").value = entry.type;
   editingIndex = index;
   saveToLocalStorage();
+  saveLastState();
 
 }
 
 function deleteEntry(index) {
   if (confirm("Delete this entry?")) {
+    saveLastState();
     ledger.splice(index, 1);
     renderTable();
   }
 saveToLocalStorage();
+
 }
 
 function exportJSON() {
@@ -176,6 +181,7 @@ function importJSON(event) {
   };
   reader.readAsText(file);
   saveToLocalStorage();
+  
 
 }
 function exportToExcel() {
@@ -232,6 +238,8 @@ function setToday() {
   const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
 dateInput.value = today;
+  
+
 }
 // Set today's date as default in the date input
 window.addEventListener('DOMContentLoaded', () => {
@@ -292,4 +300,29 @@ function updateFileHeading(file = null) {
   document.getElementById("ledgerName").textContent = name || "Untitled";
   fileName =name;
   if(file) heading.value = name
+}
+function saveLastState() {
+  lastState = JSON.stringify(ledger);
+  redoState = null; // Clear redo history on new action
+}
+function undoChange() {
+  if (lastState) {
+    redoState = JSON.stringify(ledger);
+    ledger = JSON.parse(lastState);
+    lastState = null;
+    renderTable();
+  } else {
+    alert("Nothing to undo");
+  }
+}
+
+function redoChange() {
+  if (redoState) {
+    lastState = JSON.stringify(ledger);
+    ledger = JSON.parse(redoState);
+    redoState = null;
+    renderTable();
+  } else {
+    alert("Nothing to redo");
+  }
 }
