@@ -8,7 +8,6 @@ window.onload = async function () {
     ledger = await response.json();
     renderTable();
   } catch (err) {
-    alert("Could not load records.json. Please make sure the file exists.");
   }
 };
 
@@ -176,3 +175,4 @@ dateInput.value = today;
 window.addEventListener('DOMContentLoaded', () => {
   setToday();
 });
+

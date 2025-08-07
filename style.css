@@ -22,7 +22,9 @@ body {
   max-width: 900px;
   line-height: 1.3rem;
 }
-
+a{
+  color : var(--accent-color);
+}
 h1 {
   text-align: center;
   margin-bottom: 30px;
@@ -228,7 +230,7 @@ tr:nth-child(even) {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  background: #f3f3f3;
+  background: var(--bg-color);
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 2rem;
@@ -236,7 +238,6 @@ tr:nth-child(even) {
 
 .nav-docs a {
   text-decoration: none;
-  color: #007acc;
   font-weight: bold;
 }
 
@@ -247,4 +248,15 @@ section {
 ul {
   padding-left: 1.5rem;
   list-style: disc;
+}
+
+body.dark-mode {
+  --primary-color: #4fc3f7;       /* Light Blue Accent */
+  --secondary-color: #2d2d2d;     /* Background base */
+  --accent-color: #03a9f4;        /* Blue highlight for buttons, etc. */
+  --hover-color: #0288d1;         /* Hover color - deeper blue */
+  --border-color: #444444;        /* Subtle borders */
+  --text-color: #e0e0e0;          /* Soft white - not too harsh */
+  --bg-color: #3a3a3a;            /* Form/table backgrounds */
+  --danger-color: #ef5350;        /* Gentle red */
 }
