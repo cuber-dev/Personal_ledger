@@ -21,7 +21,11 @@ body {
   margin: 0 auto;
   max-width: 900px;
   line-height: 1.3rem;
+  font-family: "Google Sans Code", monospace;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
+
 a{
   color : var(--accent-color);
 }
