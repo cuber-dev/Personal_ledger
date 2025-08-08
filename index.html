@@ -27,6 +27,7 @@
   <!-- Favicon -->
   <link rel="icon" href="logo.png" type="image/x-icon" />
   
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -50,7 +51,7 @@
   </div>
   
   <button class="primary-button" id="newLedgerBtn">+ New Ledger</button>
-  <button id="deleteLedgerBtn" class="primary-button delete-btn">Delete current Ledger</button>
+  <button id="deleteLedgerBtn" class="primary-button delete-btn">Delete Current Ledger</button>
 
 </div>
   <form id="entryForm">
@@ -86,6 +87,8 @@
   <button class="export-btn" onclick="exportJSON()">Save/Export as JSON</button>
   <button class="export-btn" onclick="exportToExcel()">Export to Excel</button>
 <button  class="export-btn" onclick="exportToPDF()">Export to PDF</button>
+<button  class="export-btn" onclick="exportToPNG()">Export table as PNG</button>
+
 </div>
 
 <!-- Filter Section -->

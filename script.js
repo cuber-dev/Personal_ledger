@@ -258,6 +258,23 @@ async function exportToPDF() {
   
   doc.save(currentLedgerKey + ".pdf");
 }
+function exportToPNG(param) {
+  // Tab to edit
+  const table = document.querySelector('table');
+if (!table) {
+  alert("No table found to export!");
+  return;
+}
+
+html2canvas(table, { scale: 2 }).then(canvas => {
+  const link = document.createElement("a");
+  link.download = `${currentLedgerKey || "ledger"}.png`;
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}).catch(err => {
+  console.error("Error exporting table as PNG:", err);
+});
+}
 function setToday() {
   const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
@@ -700,3 +717,5 @@ document.getElementById("deleteLedgerBtn").addEventListener("click", () => {
   updateLedgerSelect();
   document.getElementById("filename").value = fileName; // ← update filename input
 });
+
+
