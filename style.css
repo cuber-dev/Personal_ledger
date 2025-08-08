@@ -322,6 +322,9 @@ ul {
   gap: 10px;
   margin-bottom: 1rem;
 }
+.date-labels {
+  justify-content: space-around;
+}
 
 .filter-row input,
 .filter-row select,
