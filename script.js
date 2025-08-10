@@ -36,7 +36,6 @@ function renderTable(data = ledger) {
     row.innerHTML = `
       <td>${index + 1}</td>
       <td>${entry.date}</td>
-      <td>${currentLedgerKey}</td>
       <td>${entry.desc}</td>
       <td>${entry.type}</td>
       <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
