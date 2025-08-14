@@ -60,7 +60,7 @@ function renderTable(data = ledger) {
   setToday();
   saveToLocalStorage();
   renderCharts(ledger);
-
+  renderReports();
 }
 document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -719,3 +719,78 @@ document.getElementById("deleteLedgerBtn").addEventListener("click", () => {
 });
 
 
+
+
+function generateReports(data = ledger) {
+  let dailyTotals = {};
+  let monthlyTotals = {};
+  let yearlyTotals = {};
+  let incomes = [];
+  let expenses = [];
+
+  data.forEach(txn => {
+    let dateObj = new Date(txn.date);
+    let dayKey = txn.date;
+    let monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}`;
+    let yearKey = dateObj.getFullYear();
+
+    // Group totals
+    if (txn.type === "income") {
+      incomes.push(txn.amount);
+      dailyTotals[dayKey] = (dailyTotals[dayKey] || { income: 0, expense: 0 });
+      dailyTotals[dayKey].income += txn.amount;
+
+      monthlyTotals[monthKey] = (monthlyTotals[monthKey] || { income: 0, expense: 0 });
+      monthlyTotals[monthKey].income += txn.amount;
+
+      yearlyTotals[yearKey] = (yearlyTotals[yearKey] || { income: 0, expense: 0 });
+      yearlyTotals[yearKey].income += txn.amount;
+    } else {
+      expenses.push(txn.amount);
+      dailyTotals[dayKey] = (dailyTotals[dayKey] || { income: 0, expense: 0 });
+      dailyTotals[dayKey].expense += txn.amount;
+
+      monthlyTotals[monthKey] = (monthlyTotals[monthKey] || { income: 0, expense: 0 });
+      monthlyTotals[monthKey].expense += txn.amount;
+
+      yearlyTotals[yearKey] = (yearlyTotals[yearKey] || { income: 0, expense: 0 });
+      yearlyTotals[yearKey].expense += txn.amount;
+    }
+  });
+
+  // Averages
+  const avgDailyIncome = (Object.values(dailyTotals).reduce((sum, day) => sum + day.income, 0) / Object.keys(dailyTotals).length) || 0;
+  const avgDailyExpense = (Object.values(dailyTotals).reduce((sum, day) => sum + day.expense, 0) / Object.keys(dailyTotals).length) || 0;
+
+  const avgMonthlyIncome = (Object.values(monthlyTotals).reduce((sum, m) => sum + m.income, 0) / Object.keys(monthlyTotals).length) || 0;
+  const avgMonthlyExpense = (Object.values(monthlyTotals).reduce((sum, m) => sum + m.expense, 0) / Object.keys(monthlyTotals).length) || 0;
+
+  const avgYearlyIncome = (Object.values(yearlyTotals).reduce((sum, y) => sum + y.income, 0) / Object.keys(yearlyTotals).length) || 0;
+  const avgYearlyExpense = (Object.values(yearlyTotals).reduce((sum, y) => sum + y.expense, 0) / Object.keys(yearlyTotals).length) || 0;
+
+  // Min/Max
+  const highestIncome = incomes.length ? Math.max(...incomes) : 0;
+  const lowestIncome = incomes.length ? Math.min(...incomes) : 0;
+  const highestExpense = expenses.length ? Math.max(...expenses) : 0;
+  const lowestExpense = expenses.length ? Math.min(...expenses) : 0;
+
+  return {
+    avgDailyIncome, avgDailyExpense,
+    avgMonthlyIncome, avgMonthlyExpense,
+    avgYearlyIncome, avgYearlyExpense,
+    highestIncome, lowestIncome,
+    highestExpense, lowestExpense
+  };
+}
+
+function renderReports() {
+  const reports = generateReports();
+  const reportsDiv = document.getElementById("reportsOutput");
+  reportsDiv.innerHTML = `
+    <p class="line"><strong>Daily Avg:</strong> Income ₹${reports.avgDailyIncome.toFixed(2)}, Expense ₹${reports.avgDailyExpense.toFixed(2)}</p>
+    <p class="line"><strong>Monthly Avg:</strong> Income ₹${reports.avgMonthlyIncome.toFixed(2)}, Expense ₹${reports.avgMonthlyExpense.toFixed(2)}</p>
+    <p class="line"><strong>Yearly Avg:</strong> Income ₹${reports.avgYearlyIncome.toFixed(2)}, Expense ₹${reports.avgYearlyExpense.toFixed(2)}</p>
+    <p class="line"><strong>Highest:</strong> Income ₹${reports.highestIncome}, Expense ₹${reports.highestExpense}</p>
+    <p class="line"><strong>Lowest:</strong> Income ₹${reports.lowestIncome}, Expense ₹${reports.lowestExpense}</p>
+  `;
+}

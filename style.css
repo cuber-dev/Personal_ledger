@@ -62,12 +62,22 @@ h2{
   word-wrap : break-word;
    word-break: break-word;
 }
-.white-card{
+.white-card,.card{
   background: var(--bg-color);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(106, 13, 173, 0.1); /* subtle purple shadow */
   margin-bottom: 20px;
+}
+.card h2{
+  margin-top: 0;
+}
+.card .line{
+  background: var(--secondary-color);
+  padding:.8rem .3rem;
+  border-radius: .2rem;
+  text-align: center;
+  line-height: 1.6rem;
 }
 form {
   background: var(--bg-color);
