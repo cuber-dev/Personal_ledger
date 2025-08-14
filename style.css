@@ -79,6 +79,37 @@ h2{
   text-align: center;
   line-height: 1.6rem;
 }
+#advancedReports {
+  margin-top: 20px;
+  padding: 15px;
+}
+
+.report-section {
+  background: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.report-section h3 {
+  color: var(--primary-color);
+  margin-bottom: 8px;
+}
+
+.report-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.report-section li {
+  padding: 5px 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.report-section li:last-child {
+  border-bottom: none;
+}
 form {
   background: var(--bg-color);
   padding: 20px;

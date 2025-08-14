@@ -61,6 +61,7 @@ function renderTable(data = ledger) {
   saveToLocalStorage();
   renderCharts(ledger);
   renderReports();
+  renderAdvancedReports();
 }
 document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -794,3 +795,67 @@ function renderReports() {
     <p class="line"><strong>Lowest:</strong> Income ₹${reports.lowestIncome}, Expense ₹${reports.lowestExpense}</p>
   `;
 }
+
+function generateAdvancedReports(data = ledger) {
+  // Separate income & expense transactions
+  const incomes = data.filter(txn => txn.type === "income");
+  const expenses = data.filter(txn => txn.type === "expense");
+  
+  // Top 5 incomes & expenses
+  const topIncomes = [...incomes].sort((a, b) => b.amount - a.amount).slice(0, 5);
+  const topExpenses = [...expenses].sort((a, b) => b.amount - a.amount).slice(0, 5);
+  
+  // Frequent transactions (by description only)
+  const descCount = {};
+  data.forEach(txn => {
+    let desc = txn.desc?.trim() || "No Description";
+    descCount[desc] = (descCount[desc] || 0) + 1;
+  });
+  const frequentTransactions = Object.entries(descCount)
+    .filter(([desc, count]) => count > 1)
+    .sort((a, b) => b[1] - a[1]);
+  
+  // Recurring transactions (same desc + amount + type)
+  const recurringMap = {};
+  data.forEach(txn => {
+    let desc = txn.desc?.trim() || "No Description";
+    const key = JSON.stringify({ desc, amount: txn.amount, type: txn.type });
+    recurringMap[key] = (recurringMap[key] || 0) + 1;
+  });
+  
+  const recurringTransactions = Object.entries(recurringMap)
+    .filter(([key, count]) => count > 1)
+    .map(([key, count]) => {
+      const parsed = JSON.parse(key);
+      return { desc: parsed.desc, amount: parsed.amount, type: parsed.type, count };
+    });
+  
+  return { topIncomes, topExpenses, frequentTransactions, recurringTransactions };
+}
+
+function renderAdvancedReports() {
+  const { topIncomes, topExpenses, frequentTransactions, recurringTransactions } = generateAdvancedReports();
+  
+  // Top incomes
+  document.getElementById("topIncomesList").innerHTML = topIncomes
+    .map(txn => `<li>${txn.desc} – ₹${txn.amount}</li>`)
+    .join("");
+  
+  // Top expenses
+  document.getElementById("topExpensesList").innerHTML = topExpenses
+    .map(txn => `<li>${txn.desc} – ₹${txn.amount}</li>`)
+    .join("");
+  
+  // Frequent
+  document.getElementById("frequentList").innerHTML = frequentTransactions
+    .map(([desc, count]) => `<li>${desc} – ${count} times</li>`)
+    .join("");
+  
+  // Recurring
+  document.getElementById("recurringList").innerHTML = recurringTransactions
+    .map(txn => `<li>${txn.desc} – ₹${txn.amount} (${txn.count} times)</li>`)
+    .join("");
+}
+
+console.log("Ledger Data:", ledger);
+console.log("Advanced Reports:", generateAdvancedReports());
