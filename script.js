@@ -838,24 +838,25 @@ function renderAdvancedReports() {
   const { topIncomes, topExpenses, frequentTransactions, recurringTransactions } = generateAdvancedReports();
   
   // Top incomes
-  document.getElementById("topIncomesList").innerHTML = topIncomes
+  document.getElementById("topIncomesList").innerHTML = topIncomes.length ?  topIncomes
     .map(txn => `<li>${txn.desc} – ₹${txn.amount}</li>`)
-    .join("");
+    .join("") : "<li>No transactions found</li>";
   
   // Top expenses
-  document.getElementById("topExpensesList").innerHTML = topExpenses
-    .map(txn => `<li>${txn.desc} – ₹${txn.amount}</li>`)
-    .join("");
+  document.getElementById("topExpensesList").innerHTML =
+  topExpenses.length ? 
+    topExpenses.map(txn => `<li>${txn.desc} – ₹${txn.amount}</li>`).join("") 
+    : "<li>No transactions found</li>"; ;
   
   // Frequent
-  document.getElementById("frequentList").innerHTML = frequentTransactions
+  document.getElementById("frequentList").innerHTML = frequentTransactions.length ? frequentTransactions
     .map(([desc, count]) => `<li>${desc} – ${count} times</li>`)
-    .join("");
+    .join("") : "<li>No transactions found</li>";
   
   // Recurring
-  document.getElementById("recurringList").innerHTML = recurringTransactions
+  document.getElementById("recurringList").innerHTML = recurringTransactions.length ? recurringTransactions
     .map(txn => `<li>${txn.desc} – ₹${txn.amount} (${txn.count} times)</li>`)
-    .join("");
+    .join("") :"<li>No transactions found</li>";
 }
 
 function generateUpcomingExpectations(data = ledger) {
