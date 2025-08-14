@@ -62,6 +62,7 @@ function renderTable(data = ledger) {
   renderCharts(ledger);
   renderReports();
   renderAdvancedReports();
+  renderUpcomingExpectations();
 }
 document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -857,5 +858,48 @@ function renderAdvancedReports() {
     .join("");
 }
 
-console.log("Ledger Data:", ledger);
-console.log("Advanced Reports:", generateAdvancedReports());
+function generateUpcomingExpectations(data = ledger) {
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const lastMonth = (currentMonth - 1 + 12) % 12;
+  const currentYear = now.getFullYear();
+  const lastMonthYear = lastMonth === 11 ? currentYear - 1 : currentYear;
+
+  // Filter last month's transactions
+  const lastMonthData = data.filter(txn => {
+    const txnDate = new Date(txn.date);
+    return txnDate.getMonth() === lastMonth && txnDate.getFullYear() === lastMonthYear;
+  });
+
+  // Group last month's transactions by desc + amount + type
+  const recurringMap = {};
+  lastMonthData.forEach(txn => {
+    let desc = txn.desc?.trim() || "No Description";
+    const key = JSON.stringify({ desc, amount: txn.amount, type: txn.type });
+    recurringMap[key] = (recurringMap[key] || 0) + 1;
+  });
+
+  // Get current month's transactions
+  const currentMonthData = data.filter(txn => {
+    const txnDate = new Date(txn.date);
+    return txnDate.getMonth() === currentMonth && txnDate.getFullYear() === currentYear;
+  });
+  const currentMonthKeys = new Set(
+    currentMonthData.map(txn => JSON.stringify({ desc: txn.desc?.trim() || "No Description", amount: txn.amount, type: txn.type }))
+  );
+
+  // Expected transactions for this month (not yet recorded)
+  const expectedTransactions = Object.entries(recurringMap)
+    .filter(([key, count]) => count >= 1 && !currentMonthKeys.has(key))
+    .map(([key]) => JSON.parse(key));
+
+  return expectedTransactions;
+}
+
+function renderUpcomingExpectations() {
+  const upcoming = generateUpcomingExpectations();
+  
+  document.getElementById("upcomingList").innerHTML = upcoming.length ?
+    upcoming.map(txn => `<li>${txn.desc} – ₹${txn.amount} (${txn.type})</li>`).join("") :
+    "<li>No upcoming expected transactions found</li>";
+}
