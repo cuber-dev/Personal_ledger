@@ -33,6 +33,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<!-- Add in your <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js"></script>
@@ -45,7 +47,7 @@
 </head>
 <body>
   <h1>Vault Ledger</h1>
-  <button id="themeToggle" class="export-btn toggle">🌙 Toggle Dark Mode</button>
+  <button id="themeToggle" class="export-btn toggle"><i class="fa-solid fa-moon"></i> Toggle Dark Mode</button>
 
  <div class="entry-section white-card">
   <div class="form-row">
@@ -59,12 +61,12 @@
     </select>
   </div>
   
-  <button class="primary-button" id="newLedgerBtn">+ New Ledger</button>
+  <button class="primary-button" id="newLedgerBtn"><i class="fa-solid fa-plus"></i>  New Ledger</button>
   <button id="deleteLedgerBtn" class="primary-button delete-btn">Delete Current Ledger</button>
 
 </div>
   <form id="entryForm">
-    <label for="desc">Add Transaction:</label>
+    <label for="desc"><i class="fa-solid fa-pencil"></i> Add Transaction:</label>
 
     <div class="inputs-container">
       
@@ -85,7 +87,7 @@
   <hr />
   <label>Import JSON File: </label>
 
-<label for="file-input" class="import-label">📂 Import JSON</label>
+<label for="file-input" class="import-label"><i class="fa-solid fa-file"></i> Import JSON</label>
 <input type="file" class="import-btn" id="file-input" onchange="importJSON(event)" accept=".json" hidden />
   <!-- <button id="importDriveBtn" class="import-btn" onclick="importLedgerFromDrive()">Import from Google Drive</button> -->
 
@@ -95,19 +97,18 @@
   <label>Export or download File: </label>
 <div class="export-container">
   
-  <button class="export-btn" onclick="exportJSON()">Export table as JSON</button>
-  <button class="export-btn" onclick="exportToExcel()">Export table as Excel</button>
-<button  class="export-btn" onclick="exportToPDF()">Export table as PDF</button>
-<button  class="export-btn" onclick="exportToPNG()">Export table as PNG</button>
+  <button class="export-btn" onclick="exportJSON()"><i class="fa-solid fa-table"></i> Export table as JSON</button>
+  <button class="export-btn" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> Export table as Excel</button>
+<button  class="export-btn" onclick="exportToPDF()"><i class="fa-solid fa-file-pdf"></i> Export table as PDF</button>
+<button  class="export-btn" onclick="exportToPNG()"><i class="fa-solid fa-photo"></i> Export table as PNG</button>
 <!-- Google Drive Integration Buttons -->
   <!-- <button id="exportDriveBtn" class="export-btn" onclick="exportLedgerToDrive()">Export to Google Drive</button> -->
 </div>
 
 <!-- Filter Section -->
 <div id="filterSection" class="filter-section">
-  <label><strong>Filter:</strong>
+  <label><strong><i class="fa-solid fa-filter"></i> Filter:</strong>
   </label>
-  <i class="fa-solid fa-arrow"></i>
   <div class="filter-row">
 
   <input type="text" id="searchDesc" placeholder="Search Description" />
@@ -122,6 +123,7 @@
   </div>
   <div class="filter-row date-labels">
     <label for="startDate" >From Date</label>
+    <i class="fa-solid fa-calender"></i>
     <label for="endDate" >To Date</label>
   </div>
   <div class="filter-row">
@@ -130,16 +132,16 @@
     </div>
   <div class="filter-row">
 
-    <button onclick="applyFilters()">🔍 Filter</button>
-    <button onclick="clearFilters()">❌ Clear</button>
+    <button onclick="applyFilters()"><i class="fa-solid fa-search"></i> Filter</button>
+    <button onclick="clearFilters()"><i class="fa-solid fa-circle-xmark"></i> Clear</button>
     </div>
 
 </div>
 <br />
-<h2>Ledger</h2>
+<h2><i class="fa-solid fa-book"></i> Ledger</h2>
 <div class="changes-container">
-  <button onclick="undoChange()">↩️ Undo Last Action</button>
-  <button onclick="redoChange()">↪️ Redo Last Action</button>
+  <button onclick="undoChange()"><i class="fa-solid fa-undo"></i> Undo Last Action</button>
+  <button onclick="redoChange()"><i class="fa-solid fa-redo"></i> Redo Last Action</button>
 </div>
   <div class="table-wrapper">
   <table>
@@ -159,7 +161,7 @@
 </div>
  <div class="summary-container">
    
- <h2 class="heading" >Summary</h2>
+ <h2 class="heading" ><i class="fa-solid fa-clipboard-list"></i> Summary</h2>
 <div id="summarySection">
   <div class="summary-box income-summary">Total Income: ₹ <span id="totalIncome">0.00</span></div>
   <div class="summary-box expense-summary">Total Expenses: ₹ <span id="totalExpense">0.00</span></div>
@@ -167,11 +169,11 @@
 </div>
  </div>
  <section id="reportsSection" class="card">
-  <h2>Basic Reports</h2>
+  <h2><i class="fa-solid fa-basic"></i> Basic Reports</h2>
   <div id="reportsOutput"></div>
 </section>
 <section id="advancedReports" class="card">
-  <h2>Advanced Reports</h2>
+  <h2><i class="fa-solid fa-chart-simple"></i> Advanced Reports</h2>
   
   <div class="report-section" id="topIncomesSection">
     <h3>Top 5 Incomes</h3>
@@ -194,13 +196,13 @@
   </div>
 </section>
 <section class="card">
-  <h2>Upcoming Expected Transactions</h2>
+  <h2><i class="fa-solid fa-clock"></i> Upcoming Expected Transactions</h2>
 <div class="report-section" id="upcomingSection">
   <ul id="upcomingList"></ul>
 </div>
 </section>
 
-<h2 style="text-align: center;">Visual Insights</h2>
+<h2 style="text-align: center;"><i class="fa-solid fa-chart-pie"></i> Visual Insights</h2>
 <div id="chartContainer" class="chart-container">
   
   <div class="chart-card">
