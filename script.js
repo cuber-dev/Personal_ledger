@@ -57,12 +57,8 @@ function renderTable(data = ledger) {
   totalExpenseSpan.textContent = totalExpense.toFixed(2);
   finalBalanceSpan.textContent = balance.toFixed(2);
   
-  setToday();
-  saveToLocalStorage();
-  renderCharts(ledger);
-  renderReports();
-  renderAdvancedReports();
-  renderUpcomingExpectations();
+  
+  refreshReports();
 }
 document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -803,4 +799,62 @@ function renderUpcomingExpectations() {
   document.getElementById("upcomingList").innerHTML = upcoming.length ?
     upcoming.map(txn => `<li>${txn.desc} – ₹${txn.amount} (${txn.type})</li>`).join("") :
     "<li>No upcoming expected transactions found</li>";
+}
+
+
+// ===== Special Insights =====
+function updateSpecialInsights() {
+  if (!ledger.length) {
+    document.getElementById("highestIncome").innerHTML = "<strong>Highest Income:</strong> No data found";
+    document.getElementById("highestExpense").innerHTML = "<strong>Highest Expense:</strong> No data found";
+    document.getElementById("zeroDays").innerHTML = "<strong>Zero Spent Days:</strong> No data found";
+    document.getElementById("incomeRatio").innerHTML = "<strong>Income Ratio:</strong> No data found";
+    return;
+  }
+  
+  // Highest Income
+  let highestIncome = ledger.filter(t => t.type === "income").sort((a, b) => b.amount - a.amount)[0];
+  document.getElementById("highestIncome").innerHTML =
+    highestIncome ?
+    `<strong>Highest Income:</strong> ₹${highestIncome.amount} (${highestIncome.desc} on ${highestIncome.date})` :
+    "<strong>Highest Income:</strong> No data found";
+  
+  // Highest Expense
+  let highestExpense = ledger.filter(t => t.type === "expense").sort((a, b) => b.amount - a.amount)[0];
+  document.getElementById("highestExpense").innerHTML =
+    highestExpense ?
+    `<strong>Highest Expense:</strong> ₹${highestExpense.amount} (${highestExpense.desc} on ${highestExpense.date})` :
+    "<strong>Highest Expense:</strong> No data found";
+  
+  // Zero Spent Days (list format)
+  let expenseDates = new Set(ledger.filter(t => t.type === "expense").map(t => t.date));
+  let allDates = new Set(ledger.map(t => t.date));
+  let zeroSpentDays = [...allDates].filter(d => !expenseDates.has(d));
+  
+  if (zeroSpentDays.length) {
+    document.getElementById("zeroDays").innerHTML =
+      `<strong>Zero Spent Days:</strong><ul>${zeroSpentDays.map(date => `<li>${date}</li>`).join("")}</ul>`;
+  } else {
+    document.getElementById("zeroDays").innerHTML = "<strong>Zero Spent Days:</strong> No data found";
+  }
+  
+  // Income Ratio (Expense / Income * 100)
+  let totalIncome = ledger.filter(t => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
+  let totalExpense = ledger.filter(t => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
+  let ratio = totalIncome ? ((totalExpense / totalIncome) * 100).toFixed(1) : null;
+  document.getElementById("incomeRatio").innerHTML =
+    ratio !== null ?
+    `<strong>Income Ratio:</strong> ${ratio}%` :
+    "<strong>Income Ratio:</strong> No income data";
+}
+
+// Auto-update on changes
+function refreshReports() {
+  setToday();
+saveToLocalStorage();
+renderCharts();
+renderReports();
+renderAdvancedReports();
+renderUpcomingExpectations();
+  updateSpecialInsights();
 }
