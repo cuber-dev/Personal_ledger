@@ -188,31 +188,7 @@ function exportToExcel() {
   XLSX.utils.book_append_sheet(wb, ws, "Records");
   XLSX.writeFile(wb, currentLedgerKey + ".xlsx");
 }
-/*async function exportToPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  
-  // Table first
-  doc.autoTable({ html: 'table' });
-  
-  // Calculate closing balance
-  let closingBalance = 0;
-  ledger.forEach(entry => {
-    if (entry.type === "income") closingBalance += entry.amount;
-    else closingBalance -= entry.amount;
-  });
-  
-  // Format as currency string
-  const formattedBalance = `₹ ${closingBalance.toFixed(2)}`;
-  
-  // Set font and add closing balance cleanly
-  doc.setFontSize(16);
-  doc.setFont(undefined, 'bold');
-  doc.text(`Closing Balance: ${formattedBalance}`, 14, doc.lastAutoTable.finalY + 20);
-  
-  doc.save(currentLedgerKey + ".pdf");
-}
-*/
+/*
 async function exportToPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -260,6 +236,121 @@ async function exportToPDF() {
   doc.text(`Closing Balance: ${formattedBalance}`, 14, doc.lastAutoTable.finalY + 20);
   
   doc.save(currentLedgerKey + ".pdf");
+}
+*/
+async function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  // ====== THEME COLORS FROM CSS ======
+  const rootStyles = getComputedStyle(document.documentElement);
+  const primaryColor = rootStyles.getPropertyValue("--primary-color")?.trim() || "#6a0dad";
+  const secondaryColor = rootStyles.getPropertyValue("--secondary-color")?.trim() || "#f3e8ff";
+  const textColor = rootStyles.getPropertyValue("--text-color")?.trim() || "#000000";
+  
+  // ====== META DATA ======
+  const downloadDate = new Date().toLocaleString();
+  const ledgerName = document.getElementById("filename")?.value || "Untitled Ledger";
+  const selectedLedger = document.getElementById("ledgerSelect")?.value || "N/A";
+  const appURL = window.location.href;
+  
+  // ====== HEADER ======
+  doc.setFontSize(20).setTextColor(primaryColor).setFont(undefined, "bold");
+  doc.text("Vault Ledger Report", 14, 15);
+  
+  doc.setFontSize(12).setTextColor(textColor).setFont(undefined, "normal");
+  doc.text(`Ledger Name: ${ledgerName}`, 14, 25);
+  doc.text(`Selected Ledger: ${selectedLedger}`, 14, 31);
+  doc.text(`Date of Download: ${downloadDate}`, 14, 37);
+  doc.text(`URL: ${appURL}`, 14, 43);
+  
+  // ====== TABLE ======
+  doc.autoTable({
+    html: 'table',
+    startY: 50,
+    styles: { fontSize: 10, textColor: textColor, lineColor: primaryColor, lineWidth: 0.2 },
+    headStyles: { fillColor: primaryColor, textColor: "#ffffff", fontStyle: "bold" },
+    bodyStyles: { fillColor: secondaryColor },
+    alternateRowStyles: { fillColor: "#ffffff" },
+  });
+  
+  let y = doc.lastAutoTable.finalY + 10;
+  
+  // ====== SUMMARY ======
+  const totalIncome = document.getElementById("totalIncome")?.textContent || "0.00";
+  const totalExpense = document.getElementById("totalExpense")?.textContent || "0.00";
+  const finalBalance = document.getElementById("finalBalance")?.textContent || "0.00";
+  
+  doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
+  doc.text("Summary", 14, y);
+  
+  doc.setFontSize(12).setTextColor(textColor);
+  doc.text(`Total Income: ₹${totalIncome}`, 14, y + 8);
+  doc.text(`Total Expense: ₹${totalExpense}`, 14, y + 16);
+  doc.text(`Final Balance: ₹${finalBalance}`, 14, y + 24);
+  
+  y += 40;
+  
+  // ====== BASIC REPORTS ======
+  const basicReports = document.getElementById("reportsOutput")?.innerText.trim();
+  if (basicReports) {
+    doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
+    doc.text("Basic Reports", 14, y);
+    doc.setFontSize(12).setTextColor(textColor);
+    doc.text(basicReports.split("\n"), 14, y + 8);
+    y += basicReports.split("\n").length * 8 + 10;
+  }
+  
+  // ====== ADVANCED REPORTS ======
+  const advancedSections = [
+    { title: "Top 5 Incomes", listId: "topIncomesList" },
+    { title: "Top 5 Expenses", listId: "topExpensesList" },
+    { title: "Frequent Transactions", listId: "frequentList" },
+    { title: "Recurring Transactions", listId: "recurringList" },
+  ];
+  advancedSections.forEach(sec => {
+    const items = [...document.querySelectorAll(`#${sec.listId} li`)].map(li => li.innerText);
+    if (items.length) {
+      doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
+      doc.text(sec.title, 14, y);
+      doc.setFontSize(12).setTextColor(textColor);
+      doc.text(items, 14, y + 8);
+      y += items.length * 8 + 10;
+    }
+  });
+  
+  // ====== UPCOMING EXPECTED TRANSACTIONS ======
+  const upcomingItems = [...document.querySelectorAll(`#upcomingList li`)].map(li => li.innerText);
+  if (upcomingItems.length) {
+    doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
+    doc.text("Upcoming Expected Transactions", 14, y);
+    doc.setFontSize(12).setTextColor(textColor);
+    doc.text(upcomingItems, 14, y + 8);
+    y += upcomingItems.length * 8 + 10;
+  }
+  
+  // ====== SPECIAL INSIGHTS ======
+  const insights = [
+    document.getElementById("highestIncome")?.innerText,
+    document.getElementById("highestExpense")?.innerText,
+    document.getElementById("zeroDays")?.innerText,
+    document.getElementById("incomeRatio")?.innerText
+  ].filter(Boolean);
+  
+  if (insights.length) {
+    doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
+    doc.text("Special Insights", 14, y);
+    doc.setFontSize(12).setTextColor(textColor);
+    doc.text(insights, 14, y + 8);
+    y += insights.length * 8 + 10;
+  }
+  
+  // ====== FOOTER ======
+  doc.setFontSize(10).setTextColor("#666666").setFont(undefined, "italic");
+  doc.text("Generated by Vault Ledger App", 14, 290);
+  
+  // ====== SAVE ======
+  doc.save(`${ledgerName}.pdf`);
 }
 function exportToPNG(param) {
   // Tab to edit
