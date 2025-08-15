@@ -188,7 +188,7 @@ function exportToExcel() {
   XLSX.utils.book_append_sheet(wb, ws, "Records");
   XLSX.writeFile(wb, currentLedgerKey + ".xlsx");
 }
-async function exportToPDF() {
+/*async function exportToPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   
@@ -208,6 +208,55 @@ async function exportToPDF() {
   // Set font and add closing balance cleanly
   doc.setFontSize(16);
   doc.setFont(undefined, 'bold');
+  doc.text(`Closing Balance: ${formattedBalance}`, 14, doc.lastAutoTable.finalY + 20);
+  
+  doc.save(currentLedgerKey + ".pdf");
+}
+*/
+async function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  // Example theme colors (replace with your CSS variable values if needed)
+  const primaryColor = "#6a0dad"; // purple theme
+  const secondaryColor = "#f3e8ff"; // light purple background
+  const textColor = "#000000";
+  
+  // Table with theme
+  doc.autoTable({
+    html: 'table',
+    styles: {
+      fontSize: 10,
+      textColor: textColor,
+      lineColor: primaryColor,
+      lineWidth: 0.2,
+    },
+    headStyles: {
+      fillColor: primaryColor,
+      textColor: "#ffffff",
+      fontStyle: "bold",
+    },
+    bodyStyles: {
+      fillColor: secondaryColor,
+    },
+    alternateRowStyles: {
+      fillColor: "#ffffff",
+    },
+  });
+  
+  // Calculate closing balance
+  let closingBalance = 0;
+  ledger.forEach(entry => {
+    if (entry.type === "income") closingBalance += entry.amount;
+    else closingBalance -= entry.amount;
+  });
+  
+  const formattedBalance = `₹ ${closingBalance.toFixed(2)}`;
+  
+  // Closing balance text with color theme
+  doc.setFontSize(16);
+  doc.setFont(undefined, 'bold');
+  doc.setTextColor(primaryColor);
   doc.text(`Closing Balance: ${formattedBalance}`, 14, doc.lastAutoTable.finalY + 20);
   
   doc.save(currentLedgerKey + ".pdf");
