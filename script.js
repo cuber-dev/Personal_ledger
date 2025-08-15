@@ -858,3 +858,26 @@ renderAdvancedReports();
 renderUpcomingExpectations();
   updateSpecialInsights();
 }
+
+window.addEventListener("beforeunload", function() {
+  let ledgersList = JSON.parse(localStorage.getItem("ledgers") || "[]");
+  
+  if (ledgersList.length > 0) {
+    ledgersList.forEach(ledgerKey => {
+      let ledgerData = localStorage.getItem(ledgerKey);
+      if (ledgerData) {
+        let blob = new Blob([ledgerData], { type: "application/json" });
+        let url = URL.createObjectURL(blob);
+        
+        let a = document.createElement("a");
+        a.href = url;
+        a.download = `${ledgerKey}.json`; // Use ledger's actual name as filename
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        URL.revokeObjectURL(url);
+      }
+    });
+  }
+});
