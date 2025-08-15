@@ -275,34 +275,47 @@ dateInput.value = today;
 window.addEventListener('DOMContentLoaded', () => {
   setToday();
 });
- 
+
 function applyFilters() {
   const desc = document.getElementById('searchDesc').value.toLowerCase();
   const type = document.getElementById('filterType').value;
   const startDate = document.getElementById('startDate').value;
   const endDate = document.getElementById('endDate').value;
+  const minAmount = parseFloat(document.getElementById('minAmount').value);
+  const maxAmount = parseFloat(document.getElementById('maxAmount').value);
   
   const filtered = ledger.filter(entry => {
     const matchesDesc = desc ? entry.desc.toLowerCase().includes(desc) : true;
     const matchesType = type ? entry.type === type : true;
     const matchesStart = startDate ? entry.date >= startDate : true;
     const matchesEnd = endDate ? entry.date <= endDate : true;
-    return matchesDesc && matchesType && matchesStart && matchesEnd;
+    
+    const matchesMinAmount = !isNaN(minAmount) ? entry.amount >= minAmount : true;
+    const matchesMaxAmount = !isNaN(maxAmount) ? entry.amount <= maxAmount : true;
+    
+    return (
+      matchesDesc &&
+      matchesType &&
+      matchesStart &&
+      matchesEnd &&
+      matchesMinAmount &&
+      matchesMaxAmount
+    );
   });
   
   renderTable(filtered);
   renderCharts(filtered);
-
 }
 function clearFilters() {
   document.getElementById('searchDesc').value = '';
   document.getElementById('filterType').value = '';
   document.getElementById('startDate').value = '';
   document.getElementById('endDate').value = '';
+  document.getElementById('minAmount').value = '';
+  document.getElementById('maxAmount').value = '';
   
   renderTable(ledger);
   renderCharts(ledger);
-
 }
 function saveToLocalStorage() {
   localStorage.setItem(currentLedgerKey, JSON.stringify(ledger));
