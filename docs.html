@@ -5,32 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ledger App - Documentation</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-  <button id="themeToggle" class="export-btn">🌙 Toggle Dark Mode</button>
+  <button id="themeToggle" class="export-btn"><i class="fa-solid fa-moon"></i> Toggle Dark Mode</button>
 
   <div class="container">
-    <h1>📘 Personal Ledger App - User Guide</h1>
+    <h1><i class="fa-solid fa-book"></i> Personal Ledger App - User Guide</h1>
 
     <p>This page explains how to use your daily income & expense ledger with all its powerful features.</p>
 
-    <nav class="nav-docs">
-      <strong>Quick Links:</strong>
-      <a href="./index.html">Back to Home</a>
-      <a href="#add-entry">Add Entry</a>
-      <a href="#edit-entry">Edit Entry</a>
-      <a href="#delete-entry">Delete Entry</a>
-      <a href="#import-export">Import / Export</a>
-      <a href="#view-balance">View Balance</a>
-      <a href="#undo-redo">Undo / Redo</a>
-      <a href="#closing-balance">Closing Balance</a>
-      <a href="#charts">Charts</a>
-      <a href="#dark-mode">Dark Mode</a>
-      <a href="#version">Version Info</a>
-    </nav>
+<nav class="nav-docs card">
+  <strong><i class="fa-solid fa-link"></i> Quick Links:</strong>
+  <ul>
+    <li><a href="./index.html"><i class="fa-solid fa-house"></i> Back to Home</a></li>
+    <li><a href="#add-entry"><i class="fa-solid fa-plus"></i> Add Entry</a></li>
+    <li><a href="#edit-entry"><i class="fa-solid fa-pen"></i> Edit Entry</a></li>
+    <li><a href="#delete-entry"><i class="fa-solid fa-trash"></i> Delete Entry</a></li>
+    <li><a href="#import-export"><i class="fa-solid fa-file-import"></i> Import / Export</a></li>
+    <li><a href="#view-balance"><i class="fa-solid fa-wallet"></i> View Balance</a></li>
+    <li><a href="#undo-redo"><i class="fa-solid fa-rotate-left"></i> Undo / Redo</a></li>
+    <li><a href="#closing-balance"><i class="fa-solid fa-chart-line"></i> Closing Balance</a></li>
+    <li><a href="#charts"><i class="fa-solid fa-chart-pie"></i> Charts</a></li>
+    <li><a href="#special-insights"><i class="fa-solid fa-lightbulb"></i> Special Insights</a></li>
+    <li><a href="#dark-mode"><i class="fa-solid fa-moon"></i> Dark Mode</a></li>
+    <li><a href="#version"><i class="fa-solid fa-code-branch"></i> Version Info</a></li>
+  </ul>
+</nav>
 
     <section id="add-entry">
-      <h2>➕ Add Entry</h2>
+      <h2><i class="fa-solid fa-plus"></i> Add Entry</h2>
       <ul>
         <li>Choose a <strong>date</strong> (defaults to today automatically).</li>
         <li>Enter a <strong>description</strong> (e.g., "Bus fare", "Salary").</li>
@@ -41,7 +46,7 @@
     </section>
 
     <section id="edit-entry">
-      <h2>✏️ Edit Entry</h2>
+      <h2><i class="fa-solid fa-pen"></i> Edit Entry</h2>
       <ul>
         <li>Click the <strong>Edit</strong> button beside any transaction.</li>
         <li>The form auto-fills with the selected data.</li>
@@ -50,7 +55,7 @@
     </section>
 
     <section id="delete-entry">
-      <h2>🗑️ Delete Entry</h2>
+      <h2><i class="fa-solid fa-trash"></i> Delete Entry</h2>
       <ul>
         <li>Click the <strong>Delete</strong> button beside any transaction.</li>
         <li>This will permanently remove the record from your ledger.</li>
@@ -58,7 +63,7 @@
     </section>
 
     <section id="import-export">
-      <h2>📁 Import / Export</h2>
+      <h2><i class="fa-solid fa-file-import"></i> Import / Export</h2>
       <ul>
         <li><strong>Import:</strong> Click the file input to load a `.json` file and continue from a previous session.</li>
         <li><strong>Export:</strong> Choose between <strong>JSON, Excel, or PDF</strong> formats for backup or sharing.</li>
@@ -67,14 +72,14 @@
     </section>
 
     <section id="view-balance">
-      <h2>💰 View Balance</h2>
+      <h2><i class="fa-solid fa-wallet"></i> View Balance</h2>
       <p>
         A summary card at the top shows your total <strong>Income</strong>, <strong>Expenses</strong>, and <strong>Current Balance</strong>.
       </p>
     </section>
 
     <section id="undo-redo">
-      <h2>↩️ Undo / Redo</h2>
+      <h2><i class="fa-solid fa-rotate-left"></i> Undo / Redo</h2>
       <ul>
         <li>Click the <strong>Undo</strong> button to revert your last change.</li>
         <li>Click <strong>Redo</strong> to bring it back again.</li>
@@ -83,7 +88,7 @@
     </section>
 
     <section id="closing-balance">
-      <h2>📉 Closing Balance</h2>
+      <h2><i class="fa-solid fa-chart-line"></i> Closing Balance</h2>
       <ul>
         <li>Each row displays the <strong>closing balance</strong> after that transaction.</li>
         <li>This gives you a real-time snapshot of your funds after every entry.</li>
@@ -91,15 +96,26 @@
     </section>
 
     <section id="charts">
-      <h2>📊 Visual Charts</h2>
+      <h2><i class="fa-solid fa-chart-pie"></i> Visual Charts</h2>
       <ul>
         <li>Scroll down to see bar, pie, and line charts representing your financial activity.</li>
         <li>Charts auto-update as you add, edit, or delete entries.</li>
       </ul>
     </section>
 
+    <section id="special-insights">
+      <h2><i class="fa-solid fa-lightbulb"></i> Special Insights</h2>
+      <ul>
+        <li><strong>Highest Income:</strong> Displays the largest income with description & date.</li>
+        <li><strong>Highest Expense:</strong> Displays the largest expense with description & date.</li>
+        <li><strong>Zero Spent Days:</strong> Shows a list of dates when no expenses were recorded.</li>
+        <li><strong>Income Ratio:</strong> Shows your expense-to-income percentage.</li>
+        <li>Updates automatically as you modify your ledger.</li>
+      </ul>
+    </section>
+
     <section id="dark-mode">
-      <h2>🌙 Dark Mode</h2>
+      <h2><i class="fa-solid fa-moon"></i> Dark Mode</h2>
       <ul>
         <li>Click the <strong>Toggle Dark Mode</strong> button to switch themes.</li>
         <li>The app uses <strong>CSS variables</strong> to adjust colors dynamically.</li>
@@ -108,8 +124,8 @@
     </section>
 
     <section id="version">
-      <h2>📌 Version Info & Changelog</h2>
-      <p><strong>Current Version:</strong> <code>v1.6.0</code></p>
+      <h2><i class="fa-solid fa-code-branch"></i> Version Info & Changelog</h2>
+      <p><strong>Current Version:</strong> <code>v1.7.0</code></p>
       <ul>
         <li>✅ Added: Closing balance per transaction</li>
         <li>✅ Added: Export to PDF and Excel</li>
@@ -117,6 +133,7 @@
         <li>✅ Added: Auto-save using Local Storage</li>
         <li>✅ Added: Visual charts (bar, pie, line)</li>
         <li>✅ Added: Custom filename for export</li>
+        <li>✅ Added: Special Insights (Highest Income, Highest Expense, Zero Spent Days, Income Ratio)</li>
         <li>✅ Enhanced: Dark mode support for all UI and chart elements</li>
         <li>🔧 Fixed: Text visibility issues in dark mode</li>
         <li>🔧 Fixed: Ledger reset logic on empty state</li>

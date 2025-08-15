@@ -1,27 +1,28 @@
 # 📘 Personal Ledger App - User Guide
 
-This guide explains how to use your **daily income & expense ledger** with all its powerful features.
+This guide explains how to use your daily income & expense ledger with all its powerful features.
 
 ---
 
-## 📎 Quick Links
-- [Back to Home](./index.html)
-- [➕ Add Entry](#-add-entry)
-- [✏️ Edit Entry](#️-edit-entry)
-- [🗑️ Delete Entry](#%EF%B8%8F-delete-entry)
-- [📁 Import / Export](#-import--export)
-- [💰 View Balance](#-view-balance)
-- [↩️ Undo / Redo](#️-undo--redo)
-- [📉 Closing Balance](#-closing-balance)
-- [📊 Charts](#-visual-charts)
-- [🌙 Dark Mode](#-dark-mode)
-- [📌 Version Info](#-version-info--changelog)
+## 🔗 Quick Links
+- [🏠 Back to Home](./index.html)
+- [➕ Add Entry](#add-entry)
+- [✏️ Edit Entry](#edit-entry)
+- [🗑 Delete Entry](#delete-entry)
+- [📥 Import / Export](#import-export)
+- [👛 View Balance](#view-balance)
+- [↩️ Undo / Redo](#undo-redo)
+- [📈 Closing Balance](#closing-balance)
+- [🥧 Charts](#charts)
+- [💡 Special Insights](#special-insights)
+- [🌙 Dark Mode](#dark-mode)
+- [🌿 Version Info](#version)
 
 ---
 
 ## ➕ Add Entry
 1. Choose a **date** (defaults to today automatically).
-2. Enter a **description** (e.g., `"Bus fare"`, `"Salary"`).
+2. Enter a **description** (e.g., "Bus fare", "Salary").
 3. Input the **amount**.
 4. Select **Income** or **Expense**.
 5. Click **"Add / Update"** to save the record.
@@ -35,70 +36,76 @@ This guide explains how to use your **daily income & expense ledger** with all i
 
 ---
 
-## 🗑️ Delete Entry
-1. Click the **Delete** button beside any transaction.
-2. This will permanently remove the record from your ledger.
+## 🗑 Delete Entry
+- Click the **Delete** button beside any transaction.  
+- This will permanently remove the record from your ledger.
 
 ---
 
-## 📁 Import / Export
-- **Import:** Click the file input to load a `.json` file and continue from a previous session.
-- **Export:** Choose between **JSON**, **Excel**, or **PDF** formats for backup or sharing.
+## 📥 Import / Export
+- **Import:** Load a `.json` file to continue from a previous session.
+- **Export:** Choose **JSON, Excel, or PDF** for backup or sharing.
 - You can also give a **custom filename** before exporting.
 
 ---
 
-## 💰 View Balance
-- A summary card at the top shows your total **Income**, **Expenses**, and **Current Balance**.
+## 👛 View Balance
+- A summary card shows **Income**, **Expenses**, and **Current Balance**.
 
 ---
 
 ## ↩️ Undo / Redo
-- Click the **Undo** button to revert your last change.
-- Click **Redo** to bring it back again.
-- Prevents accidental deletions or changes.
+- **Undo:** Revert your last change.  
+- **Redo:** Bring it back again.  
+- Prevents accidental deletions or edits.
 
 ---
 
-## 📉 Closing Balance
-- Each row displays the **closing balance** after that transaction.
-- Gives you a real-time snapshot of your funds after every entry.
+## 📈 Closing Balance
+- Each row shows the **closing balance** after that transaction.  
+- Gives a real-time snapshot after every entry.
 
 ---
 
-## 📊 Visual Charts
-- Scroll down to see **bar, pie, and line charts** representing your financial activity.
-- Charts **auto-update** as you add, edit, or delete entries.
+## 🥧 Charts
+- Bar, pie, and line charts represent your financial activity.  
+- Charts update automatically as you add, edit, or delete entries.
+
+---
+
+## 💡 Special Insights
+- **Highest Income:** Largest income with description & date.
+- **Highest Expense:** Largest expense with description & date.
+- **Zero Spent Days:** List of dates with no expenses.
+- **Income Ratio:** Expense-to-income percentage.
+- Updates automatically.
 
 ---
 
 ## 🌙 Dark Mode
-- Click the **Toggle Dark Mode** button to switch themes.
+- Click **Toggle Dark Mode** to switch themes.
 - Uses **CSS variables** for dynamic color changes.
-- All charts and text adjust for readability.
+- Charts and text adapt for better readability.
 
 ---
 
-## 📌 Version Info & Changelog
-**Current Version:** `v1.6.0`
+## 🌿 Version Info & Changelog
+**Current Version:** `v1.7.0`
 
 ### ✅ Added
-- Closing balance per transaction  
-- Export to PDF and Excel  
-- Undo & Redo functionality  
-- Auto-save using Local Storage  
-- Visual charts (bar, pie, line)  
-- Custom filename for export  
-
-### ✨ Enhanced
-- Dark mode support for all UI and chart elements  
+- Closing balance per transaction
+- Export to PDF and Excel
+- Undo & Redo functionality
+- Auto-save using Local Storage
+- Visual charts (bar, pie, line)
+- Custom filename for export
+- Special Insights (Highest Income, Highest Expense, Zero Spent Days, Income Ratio)
 
 ### 🔧 Fixed
-- Text visibility issues in dark mode  
-- Ledger reset logic on empty state  
+- Text visibility issues in dark mode
+- Ledger reset logic on empty state
 
 ---
 
-## 🛡️ About
-**Made by:** Nandhu  
-**Features:** Fully offline & secure, data stored via JSON
+## 📌 Footer
+Made by **Nandhu** | Fully offline & secure | Data stored via JSON
