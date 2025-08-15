@@ -107,39 +107,38 @@
 
 <!-- Filter Section -->
 <div id="filterSection" class="filter-section">
-  <label><strong><i class="fa-solid fa-filter"></i> Filter:</strong>
-  </label>
+  <label><strong><i class="fa-solid fa-filter"></i> Filter:</strong></label>
+  
   <div class="filter-row">
-
-  <input type="text" id="searchDesc" placeholder="Search Description" />
+    <input type="text" id="searchDesc" placeholder="Search Description" oninput="applyFilters()" />
   </div>
-
+  
   <div class="filter-row">
-    <select id="filterType">
+    <select id="filterType" onchange="applyFilters()">
       <option value="">All Types</option>
       <option value="income">Income</option>
       <option value="expense">Expense</option>
     </select>
   </div>
+  
   <div class="filter-row">
-  <input type="number" id="minAmount" placeholder="Min Amount" step="0.01" />
-  <input type="number" id="maxAmount" placeholder="Max Amount" step="0.01" />
-</div>
-  <div class="filter-row date-labels">
-    <label for="startDate" >From Date</label>
-    <i class="fa-solid fa-calender"></i>
-    <label for="endDate" >To Date</label>
+    <input type="number" id="minAmount" placeholder="Min Amount" step="0.01" oninput="applyFilters()" />
+    <input type="number" id="maxAmount" placeholder="Max Amount" step="0.01" oninput="applyFilters()" />
   </div>
+  
+  <div class="filter-row date-labels">
+    <label for="startDate">From Date</label>
+    <label for="endDate">To Date</label>
+  </div>
+  
   <div class="filter-row">
-    <input type="date" placeholder="From Date" id="startDate" />
-    <input type="date" placeholder="To Date" id="endDate" />
-    </div>
+    <input type="date" id="startDate" onchange="applyFilters()" />
+    <input type="date" id="endDate" onchange="applyFilters()" />
+  </div>
+  
   <div class="filter-row">
-
-    <button onclick="applyFilters()"><i class="fa-solid fa-search"></i> Filter</button>
     <button onclick="clearFilters()"><i class="fa-solid fa-circle-xmark"></i> Clear</button>
-    </div>
-
+  </div>
 </div>
 <br />
 <h2><i class="fa-solid fa-book"></i> Ledger</h2>
