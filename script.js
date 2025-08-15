@@ -930,3 +930,20 @@ window.addEventListener("beforeunload", function() {
     });
   }
 });
+
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Show button only when scrolled down
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('scrollTopBtn');
+  if (window.scrollY > 200) {
+    btn.classList.remove("hide");
+    btn.classList.add("show");
+  } else {
+    btn.classList.remove("show");
+    btn.classList.add("hide");
+  }
+});

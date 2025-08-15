@@ -598,3 +598,42 @@ body.dark-mode {
   background-color: var(--danger-color);
   color: white;
 }
+
+.scroll-top-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 22px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  cursor: pointer;
+  display: none; /* Hidden until scrolled down */
+  z-index: 999;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.scroll-top-btn.show{
+  display: flex;
+  background: var(--primary-color);
+}
+.scroll-top-btn.hide{
+  display: none;
+}
+
+.scroll-top-btn:hover {
+  background: var(--secondary-color);
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .scroll-top-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+  }
+}
