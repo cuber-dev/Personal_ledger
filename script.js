@@ -3,7 +3,7 @@ let editingIndex = null;
 let fileName = "Untitled";
 let currentLedgerKey = "";
 
-
+/*
 function renderTable(data = ledger) {
   const table = document.getElementById("tableBody");
   const balanceDiv = document.getElementById("balance");
@@ -60,6 +60,85 @@ function renderTable(data = ledger) {
   
   
   refreshReports();
+}
+*/
+
+function renderTable(data = ledger, showRecurringOnly = false) {
+  const table = document.getElementById("tableBody");
+  const balanceDiv = document.getElementById("balance");
+  const totalIncomeSpan = document.getElementById("totalIncome");
+  const totalExpenseSpan = document.getElementById("totalExpense");
+  const finalBalanceSpan = document.getElementById("finalBalance");
+  
+  table.innerHTML = "";
+  let balance = 0;
+  let totalIncome = 0;
+  let totalExpense = 0;
+  
+  // Sort the filtered data
+  const displayData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  // Fix: get recurring indices based on filtered & sorted displayData
+  const recurringIndices = getRecurringIndices(displayData);
+  
+  displayData.forEach((entry, index) => {
+    const isRecurring = recurringIndices.has(index);
+    if (showRecurringOnly && !isRecurring) return;
+    
+    if (entry.type === "income") {
+      balance += entry.amount;
+      totalIncome += entry.amount;
+    } else {
+      balance -= entry.amount;
+      totalExpense += entry.amount;
+    }
+    
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${entry.date}</td>
+      <td>${currentLedgerKey}</td>
+      <td>${entry.desc} ${isRecurring ? '<span class="recurring-badge">🔁</span>' : ''}</td>
+      <td>${entry.type}</td>
+      <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
+        ${entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
+      </td>
+      <td>${balance.toFixed(2)}</td>
+      <td class="actions">
+        <button onclick="editEntry(${index})">Edit</button>
+        <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
+      </td>
+    `;
+    table.appendChild(row);
+  });
+  
+  balanceDiv.textContent = `Balance : ₹ ${balance.toFixed(2)}`;
+  totalIncomeSpan.textContent = totalIncome.toFixed(2);
+  totalExpenseSpan.textContent = totalExpense.toFixed(2);
+  finalBalanceSpan.textContent = balance.toFixed(2);
+  
+  refreshReports();
+}
+function getRecurringIndices(data) {
+  const ledgerKeyMap = {};
+  
+  // Build a map of keys from the full ledger (desc + amount)
+  ledger.forEach(entry => {
+    const key = `${entry.desc.toLowerCase()}-${entry.amount}`;
+    if (!ledgerKeyMap[key]) ledgerKeyMap[key] = 0;
+    ledgerKeyMap[key]++;
+  });
+  
+  // Now mark indices in the current display data if the key appears more than once
+  const recurring = new Set();
+  data.forEach((entry, index) => {
+    const key = `${entry.desc.toLowerCase()}-${entry.amount}`;
+    if (ledgerKeyMap[key] > 1) {
+      recurring.add(index);
+    }
+  });
+  
+  return recurring;
 }
 document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -284,12 +363,11 @@ function applyFilters() {
   const minAmount = parseFloat(document.getElementById('minAmount').value);
   const maxAmount = parseFloat(document.getElementById('maxAmount').value);
   
-  const filtered = ledger.filter(entry => {
+  const filtered = ledger.filter((entry, index) => {
     const matchesDesc = desc ? entry.desc.toLowerCase().includes(desc) : true;
     const matchesType = type ? entry.type === type : true;
     const matchesStart = startDate ? entry.date >= startDate : true;
     const matchesEnd = endDate ? entry.date <= endDate : true;
-    
     const matchesMinAmount = !isNaN(minAmount) ? entry.amount >= minAmount : true;
     const matchesMaxAmount = !isNaN(maxAmount) ? entry.amount <= maxAmount : true;
     
@@ -313,7 +391,6 @@ function clearFilters() {
   document.getElementById('endDate').value = '';
   document.getElementById('minAmount').value = '';
   document.getElementById('maxAmount').value = '';
-  
   renderTable(ledger);
   renderCharts(ledger);
 }
