@@ -2,7 +2,8 @@ let ledger = [];
 let editingIndex = null;
 let fileName = "Untitled";
 let currentLedgerKey = "";
-
+let isUsingFilter = false;
+let globalFilterData = [];
 
 function renderTable(data = ledger, showRecurringOnly = false) {
   const table = document.getElementById("tableBody");
@@ -103,7 +104,7 @@ document.getElementById("entryForm").addEventListener("submit", function (e) {
 });
 
 function editEntry(index) {
-  const entry = ledger[index];
+  const entry = isUsingFilter ? globalFilterData[index] : ledger[index];
   document.getElementById("date").value = entry.date;
   document.getElementById("desc").value = entry.desc;
   document.getElementById("amount").value = entry.amount;
@@ -121,9 +122,8 @@ function deleteEntry(index) {
     ledger.splice(index, 1);
     renderTable();
   }
-saveToLocalStorage();
+  saveToLocalStorage();
   renderCharts(ledger);
-
 }
 
 function exportJSON() {
@@ -298,6 +298,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function applyFilters() {
+  isUsingFilter = true;
   const desc = document.getElementById('searchDesc').value.toLowerCase();
   const type = document.getElementById('filterType').value;
   const startDate = document.getElementById('startDate').value;
@@ -322,7 +323,7 @@ function applyFilters() {
       matchesMaxAmount
     );
   });
-  
+  globalFilterData = filtered;
   renderTable(filtered);
   renderCharts(filtered);
   renderReports(filtered);
@@ -331,6 +332,7 @@ renderUpcomingExpectations(filtered);
 updateSpecialInsights(filtered);
 }
 function clearFilters() {
+  isUsingFilter = false;
   document.getElementById('searchDesc').value = '';
   document.getElementById('filterType').value = '';
   document.getElementById('startDate').value = '';
