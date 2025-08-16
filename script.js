@@ -383,6 +383,10 @@ function applyFilters() {
   
   renderTable(filtered);
   renderCharts(filtered);
+  renderReports(filtered);
+renderAdvancedReports(filtered);
+renderUpcomingExpectations(filtered);
+updateSpecialInsights(filtered);
 }
 function clearFilters() {
   document.getElementById('searchDesc').value = '';
@@ -391,8 +395,7 @@ function clearFilters() {
   document.getElementById('endDate').value = '';
   document.getElementById('minAmount').value = '';
   document.getElementById('maxAmount').value = '';
-  renderTable(ledger);
-  renderCharts(ledger);
+ refreshReports() ;
 }
 function saveToLocalStorage() {
   localStorage.setItem(currentLedgerKey, JSON.stringify(ledger));
@@ -745,7 +748,7 @@ document.getElementById("deleteLedgerBtn").addEventListener("click", () => {
 
 
 
-function generateReports(data = ledger) {
+function generateReports(data ) {
   let dailyTotals = {};
   let monthlyTotals = {};
   let yearlyTotals = {};
@@ -807,8 +810,8 @@ function generateReports(data = ledger) {
   };
 }
 
-function renderReports() {
-  const reports = generateReports();
+function renderReports(data = ledger) {
+  const reports = generateReports(data);
   const reportsDiv = document.getElementById("reportsOutput");
   reportsDiv.innerHTML = `
     <p class="line"><strong>Daily Avg:</strong> Income ₹${reports.avgDailyIncome.toFixed(2)}, Expense ₹${reports.avgDailyExpense.toFixed(2)}</p>
@@ -819,7 +822,7 @@ function renderReports() {
   `;
 }
 
-function generateAdvancedReports(data = ledger) {
+function generateAdvancedReports(data) {
   // Separate income & expense transactions
   const incomes = data.filter(txn => txn.type === "income");
   const expenses = data.filter(txn => txn.type === "expense");
@@ -856,8 +859,8 @@ function generateAdvancedReports(data = ledger) {
   return { topIncomes, topExpenses, frequentTransactions, recurringTransactions };
 }
 
-function renderAdvancedReports() {
-  const { topIncomes, topExpenses, frequentTransactions, recurringTransactions } = generateAdvancedReports();
+function renderAdvancedReports(data = ledger) {
+  const { topIncomes, topExpenses, frequentTransactions, recurringTransactions } = generateAdvancedReports(data);
   
   // Top incomes
   document.getElementById("topIncomesList").innerHTML = topIncomes.length ?  topIncomes
@@ -881,7 +884,7 @@ function renderAdvancedReports() {
     .join("") :"<li>No transactions found</li>";
 }
 
-function generateUpcomingExpectations(data = ledger) {
+function generateUpcomingExpectations(data) {
   const now = new Date();
   const currentMonth = now.getMonth();
   const lastMonth = (currentMonth - 1 + 12) % 12;
@@ -919,8 +922,8 @@ function generateUpcomingExpectations(data = ledger) {
   return expectedTransactions;
 }
 
-function renderUpcomingExpectations() {
-  const upcoming = generateUpcomingExpectations();
+function renderUpcomingExpectations(data = ledger) {
+  const upcoming = generateUpcomingExpectations(data);
   
   document.getElementById("upcomingList").innerHTML = upcoming.length ?
     upcoming.map(txn => `<li>${txn.desc} – ₹${txn.amount} (${txn.type})</li>`).join("") :
@@ -929,8 +932,8 @@ function renderUpcomingExpectations() {
 
 
 // ===== Special Insights =====
-function updateSpecialInsights() {
-  if (!ledger.length) {
+function updateSpecialInsights(data = ledger) {
+  if (!data.length) {
     document.getElementById("highestIncome").innerHTML = "<strong>Highest Income:</strong> No data found";
     document.getElementById("highestExpense").innerHTML = "<strong>Highest Expense:</strong> No data found";
     document.getElementById("zeroDays").innerHTML = "<strong>Zero Spent Days:</strong> No data found";
@@ -939,22 +942,22 @@ function updateSpecialInsights() {
   }
   
   // Highest Income
-  let highestIncome = ledger.filter(t => t.type === "income").sort((a, b) => b.amount - a.amount)[0];
+  let highestIncome = data.filter(t => t.type === "income").sort((a, b) => b.amount - a.amount)[0];
   document.getElementById("highestIncome").innerHTML =
     highestIncome ?
     `<strong>Highest Income:</strong> ₹${highestIncome.amount} (${highestIncome.desc} on ${highestIncome.date})` :
     "<strong>Highest Income:</strong> No data found";
   
   // Highest Expense
-  let highestExpense = ledger.filter(t => t.type === "expense").sort((a, b) => b.amount - a.amount)[0];
+  let highestExpense = data.filter(t => t.type === "expense").sort((a, b) => b.amount - a.amount)[0];
   document.getElementById("highestExpense").innerHTML =
     highestExpense ?
     `<strong>Highest Expense:</strong> ₹${highestExpense.amount} (${highestExpense.desc} on ${highestExpense.date})` :
     "<strong>Highest Expense:</strong> No data found";
   
   // Zero Spent Days (list format)
-  let expenseDates = new Set(ledger.filter(t => t.type === "expense").map(t => t.date));
-  let allDates = new Set(ledger.map(t => t.date));
+  let expenseDates = new Set(data.filter(t => t.type === "expense").map(t => t.date));
+  let allDates = new Set(data.map(t => t.date));
   let zeroSpentDays = [...allDates].filter(d => !expenseDates.has(d));
   
   if (zeroSpentDays.length) {
@@ -965,8 +968,8 @@ function updateSpecialInsights() {
   }
   
   // Income Ratio (Expense / Income * 100)
-  let totalIncome = ledger.filter(t => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
-  let totalExpense = ledger.filter(t => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
+  let totalIncome = data.filter(t => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
+  let totalExpense = data.filter(t => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
   let ratio = totalIncome ? ((totalExpense / totalIncome) * 100).toFixed(1) : null;
   document.getElementById("incomeRatio").innerHTML =
     ratio !== null ?
