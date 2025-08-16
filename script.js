@@ -337,7 +337,8 @@ function clearFilters() {
   document.getElementById('endDate').value = '';
   document.getElementById('minAmount').value = '';
   document.getElementById('maxAmount').value = '';
- refreshReports() ;
+  renderTable();
+  refreshReports() ;
 }
 function saveToLocalStorage() {
   localStorage.setItem(currentLedgerKey, JSON.stringify(ledger));
