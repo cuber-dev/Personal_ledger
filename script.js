@@ -3,65 +3,6 @@ let editingIndex = null;
 let fileName = "Untitled";
 let currentLedgerKey = "";
 
-/*
-function renderTable(data = ledger) {
-  const table = document.getElementById("tableBody");
-  const balanceDiv = document.getElementById("balance");
-  const totalIncomeSpan = document.getElementById("totalIncome");
-  const totalExpenseSpan = document.getElementById("totalExpense");
-  const finalBalanceSpan = document.getElementById("finalBalance");
-  
-  table.innerHTML = "";
-  let balance = 0;
-  let totalIncome = 0;
-  let totalExpense = 0;
-  
-  // Always sort the full ledger for consistency
-  ledger.sort((a, b) => new Date(a.date) - new Date(b.date));
-  
-
-  // Sort filtered data separately if needed
-  const displayData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
-  
-  displayData.forEach((entry, index) => {
-    if (entry.type === "income") {
-      balance += entry.amount;
-      totalIncome += entry.amount;
-    } else {
-      balance -= entry.amount;
-      totalExpense += entry.amount;
-    }
-    
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${entry.date}</td>
-      <td>${currentLedgerKey}</td>
-      <td>${entry.desc}</td>
-      <td>${entry.type}</td>
-      <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
-        ${entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
-      </td>
-      <td>${balance.toFixed(2)}</td>
-      <td class="actions">
-        <button onclick="editEntry(${index})">Edit</button>
-        <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
-      </td>
-    `;
-    table.appendChild(row);
-  });
-  
-  balanceDiv.textContent = `Balance : ₹ ${balance.toFixed(2)}`;
-  
-  // Update the summary section
-  totalIncomeSpan.textContent = totalIncome.toFixed(2);
-  totalExpenseSpan.textContent = totalExpense.toFixed(2);
-  finalBalanceSpan.textContent = balance.toFixed(2);
-  
-  
-  refreshReports();
-}
-*/
 
 function renderTable(data = ledger, showRecurringOnly = false) {
   const table = document.getElementById("tableBody");
@@ -116,7 +57,8 @@ function renderTable(data = ledger, showRecurringOnly = false) {
   totalIncomeSpan.textContent = totalIncome.toFixed(2);
   totalExpenseSpan.textContent = totalExpense.toFixed(2);
   finalBalanceSpan.textContent = balance.toFixed(2);
-  
+  updateWealthLight(totalIncome,totalExpense);
+  showLowBalancePlan(balance);
   refreshReports();
 }
 function getRecurringIndices(data) {
@@ -1027,3 +969,51 @@ window.addEventListener('scroll', () => {
     btn.classList.add("hide");
   }
 });
+
+// === Wealth Light Update ===
+function updateWealthLight(income, expenses) {
+  const light = document.getElementById("wealthLight");
+  const title = document.getElementById("wealthTitle");
+  if (!light) return;
+  
+  if (income >= expenses) {
+    light.className = "wealth-light green";
+    title.textContent = "Good financial health";
+  } else if (income >= expenses * 0.7) {
+    light.className = "wealth-light yellow";
+    title.textContent = "Warning: More expenses than income";
+  } else {
+    light.className = "wealth-light red";
+    title.textContent = "Danger: Too many expenses!";
+  }
+}
+
+// === Smart Plan for Low Balance ===
+function showLowBalancePlan(balance) {
+  const alertDiv = document.getElementById("planSection");
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  
+  // Get remaining days in this month
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const remainingDays = daysInMonth - today.getDate() + 1; // include today
+  
+  if (balance < 800 && remainingDays > 0) {
+    const perDay = Math.floor(balance / remainingDays);
+    
+    alertDiv.innerHTML = `
+      <h2><i class="fa-solid fa-warning"></i> Low Balance Alert</h2>
+      <p>Your balance is below ₹800.</p>
+      <p>Suggested expense plan (equal split):</p>
+      <ul>
+        <li>Total Remaining Days: ${remainingDays}</li>
+        <li>Daily Allowance: ~₹${perDay} per day</li>
+      </ul>
+      <p><b>Total Planned ${perDay + " x " + remainingDays}  = ₹${perDay * remainingDays}</b></p>
+    `;
+    alertDiv.style.display = "block";
+  } else {
+    alertDiv.style.display = "none";
+  }
+}

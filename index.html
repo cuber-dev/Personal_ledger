@@ -85,7 +85,14 @@
     <button class="submit" type="submit">Add Entry</button>
   </form>
 
+ <!-- Wealth Light Section -->
+<div class="wealth-light-section card">
+  <h2>Wealth Indicator</h2>
+  <div id="wealthLight" class="wealth-light">
+  </div>
+  <p id="wealthTitle"></p>
   <div class="summary" id="balance">Balance : ₹0.00</div>
+</div>
 
   <hr />
   <label>Import JSON File: </label>
@@ -175,6 +182,11 @@
   <div class="summary-box balance-summary">Final Balance: ₹ <span id="finalBalance">0.00</span></div>
 </div>
  </div>
+
+<!-- Smart Plan Section -->
+<div id="planSection" class="plan-section card">
+  <!-- Smart plan will be shown here when balance < 800 -->
+</div>
  <section id="reportsSection" class="card">
   <h2><i class="fa-solid fa-basic"></i> Basic Reports</h2>
   <div id="reportsOutput"></div>

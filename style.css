@@ -646,3 +646,43 @@ body.dark-mode {
   font-size: 0.8rem;
   margin-left: 5px;
 }
+.wealth-light-section {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.wealth-light {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 0.5rem auto;
+  border: 1px solid var(--primary-color);
+  background-color: gray;
+  transition: background-color 0.3s ease;
+}
+
+.wealth-light.green {
+  background-color: #2ecc71; /* Green */
+}
+
+.wealth-light.yellow {
+  background-color: #f1c40f; /* Yellow */
+}
+
+.wealth-light.red {
+  background-color: #e74c3c; /* Red */
+}
+
+.plan-section {
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 8px;
+}
+.plan-section ul {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.plan-section button {
+  margin-top: 0.5rem;
+}
