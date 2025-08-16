@@ -994,17 +994,17 @@ function showLowBalancePlan(balance) {
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
-  
+  const lowAmount = 500;
   // Get remaining days in this month
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const remainingDays = daysInMonth - today.getDate() + 1; // include today
   
-  if (balance < 800 && remainingDays > 0) {
+  if (balance < lowAmount && remainingDays > 0) {
     const perDay = Math.floor(balance / remainingDays);
     
     alertDiv.innerHTML = `
       <h2><i class="fa-solid fa-warning"></i> Low Balance Alert</h2>
-      <p>Your balance is below ₹800.</p>
+      <p>Your balance is below ₹${lowAmount}.</p>
       <p>Suggested expense plan (equal split):</p>
       <ul>
         <li>Total Remaining Days: ${remainingDays}</li>
