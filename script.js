@@ -998,7 +998,20 @@ function showLowBalancePlan(balance) {
   // Get remaining days in this month
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const remainingDays = daysInMonth - today.getDate() + 1; // include today
-  
+  if(balance < 0){
+    alertDiv.style.display = "block";
+    alertDiv.innerHTML = `
+      <h2><i class="fa-solid fa-warning"></i> Low Balance Alert</h2>
+      <p>Your balance is low</p>
+      <p>Suggested expense plan:</p>
+      <ul>
+        <li>Total Remaining Days: ${remainingDays}</li>
+        <li>Daily Allowance: 00</li>
+      </ul>
+      <p><b>Total Planned = No expenses per day until some income is received.</b></p>
+    `;
+    return;
+  }
   if (balance < lowAmount && remainingDays > 0) {
     const perDay = Math.floor(balance / remainingDays);
     
