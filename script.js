@@ -1,9 +1,39 @@
 let ledger = [];
-let editingIndex = null;
+let editingId = null; // replace editingIndex
 let fileName = "Untitled";
 let currentLedgerKey = "";
 let isUsingFilter = false;
 let globalFilterData = [];
+
+async function generateTransactionId(date, desc, amount) {
+  // Normalize values
+  const normalizedDate = new Date(date).toISOString().split("T")[0]; // yyyy-mm-dd
+  const normalizedDesc = desc.trim().toLowerCase();
+  const normalizedAmount = parseFloat(amount).toFixed(2);
+  
+  // Add a salt (timestamp + random)
+  const salt = Date.now().toString() + Math.random().toString(36).substring(2, 6);
+  
+  // Build string
+  const baseString = `${normalizedDate}|${normalizedDesc}|${normalizedAmount}|${salt}`;
+  
+  // Hash using SHA-256
+  const buffer = new TextEncoder().encode(baseString);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  
+  // Return shorter, prefixed ID
+  return "tx_" + hashHex.substring(0, 12);
+}
+(async () => {
+  console.log(await generateTransactionId("2025-08-22", "Groceries", 250));
+  // → tx_a13f9b4d8c72
+  
+  console.log(await generateTransactionId("2025-08-22", "Groceries", 250));
+  // → tx_91bf21d77f1e  (always unique, even with same data)
+})();
+
 
 function renderTable(data = ledger, showRecurringOnly = false) {
   const table = document.getElementById("tableBody");
@@ -47,8 +77,8 @@ function renderTable(data = ledger, showRecurringOnly = false) {
       </td>
       <td>${balance.toFixed(2)}</td>
       <td class="actions">
-        <button onclick="editEntry(${index})">Edit</button>
-        <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
+        <button onclick="editEntry('${entry.id}')">Edit</button>
+        <button class="delete-btn" onclick="deleteEntry('${entry.id}')">Delete</button>
       </td>
     `;
     table.appendChild(row);
@@ -83,6 +113,7 @@ function getRecurringIndices(data) {
   
   return recurring;
 }
+/*
 document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.preventDefault();
   saveLastState();
@@ -102,7 +133,36 @@ document.getElementById("entryForm").addEventListener("submit", function (e) {
   e.target.reset();
   renderTable();
 });
-
+*/
+document.getElementById("entryForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  saveLastState();
+  
+  const date = document.getElementById("date").value;
+  const desc = document.getElementById("desc").value;
+  const amount = parseFloat(document.getElementById("amount").value);
+  const type = document.getElementById("type").value;
+  
+  if (editingId !== null) {
+    // Update existing entry by ID
+    const idx = ledger.findIndex(tx => tx.id === editingId);
+    if (idx !== -1) {
+      ledger[idx] = { ...ledger[idx], date, desc, amount, type };
+    }
+    editingId = null;
+  } else {
+    // Create new entry with ID
+    const id = await generateTransactionId(date, desc, amount);
+    const entry = { id, date, desc, amount, type };
+    ledger.push(entry);
+  }
+  
+  e.target.reset();
+  renderTable();
+  saveToLocalStorage();
+  renderCharts(ledger);
+});
+/*
 function editEntry(index) {
   const entry = isUsingFilter ? globalFilterData[index] : ledger[index];
   document.getElementById("date").value = entry.date;
@@ -115,7 +175,30 @@ function editEntry(index) {
   renderCharts(ledger);
 
 }
-
+*/
+function editEntry(id) {
+  // Find entry in ledger by ID
+  const entry = ledger.find(tx => tx.id === id);
+  if (!entry) {
+    console.error("Entry not found for ID:", id);
+    return;
+  }
+  
+  // Fill form with entry values
+  document.getElementById("date").value = entry.date;
+  document.getElementById("desc").value = entry.desc;
+  document.getElementById("amount").value = entry.amount;
+  document.getElementById("type").value = entry.type;
+  
+  // Store ID instead of index
+  editingId = id;
+  
+  // Save state
+  saveToLocalStorage();
+  saveLastState();
+  renderCharts(ledger);
+}
+/*
 function deleteEntry(index) {
   if (confirm("Delete this entry?")) {
     saveLastState();
@@ -125,7 +208,22 @@ function deleteEntry(index) {
   saveToLocalStorage();
   renderCharts(ledger);
 }
-
+*/
+function deleteEntry(id) {
+  if (confirm("Delete this entry?")) {
+    saveLastState();
+    
+    // Find index of entry by ID
+    const idx = ledger.findIndex(tx => tx.id === id);
+    if (idx !== -1) {
+      ledger.splice(idx, 1);
+    }
+    
+    renderTable();
+    saveToLocalStorage();
+    renderCharts(ledger);
+  }
+}
 function exportJSON() {
   const blob = new Blob([JSON.stringify(ledger, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -135,7 +233,7 @@ function exportJSON() {
   anchor.click();
   URL.revokeObjectURL(url);
 }
-
+/*
 function importJSON(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -181,6 +279,48 @@ function importJSON(event) {
     }
   };
   
+  reader.readAsText(file);
+}
+*/
+async function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      
+      if (Array.isArray(data)) {
+        // If the file is a plain array of entries
+        for (let entry of data) {
+          if (!entry.id) {
+            entry.id = await generateTransactionId(entry.date, entry.desc, entry.amount);
+          }
+        }
+        ledger = data;
+      } else if (data.ledger) {
+        // If JSON has { ledger: [...] }
+        for (let entry of data.ledger) {
+          if (!entry.id) {
+            entry.id = await generateTransactionId(entry.date, entry.desc, entry.amount);
+          }
+        }
+        ledger = data.ledger;
+      } else {
+        alert("Invalid JSON format!");
+        return;
+      }
+      
+      renderTable();
+      saveToLocalStorage();
+      renderCharts(ledger);
+      alert("Ledger imported successfully ✅");
+    } catch (err) {
+      alert("Error importing file ❌");
+      console.error(err);
+    }
+  };
   reader.readAsText(file);
 }
 function exportToExcel() {
