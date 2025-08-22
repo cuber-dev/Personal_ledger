@@ -1217,7 +1217,7 @@ function showLowBalancePlan(balance) {
     alertDiv.innerHTML = `
       <h2><i class="fa-solid fa-warning"></i> Low Balance Alert</h2>
       <p>Your balance is low</p>
-      <p>Suggested expense plan:</p>
+      <p>Suggested expense plan for this Month:</p>
       <ul>
         <li>Total Remaining Days: ${remainingDays}</li>
         <li>Daily Allowance: 00</li>
