@@ -78,7 +78,7 @@ function renderTable(data = ledger, showRecurringOnly = false) {
       <td>${balance.toFixed(2)}</td>
       <td class="actions">
         <button onclick="editEntry('${entry.id}')">Edit</button>
-        <button class="delete-btn" onclick="deleteEntry('${entry.id}')">Delete</button>
+        <button class="delete-btn" onclick="deleteEntry('${entry.id}','${entry.desc}')">Delete</button>
       </td>
     `;
     table.appendChild(row);
@@ -209,12 +209,15 @@ function deleteEntry(index) {
   renderCharts(ledger);
 }
 */
-function deleteEntry(id) {
-  if (confirm("Delete this entry?")) {
+function deleteEntry(id,desc) {
+  if(desc === "Opening Balance"){
+    alert("Cannot delete Opening balance entry!");
+    return;
+  }
+  if (confirm(`Delete ${desc} entry?`)) {
     saveLastState();
-    
-    // Find index of entry by ID
     const idx = ledger.findIndex(tx => tx.id === id);
+    // Find index of entry by ID
     if (idx !== -1) {
       ledger.splice(idx, 1);
     }
