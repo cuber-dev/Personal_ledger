@@ -282,6 +282,7 @@ function importJSON(event) {
   reader.readAsText(file);
 }
 */
+/*
 async function importJSON(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -316,6 +317,76 @@ async function importJSON(event) {
       saveToLocalStorage();
       renderCharts(ledger);
       alert("Ledger imported successfully ✅");
+    } catch (err) {
+      alert("Error importing file ❌");
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+}
+*/
+async function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      const baseName = file.name.replace(/\.json$/, '');
+      let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+      ledgers = [...new Set(ledgers)];
+      
+      // Handle duplicate ledger names
+      if (ledgers.includes(baseName)) {
+        let newName = prompt(`A ledger named "${baseName}" already exists. Enter a different name:`);
+        if (!newName || ledgers.includes(newName)) {
+          alert("Import cancelled or name already exists.");
+          return;
+        }
+        currentLedgerKey = newName;
+        fileName = newName;
+      } else {
+        currentLedgerKey = baseName;
+        fileName = baseName;
+      }
+      
+      // Normalize ledger structure (support array or object with { ledger: [...] })
+      let importedLedger;
+      if (Array.isArray(importedData)) {
+        importedLedger = importedData;
+      } else if (importedData.ledger) {
+        importedLedger = importedData.ledger;
+      } else {
+        alert("Invalid JSON format!");
+        return;
+      }
+      
+      // Ensure every entry has an id
+      for (let entry of importedLedger) {
+        if (!entry.id) {
+          entry.id = await generateTransactionId(entry.date, entry.desc, entry.amount);
+        }
+      }
+      
+      ledger = importedLedger;
+      
+      // Save to localStorage
+      localStorage.setItem(currentLedgerKey, JSON.stringify(ledger));
+      if (!ledgers.includes(currentLedgerKey)) {
+        ledgers.push(currentLedgerKey);
+        localStorage.setItem("ledgers", JSON.stringify(ledgers));
+      }
+      
+      localStorage.setItem("currentLedgerKey", currentLedgerKey);
+      
+      // UI updates
+      document.getElementById("filename").value = fileName;
+      updateLedgerSelect();
+      renderTable();
+      renderCharts(ledger);
+      
+      alert(`Ledger ${currentLedgerKey}  imported successfully ✅`);
     } catch (err) {
       alert("Error importing file ❌");
       console.error(err);
