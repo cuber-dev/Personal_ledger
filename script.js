@@ -49,13 +49,17 @@ const accounts = [
   "Taxes",
   "Travel",
   "Utilities",
-  "Family",
   "Business Partners",
   "Refunds",
   "Repairs & Maintenance",
   "Fuel",
   "Telecom",
-  "Service Charges"
+  "Service Charges",
+  "Family Support",
+"Vehicle",
+"Cash Reimbursement",
+"Household",
+"Bank Charges"
 ].sort();
 function buildAccountSelector() {
   const accountSelector = document.getElementById("account");
