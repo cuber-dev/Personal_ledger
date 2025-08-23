@@ -94,7 +94,11 @@
 </div>
   <form id="entryForm">
     <label for="desc"><i class="fa-solid fa-pencil"></i> Add Transaction:</label>
-
+  <div class="account-container">
+    <select id="account" required>
+      <option value="Select Account">Select Account</option>
+    </select>
+  </div>
     <div class="inputs-container">
       
     <input type="date" id="date" required/>
@@ -154,7 +158,12 @@
       <option value="expense">Expense</option>
     </select>
   </div>
-  
+    <div class="filter-row">
+    <select id="filter-accounts" onchange="applyFilters()">
+      <option value="">All</option>
+    </select>
+  </div>
+
   <div class="filter-row">
     <input type="number" id="minAmount" placeholder="Min Amount" step="0.01" oninput="applyFilters()" />
     <input type="number" id="maxAmount" placeholder="Max Amount" step="0.01" oninput="applyFilters()" />

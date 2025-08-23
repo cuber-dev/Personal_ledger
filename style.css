@@ -177,6 +177,9 @@ form .inputs-container {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 15px;
 }
+form .account-container{
+ margin-bottom: 1rem;
+}
 
 form input,
 form select,

@@ -5,6 +5,90 @@ let currentLedgerKey = "";
 let isUsingFilter = false;
 let globalFilterData = [];
 
+const accounts = [
+  // Assets
+  "Bank",
+  "Cash",
+  "Accounts Receivable",
+  "Fixed Assets",
+  "Investments",
+  "Prepaid Expenses",
+  "Inventory",
+  "Savings",
+  
+  // Liabilities
+  "Accounts Payable",
+  "Credit Card",
+  "Loans",
+  "Taxes Payable",
+  
+  // Equity
+  "Capital",
+  "Owner’s Equity",
+  "Retained Earnings",
+  
+  // Income
+  "Bonus",
+  "Business Income",
+  "Commission",
+  "Interest Income",
+  "Other Income",
+  "Salary",
+  
+  // Expenses
+  "Bills",
+  "Education",
+  "Entertainment",
+  "Food",
+  "Healthcare",
+  "Insurance",
+  "Miscellaneous",
+  "Rent",
+  "Shopping",
+  "Subscriptions",
+  "Taxes",
+  "Travel",
+  "Utilities"
+].sort();
+function buildAccountSelector() {
+  const accountSelector = document.getElementById("account");
+  
+  accountSelector.innerHTML = `<option value="" disabled selected>Select Account</option>`;
+accounts.forEach(acc => {
+  const option = document.createElement("option");
+  option.value = acc;
+  option.textContent = acc;
+  accountSelector.appendChild(option);
+});
+}
+function buildFilterAccounts() {
+  const filterAccounts = document.getElementById("filter-accounts");
+  const currentValue = filterAccounts.value; // save what user selected before refresh
+  
+  filterAccounts.innerHTML = '';
+  filterAccounts.innerHTML = `<option value="">All Accounts</option>`;
+  
+  // ✅ Collect unique accounts from ledger
+  const uniqueAccounts = [...new Set(ledger.map(entry => entry.account))].sort();
+  
+  uniqueAccounts.forEach(acc => {
+    const option = document.createElement("option");
+    option.value = acc;
+    option.textContent = acc;
+    
+    // ✅ restore selection if it matches
+    if (currentValue === acc) {
+      option.selected = true;
+    }
+    
+    filterAccounts.appendChild(option);
+  });
+  
+  // ✅ also restore "All Accounts" if previously selected
+  if (currentValue === "") {
+    filterAccounts.querySelector('option[value=""]').selected = true;
+  }
+}
 async function generateTransactionId(date, desc, amount) {
   // Normalize values
   const normalizedDate = new Date(date).toISOString().split("T")[0]; // yyyy-mm-dd
@@ -61,7 +145,7 @@ function renderTable(data = ledger, showRecurringOnly = false) {
     row.innerHTML = `
       <td>${index + 1}</td>
       <td>${entry.date}</td>
-      <td>${currentLedgerKey}</td>
+      <td>${entry.account}</td>
       <td>${entry.desc} ${isRecurring ? '<span class="recurring-badge">🔁</span>' : ''}</td>
       <td>${entry.type}</td>
       <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
@@ -109,13 +193,13 @@ function getRecurringIndices(data) {
 document.getElementById("entryForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   saveLastState();
-  
+  const account = document.getElementById("account").value;
   const date = document.getElementById("date").value;
-  const desc = document.getElementById("desc").value;
+  const description = document.getElementById("desc").value.trim();
   const amount = parseFloat(document.getElementById("amount").value);
   const type = document.getElementById("type").value;
   
-  if (editingId !== null) {
+ /* if (editingId !== null) {
     // Update existing entry by ID
     const idx = ledger.findIndex(tx => tx.id === editingId);
     if (idx !== -1) {
@@ -128,7 +212,19 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
     const entry = { id, date, desc, amount, type };
     ledger.push(entry);
   }
-  
+  */
+
+if (editingId !== null) {
+  const idx = ledger.findIndex(tx => tx.id === editingId);
+  if (idx !== -1) {
+    ledger[idx] = { ...ledger[idx], date, account, description, amount, type };
+  }
+  editingId = null;
+} else {
+  const id = await generateTransactionId(date, description, amount);
+  const entry = { id, date, desc : description, account, amount, type };
+  ledger.push(entry);
+}
   e.target.reset();
   renderTable();
   saveToLocalStorage();
@@ -146,8 +242,9 @@ function editEntry(id) {
   // Fill form with entry values
   document.getElementById("date").value = entry.date;
   document.getElementById("desc").value = entry.desc;
+  document.getElementById("account").value = entry.account;
   document.getElementById("amount").value = entry.amount;
-  document.getElementById("type").value = entry.type;
+  document.getElementById("type").value = entry.type.toLowerCase();
   
   // Store ID instead of index
   editingId = id;
@@ -224,6 +321,7 @@ async function importJSON(event) {
         if (!entry.id) {
           entry.id = await generateTransactionId(entry.date, entry.desc, entry.amount);
         }
+        if (!entry.account) entry.account = "Miscellaneous"; // fallback
       }
       
       ledger = importedLedger;
@@ -367,38 +465,44 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function applyFilters() {
   isUsingFilter = true;
+
   const desc = document.getElementById('searchDesc').value.toLowerCase();
   const type = document.getElementById('filterType').value;
   const startDate = document.getElementById('startDate').value;
   const endDate = document.getElementById('endDate').value;
   const minAmount = parseFloat(document.getElementById('minAmount').value);
   const maxAmount = parseFloat(document.getElementById('maxAmount').value);
-  
-  const filtered = ledger.filter((entry, index) => {
+  const selectedAccount = document.getElementById('filter-accounts').value;
+
+  const filtered = ledger.filter(entry => {
     const matchesDesc = desc ? entry.desc.toLowerCase().includes(desc) : true;
     const matchesType = type ? entry.type === type : true;
     const matchesStart = startDate ? entry.date >= startDate : true;
     const matchesEnd = endDate ? entry.date <= endDate : true;
     const matchesMinAmount = !isNaN(minAmount) ? entry.amount >= minAmount : true;
     const matchesMaxAmount = !isNaN(maxAmount) ? entry.amount <= maxAmount : true;
-    
+    const matchesAccount = selectedAccount ? entry.account === selectedAccount : true;
+
     return (
       matchesDesc &&
       matchesType &&
       matchesStart &&
       matchesEnd &&
       matchesMinAmount &&
-      matchesMaxAmount
+      matchesMaxAmount &&
+      matchesAccount
     );
   });
+
   globalFilterData = filtered;
   renderTable(filtered);
   renderCharts(filtered);
   renderReports(filtered);
-renderAdvancedReports(filtered);
-renderUpcomingExpectations(filtered);
-updateSpecialInsights(filtered);
+  renderAdvancedReports(filtered);
+  renderUpcomingExpectations(filtered);
+  updateSpecialInsights(filtered);
 }
+
 function clearFilters() {
   isUsingFilter = false;
   document.getElementById('searchDesc').value = '';
@@ -407,6 +511,8 @@ function clearFilters() {
   document.getElementById('endDate').value = '';
   document.getElementById('minAmount').value = '';
   document.getElementById('maxAmount').value = '';
+  document.getElementById('filter-accounts').value = '';
+
   renderTable();
   refreshReports() ;
 }
@@ -601,6 +707,7 @@ async function createNewLedger() {
   
   const newLedger = [{
     id : await generateTransactionId(getCurrentDate(),"Opening Balance",0),
+    account : 'Capital',
     date: getCurrentDate(),
     desc: "Opening Balance",
     type: "Income",
@@ -639,6 +746,8 @@ document.getElementById("ledgerSelect").addEventListener("change", function(e) {
 
 // ▶️ Init on load
 window.onload = async function() {
+  buildAccountSelector();
+  
   let savedLedgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
 
   // Remove duplicates
@@ -652,6 +761,7 @@ window.onload = async function() {
     const defaultLedger = [{
       id : await generateTransactionId(getCurrentDate(),"Opening Balance",0),
       date: getCurrentDate(),
+      account : 'Capital',
       desc: "Opening Balance",
       type: "Income",
       amount: 0
@@ -673,6 +783,7 @@ window.onload = async function() {
   updateLedgerSelect();
   renderTable();
   renderCharts(ledger);
+  buildFilterAccounts()
 };
 // 🧠 Bind + New Ledger button
 document.getElementById("newLedgerBtn").addEventListener("click", createNewLedger);
@@ -1001,6 +1112,7 @@ renderReports();
 renderAdvancedReports();
 renderUpcomingExpectations();
   updateSpecialInsights();
+  buildFilterAccounts();
 }
 
 window.addEventListener("beforeunload", function() {
