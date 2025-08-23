@@ -217,27 +217,33 @@ function sortTableColumn(colKey) {
   }
   
   // perform sorting
-  sortedLedger.sort((a, b) => {
-    let valA = a[colKey];
-    let valB = b[colKey];
-    
-    // handle numbers
-    if (!isNaN(valA) && !isNaN(valB)) {
-      valA = parseFloat(valA);
-      valB = parseFloat(valB);
-    }
-    
-    // handle date
-    if (colKey === "date") {
-      valA = new Date(valA);
-      valB = new Date(valB);
-    }
-    
-    if (valA < valB) return sortState.dir === "asc" ? -1 : 1;
-    if (valA > valB) return sortState.dir === "asc" ? 1 : -1;
-    return 0;
-  });
+  // perform sorting
+sortedLedger.sort((a, b) => {
+  let valA = a[colKey];
+  let valB = b[colKey];
   
+  // Amount and Closing Balance should always be numeric
+  if (colKey === "amount" || colKey === "closingBalance") {
+    valA = parseFloat(String(valA).replace(/[+,]/g, ""));
+    valB = parseFloat(String(valB).replace(/[+,]/g, ""));
+  }
+  
+  // Date
+  else if (colKey === "date") {
+    valA = new Date(valA);
+    valB = new Date(valB);
+  }
+  
+  // Default: compare as string (case-insensitive)
+  else {
+    valA = String(valA).toLowerCase();
+    valB = String(valB).toLowerCase();
+  }
+  
+  if (valA < valB) return sortState.dir === "asc" ? -1 : 1;
+  if (valA > valB) return sortState.dir === "asc" ? 1 : -1;
+  return 0;
+});
   // update indicators
   document.querySelectorAll(".sort-indicator").forEach(el => {
     el.textContent = "⇅";
