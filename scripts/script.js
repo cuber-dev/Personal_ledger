@@ -243,6 +243,7 @@ if (editingId !== null) {
 });
 
 function editEntry(id) {
+  scrollToTop();
   // Find entry in ledger by ID
   const entry = ledger.find(tx => tx.id === id);
   if (!entry) {

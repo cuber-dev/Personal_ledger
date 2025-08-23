@@ -247,7 +247,7 @@ const themeBtn = document.getElementById("themeBtn");
 const themeOptions = document.getElementById("themeOptions");
 
 const themeSelect = document.getElementById("themeSelect");
-
+/*
 function applyTheme(themeName) {
   const theme = themes[themeName];
   if (!theme) return;
@@ -260,7 +260,38 @@ function applyTheme(themeName) {
   // Save current theme
   localStorage.setItem("selectedTheme", themeName);
 }
+*/
 
+function applyTheme(themeName) {
+  const theme = themes[themeName];
+  if (!theme) return;
+  
+  // Apply CSS variables to root element
+  Object.keys(theme).forEach(key => {
+    document.documentElement.style.setProperty(key, theme[key]);
+  });
+  
+  // ✅ Update browser theme-color (for mobile browsers, PWA, etc.)
+  let themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (!themeMeta) {
+    themeMeta = document.createElement("meta");
+    themeMeta.setAttribute("name", "theme-color");
+    document.head.appendChild(themeMeta);
+  }
+  themeMeta.setAttribute("content", theme["--primary-color"] || "#ffffff");
+  
+  // ✅ (Optional) Update description/keywords dynamically
+  const descMeta = document.querySelector('meta[name="description"]');
+  if (descMeta) {
+    descMeta.setAttribute("content", `App in ${themeName} theme with ${theme["--primary-color"]}`);
+  }
+  
+  // ✅ (Optional) Update page title
+  document.title = `Ledger App - ${themeName.charAt(0).toUpperCase() + themeName.slice(1)} Theme`;
+  
+  // Save current theme
+  localStorage.setItem("selectedTheme", themeName);
+}
 // Load saved theme on page load
 window.addEventListener("DOMContentLoaded", () => {
   const savedTheme = localStorage.getItem("selectedTheme") || "light";
