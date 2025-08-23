@@ -350,7 +350,7 @@ function exportJSON() {
   anchor.click();
   URL.revokeObjectURL(url);
 }
-
+// imports
 async function importJSON(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -421,6 +421,210 @@ async function importJSON(event) {
   };
   reader.readAsText(file);
 }
+// ===== TXT Import =====
+async function importTXT(file) {
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      const lines = e.target.result.split("\n").filter(l => l.trim() !== "");
+      let importedLedger = [];
+
+      for (let line of lines) {
+        const [date, account, desc, type, amount] = line.split(",");
+        importedLedger.push({
+          id: await generateTransactionId(date, desc, parseFloat(amount)),
+          date: date.trim(),
+          account: account?.trim() || "Miscellaneous",
+          desc: desc?.trim() || "",
+          type: type?.trim().toLowerCase(),
+          amount: parseFloat(amount) || 0
+        });
+      }
+
+      finalizeImport(file, importedLedger);
+    } catch (err) {
+      alert("Error importing TXT ❌");
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ===== CSV Import =====
+async function importCSV(file) {
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      const rows = e.target.result.split("\n").map(r => r.split(","));
+      const headers = rows.shift().map(h => h.trim().toLowerCase());
+      let importedLedger = [];
+
+      for (let row of rows) {
+        if (row.length < 4) continue;
+        const entry = {};
+        headers.forEach((h, i) => {
+          entry[h] = row[i]?.trim();
+        });
+
+        importedLedger.push({
+          id: await generateTransactionId(entry.date, entry.description, parseFloat(entry.amount)),
+          date: entry.date,
+          account: entry.account || "Miscellaneous",
+          desc: entry.description || "",
+          type: entry.type?.toLowerCase(),
+          amount: parseFloat(entry.amount) || 0
+        });
+      }
+
+      finalizeImport(file, importedLedger);
+    } catch (err) {
+      alert("Error importing CSV ❌");
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ===== XLS / XLSX Import =====
+async function importXLSX(file) {
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+      let importedLedger = [];
+      for (let row of rows) {
+        importedLedger.push({
+          id: await generateTransactionId(row.Date, row.Description, parseFloat(row.Amount)),
+          date: row.Date,
+          account: row.Account || "Miscellaneous",
+          desc: row.Description || "",
+          type: row.Type?.toLowerCase(),
+          amount: parseFloat(row.Amount) || 0
+        });
+      }
+
+      finalizeImport(file, importedLedger);
+    } catch (err) {
+      alert("Error importing Excel ❌");
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ===== PDF Import ===== (simple text extraction, not structured)
+async function importPDF(file) {
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      const pdfData = new Uint8Array(e.target.result);
+      const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+
+      let textContent = "";
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        textContent += content.items.map(i => i.str).join(" ") + "\n";
+      }
+
+      // Very basic assumption: CSV-like format inside PDF text
+      const lines = textContent.split("\n").filter(l => l.includes(","));
+      let importedLedger = [];
+
+      for (let line of lines) {
+        const [date, account, desc, type, amount] = line.split(",");
+        importedLedger.push({
+          id: await generateTransactionId(date, desc, parseFloat(amount)),
+          date: date?.trim(),
+          account: account?.trim() || "Miscellaneous",
+          desc: desc?.trim() || "",
+          type: type?.trim().toLowerCase(),
+          amount: parseFloat(amount) || 0
+        });
+      }
+
+      finalizeImport(file, importedLedger);
+    } catch (err) {
+      alert("Error importing PDF ❌");
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ===== Common Finalize Import =====
+async function finalizeImport(file, importedLedger) {
+  try {
+    const baseName = file.name.replace(/\.[^/.]+$/, ""); // remove extension
+    let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+    ledgers = [...new Set(ledgers)];
+
+    if (ledgers.includes(baseName)) {
+      let newName = prompt(`A ledger named "${baseName}" already exists. Enter a different name:`);
+      if (!newName || ledgers.includes(newName)) {
+        alert("Import cancelled or name already exists.");
+        return;
+      }
+      currentLedgerKey = newName;
+      fileName = newName;
+    } else {
+      currentLedgerKey = baseName;
+      fileName = baseName;
+    }
+
+    // Ensure IDs
+    for (let entry of importedLedger) {
+      if (!entry.id) {
+        entry.id = await generateTransactionId(entry.date, entry.desc, entry.amount);
+      }
+      if (!entry.account) entry.account = "Miscellaneous";
+    }
+
+    ledger = importedLedger;
+    localStorage.setItem(currentLedgerKey, JSON.stringify(ledger));
+
+    if (!ledgers.includes(currentLedgerKey)) {
+      ledgers.push(currentLedgerKey);
+      localStorage.setItem("ledgers", JSON.stringify(ledgers));
+    }
+
+    localStorage.setItem("currentLedgerKey", currentLedgerKey);
+
+    document.getElementById("filename").value = fileName;
+    updateLedgerSelect();
+    renderTable();
+    renderCharts(ledger);
+
+    alert(`Ledger ${currentLedgerKey} imported successfully ✅`);
+  } catch (err) {
+    alert("Error finalizing import ❌");
+    console.error(err);
+  }
+}
+
+// ===== Master Import Handler =====
+function handleImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  // other import formats pending
+  const ext = file.name.split(".").pop().toLowerCase();
+  switch (ext) {
+    case "json": return importJSON(event);
+   /* case "txt": return importTXT(file);
+    case "csv": return importCSV(file);
+    case "xls":
+    case "xlsx": return importXLSX(file);
+    case "pdf": return importPDF(file);
+   */
+   default:
+      alert("Unsupported file format ❌");
+  }
+}
+
+// exports 
 function exportToExcel() {
   const table = document.querySelector('table');
   const wb = XLSX.utils.book_new();
@@ -1088,69 +1292,7 @@ function renderReports(data = ledger) {
     <p class="line"><strong>Lowest:</strong> Income ₹${reports.lowestIncome}, Expense ₹${reports.lowestExpense}</p>
   `;
 }
-/*
-function generateAdvancedReports(data) {
-  // Separate income & expense transactions
-  const incomes = data.filter(txn => txn.type === "income");
-  const expenses = data.filter(txn => txn.type === "expense");
-  
-  // Top 5 incomes & expenses
-  const topIncomes = [...incomes].sort((a, b) => b.amount - a.amount).slice(0, 5);
-  const topExpenses = [...expenses].sort((a, b) => b.amount - a.amount).slice(0, 5);
-  
-  // Frequent transactions (by description only)
-  const descCount = {};
-  data.forEach(txn => {
-    let desc = txn.desc?.trim() || "No Description";
-    descCount[desc] = (descCount[desc] || 0) + 1;
-  });
-  const frequentTransactions = Object.entries(descCount)
-    .filter(([desc, count]) => count > 1)
-    .sort((a, b) => b[1] - a[1]);
-  
-  // Recurring transactions (same desc + amount + type)
-  const recurringMap = {};
-  data.forEach(txn => {
-    let desc = txn.desc?.trim() || "No Description";
-    const key = JSON.stringify({ desc, amount: txn.amount, type: txn.type });
-    recurringMap[key] = (recurringMap[key] || 0) + 1;
-  });
-  
-  const recurringTransactions = Object.entries(recurringMap)
-    .filter(([key, count]) => count > 1)
-    .map(([key, count]) => {
-      const parsed = JSON.parse(key);
-      return { desc: parsed.desc, amount: parsed.amount, type: parsed.type, count };
-    });
-  
-  return { topIncomes, topExpenses, frequentTransactions, recurringTransactions };
-}
 
-function renderAdvancedReports(data = ledger) {
-  const { topIncomes, topExpenses, frequentTransactions, recurringTransactions } = generateAdvancedReports(data);
-  
-  // Top incomes
-  document.getElementById("topIncomesList").innerHTML = topIncomes.length ?  topIncomes
-    .map(txn => `<li>${txn.desc} – ₹${txn.amount}</li>`)
-    .join("") : "<li>No transactions found</li>";
-  
-  // Top expenses
-  document.getElementById("topExpensesList").innerHTML =
-  topExpenses.length ? 
-    topExpenses.map(txn => `<li>${txn.desc} – ₹${txn.amount}</li>`).join("") 
-    : "<li>No transactions found</li>"; ;
-  
-  // Frequent
-  document.getElementById("frequentList").innerHTML = frequentTransactions.length ? frequentTransactions
-    .map(([desc, count]) => `<li>${desc} – ${count} times</li>`)
-    .join("") : "<li>No transactions found</li>";
-  
-  // Recurring
-  document.getElementById("recurringList").innerHTML = recurringTransactions.length ? recurringTransactions
-    .map(txn => `<li>${txn.desc} – ₹${txn.amount} (${txn.count} times)</li>`)
-    .join("") :"<li>No transactions found</li>";
-}
-*/
 function generateAdvancedReports(data = ledger) {
   // Separate income & expense transactions
   const incomes = data.filter(txn => txn.type === "income");
