@@ -26,14 +26,6 @@ async function generateTransactionId(date, desc, amount) {
   // Return shorter, prefixed ID
   return "tx_" + hashHex.substring(0, 12);
 }
-(async () => {
-  console.log(await generateTransactionId("2025-08-22", "Groceries", 250));
-  // → tx_a13f9b4d8c72
-  
-  console.log(await generateTransactionId("2025-08-22", "Groceries", 250));
-  // → tx_91bf21d77f1e  (always unique, even with same data)
-})();
-
 
 function renderTable(data = ledger, showRecurringOnly = false) {
   const table = document.getElementById("tableBody");
@@ -113,27 +105,7 @@ function getRecurringIndices(data) {
   
   return recurring;
 }
-/*
-document.getElementById("entryForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  saveLastState();
-  const date = document.getElementById("date").value;
-  const desc = document.getElementById("desc").value;
-  const amount = parseFloat(document.getElementById("amount").value);
-  const type = document.getElementById("type").value;
-  const entry = { date, desc, amount, type };
 
-  if (editingIndex !== null) {
-    ledger[editingIndex] = entry;
-    editingIndex = null;
-  } else {
-    ledger.push(entry);
-  }
-
-  e.target.reset();
-  renderTable();
-});
-*/
 document.getElementById("entryForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   saveLastState();
@@ -162,20 +134,7 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
   saveToLocalStorage();
   renderCharts(ledger);
 });
-/*
-function editEntry(index) {
-  const entry = isUsingFilter ? globalFilterData[index] : ledger[index];
-  document.getElementById("date").value = entry.date;
-  document.getElementById("desc").value = entry.desc;
-  document.getElementById("amount").value = entry.amount;
-  document.getElementById("type").value = entry.type;
-  editingIndex = index;
-  saveToLocalStorage();
-  saveLastState();
-  renderCharts(ledger);
 
-}
-*/
 function editEntry(id) {
   // Find entry in ledger by ID
   const entry = ledger.find(tx => tx.id === id);
@@ -198,22 +157,8 @@ function editEntry(id) {
   saveLastState();
   renderCharts(ledger);
 }
-/*
-function deleteEntry(index) {
-  if (confirm("Delete this entry?")) {
-    saveLastState();
-    ledger.splice(index, 1);
-    renderTable();
-  }
-  saveToLocalStorage();
-  renderCharts(ledger);
-}
-*/
+
 function deleteEntry(id,desc) {
-  if(desc === "Opening Balance"){
-    alert("Cannot delete Opening balance entry!");
-    return;
-  }
   if (confirm(`Delete ${desc} entry?`)) {
     saveLastState();
     const idx = ledger.findIndex(tx => tx.id === id);
@@ -236,98 +181,7 @@ function exportJSON() {
   anchor.click();
   URL.revokeObjectURL(url);
 }
-/*
-function importJSON(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const importedData = JSON.parse(e.target.result);
-      const baseName = file.name.replace(/\.json$/, '');
-      let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
-      ledgers = [...new Set(ledgers)];
-      
-      if (ledgers.includes(baseName)) {
-        let newName = prompt(`A ledger named "${baseName}" already exists. Enter a different name:`);
-        if (!newName || ledgers.includes(newName)) {
-          alert("Import cancelled or name already exists.");
-          return;
-        }
-        currentLedgerKey = newName;
-        fileName = newName;
-      } else {
-        currentLedgerKey = baseName;
-        fileName = baseName;
-      }
-      
-      localStorage.setItem(currentLedgerKey, JSON.stringify(importedData));
-      if (!ledgers.includes(currentLedgerKey)) {
-        ledgers.push(currentLedgerKey);
-        localStorage.setItem("ledgers", JSON.stringify(ledgers));
-      }
-      
-      localStorage.setItem("currentLedgerKey", currentLedgerKey);
-      ledger = importedData;
-      document.getElementById("filename").value = fileName;
-      
-      updateLedgerSelect();
-      renderTable();
-      renderCharts(ledger);
-      
-    } catch (err) {
-      alert("Invalid JSON file.");
-      console.error(err);
-    }
-  };
-  
-  reader.readAsText(file);
-}
-*/
-/*
-async function importJSON(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  const reader = new FileReader();
-  reader.onload = async function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      
-      if (Array.isArray(data)) {
-        // If the file is a plain array of entries
-        for (let entry of data) {
-          if (!entry.id) {
-            entry.id = await generateTransactionId(entry.date, entry.desc, entry.amount);
-          }
-        }
-        ledger = data;
-      } else if (data.ledger) {
-        // If JSON has { ledger: [...] }
-        for (let entry of data.ledger) {
-          if (!entry.id) {
-            entry.id = await generateTransactionId(entry.date, entry.desc, entry.amount);
-          }
-        }
-        ledger = data.ledger;
-      } else {
-        alert("Invalid JSON format!");
-        return;
-      }
-      
-      renderTable();
-      saveToLocalStorage();
-      renderCharts(ledger);
-      alert("Ledger imported successfully ✅");
-    } catch (err) {
-      alert("Error importing file ❌");
-      console.error(err);
-    }
-  };
-  reader.readAsText(file);
-}
-*/
+
 async function importJSON(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -730,7 +584,7 @@ function updateLedgerSelect() {
   document.getElementById("filename").value = currentLedgerKey;
 }
 
-function createNewLedger() {
+async function createNewLedger() {
   const ledgerName = prompt("Enter new ledger name:");
   if (!ledgerName) {
     alert("Please enter a valid ledger name.");
@@ -746,6 +600,7 @@ function createNewLedger() {
   }
   
   const newLedger = [{
+    id : await generateTransactionId(getCurrentDate(),"Opening Balance",0),
     date: getCurrentDate(),
     desc: "Opening Balance",
     type: "Income",
@@ -783,7 +638,7 @@ document.getElementById("ledgerSelect").addEventListener("change", function(e) {
 });
 
 // ▶️ Init on load
-window.onload = function() {
+window.onload = async function() {
   let savedLedgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
 
   // Remove duplicates
@@ -795,6 +650,7 @@ window.onload = function() {
   // If no ledgers, create only one "Untitled"
   if (savedLedgers.length === 0) {
     const defaultLedger = [{
+      id : await generateTransactionId(getCurrentDate(),"Opening Balance",0),
       date: getCurrentDate(),
       desc: "Opening Balance",
       type: "Income",
