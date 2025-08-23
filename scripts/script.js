@@ -4,6 +4,8 @@ let fileName = "Untitled";
 let currentLedgerKey = "";
 let isUsingFilter = false;
 let globalFilterData = [];
+let sortState = { col: null, dir: "asc" };
+let sortedLedger = [];
 
 const accounts = [
   // Assets
@@ -201,6 +203,58 @@ function getRecurringIndices(data) {
   return recurring;
 }
 
+// Sort function triggered from indicators
+function sortTableColumn(colKey) {
+  // base data should always come from your current ledger/filters
+  sortedLedger = [...ledger]; // or [...filteredLedger] if you use filtering
+  
+  // toggle direction if same column clicked
+  if (sortState.col === colKey) {
+    sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
+  } else {
+    sortState.col = colKey;
+    sortState.dir = "asc";
+  }
+  
+  // perform sorting
+  sortedLedger.sort((a, b) => {
+    let valA = a[colKey];
+    let valB = b[colKey];
+    
+    // handle numbers
+    if (!isNaN(valA) && !isNaN(valB)) {
+      valA = parseFloat(valA);
+      valB = parseFloat(valB);
+    }
+    
+    // handle date
+    if (colKey === "date") {
+      valA = new Date(valA);
+      valB = new Date(valB);
+    }
+    
+    if (valA < valB) return sortState.dir === "asc" ? -1 : 1;
+    if (valA > valB) return sortState.dir === "asc" ? 1 : -1;
+    return 0;
+  });
+  
+  // update indicators
+  document.querySelectorAll(".sort-indicator").forEach(el => {
+    el.textContent = "⇅";
+  });
+  const activeIndicator = document.querySelector(`.sort-indicator[data-col="${colKey}"]`);
+  if (activeIndicator) {
+    activeIndicator.textContent = sortState.dir === "asc" ? "▲" : "▼";
+  }
+  
+  // render using your existing renderTable
+  renderTable(sortedLedger);
+}
+document.querySelectorAll(".sort-indicator").forEach(indicator => {
+  indicator.addEventListener("click", () => {
+    sortTableColumn(indicator.dataset.col);
+  });
+});
 document.getElementById("entryForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   saveLastState();
