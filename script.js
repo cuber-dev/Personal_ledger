@@ -228,7 +228,7 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
 if (editingId !== null) {
   const idx = ledger.findIndex(tx => tx.id === editingId);
   if (idx !== -1) {
-    ledger[idx] = { ...ledger[idx], date, account, description, amount, type };
+    ledger[idx] = { ...ledger[idx], date, account, desc : description, amount, type };
   }
   editingId = null;
 } else {
