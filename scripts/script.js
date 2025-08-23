@@ -339,6 +339,7 @@ function editEntry(id) {
   saveToLocalStorage();
   saveLastState();
   renderCharts(ledger);
+  clearFilters();
 }
 
 function deleteEntry(id,desc) {
@@ -353,6 +354,7 @@ function deleteEntry(id,desc) {
     renderTable();
     saveToLocalStorage();
     renderCharts(ledger);
+    clearFilters();
   }
 }
 function exportJSON() {
@@ -820,7 +822,6 @@ async function exportToPDF() {
   doc.save(`${ledgerName}.pdf`);
 }
 function exportToPNG() {
-  // Tab to edit
   const table = document.querySelector('table');
 if (!table) {
   alert("No table found to export!");
