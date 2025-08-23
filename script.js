@@ -48,7 +48,14 @@ const accounts = [
   "Subscriptions",
   "Taxes",
   "Travel",
-  "Utilities"
+  "Utilities",
+  "Family",
+  "Business Partners",
+  "Refunds",
+  "Repairs & Maintenance",
+  "Fuel",
+  "Telecom",
+  "Service Charges"
 ].sort();
 function buildAccountSelector() {
   const accountSelector = document.getElementById("account");
