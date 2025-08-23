@@ -1,14 +1,169 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reports</title>
+  <link rel="stylesheet" href="../styles/style.css" />
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
-  
-</body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <h1 class="nav-brand">Vault Ledger</h1>
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../Routes/author.html">Author</a></li>
+      <li><a href="../Routes/docs.html">Docs</a></li>
+      <li><a href="../Routes/reports.html" class="active">Reports</a></li>
+    </ul>
+  </nav>
 
+  <!-- Theme Selector -->
+  <div class="theme-selector">
+    <label for="themeSelect">🎨 Theme:</label>
+    <select id="themeSelect">
+      <option value="light">🌞 Light</option>
+      <option value="dark">🌙 Dark</option>
+      <option value="blue">🔵 Blue</option>
+      <option value="green">🟢 Green</option>
+      <option value="sunset">🌅 Sunset</option>
+      <option value="neon">💡 Neon</option>
+      <option value="pastel">🎨 Pastel</option>
+      <option value="coffee">☕ Coffee</option>
+      <option value="solarized">🌐 Solarized</option>
+      <option value="purple">💜 Purple</option>
+      <option value="mono">⚪ Mono</option>
+      <option value="gradient">🌈 Gradient</option>
+      <option value="rose">🌹 Rose</option>
+      <option value="aqua">💧 Aqua</option>
+      <option value="forest">🌲 Forest</option>
+      <option value="gold">🥇 Gold</option>
+      <option value="silver">🥈 Silver</option>
+      <option value="crimson">❤️ Crimson</option>
+      <option value="indigo">🔮 Indigo</option>
+      <option value="cyberpunk">⚡ Cyberpunk</option>
+    </select>
+  </div>
+
+  <div class="container">
+    <h1><i class="fa-solid fa-clipboard-list"></i> Reports</h1>
+    <p>This page shows the detailed reports of a selected ledger</p>
+
+    <!-- Ledger Selector -->
+    <section class="report-section">
+      <h2><i class="fa-solid fa-book"></i> Select Ledger</h2>
+      <select id="ledgerSelect">
+        <option value="">Untitled</option>
+      </select>
+    </section>
+
+    <!-- Filter Section -->
+    <div id="filterSection" class="filter-section">
+      <h2><i class="fa-solid fa-filter"></i> Filters</h2>
+      <div class="filter-row">
+        <input type="text" id="searchDesc" placeholder="Search Description" oninput="applyFilters()" />
+      </div>
+      <div class="filter-row">
+        <select id="filterType" onchange="applyFilters()">
+          <option value="">All Types</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <select id="filter-accounts" onchange="applyFilters()">
+          <option value="">All Accounts</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <input type="number" id="minAmount" placeholder="Min Amount" step="0.01" oninput="applyFilters()" />
+        <input type="number" id="maxAmount" placeholder="Max Amount" step="0.01" oninput="applyFilters()" />
+      </div>
+      <div class="filter-row date-labels">
+        <label for="startDate">From</label>
+        <label for="endDate">To</label>
+      </div>
+      <div class="filter-row">
+        <input type="date" id="startDate" onchange="applyFilters()" />
+        <input type="date" id="endDate" onchange="applyFilters()" />
+      </div>
+      <div class="filter-row">
+        <button onclick="clearFilters()"><i class="fa-solid fa-circle-xmark"></i> Clear Filters</button>
+      </div>
+    </div>
+
+    <!-- Basic Reports -->
+    <section id="reportsSection" class="card">
+      <h2><i class="fa-solid fa-file-lines"></i> Basic Reports</h2>
+      <div id="reportsOutput"></div>
+    </section>
+
+    <!-- Advanced Reports -->
+    <section id="advancedReports" class="card">
+      <h2><i class="fa-solid fa-chart-simple"></i> Advanced Reports</h2>
+      <div class="report-section" id="topIncomesSection">
+        <h3>Top 5 Incomes</h3>
+        <ul id="topIncomesList"></ul>
+      </div>
+      <div class="report-section" id="topExpensesSection">
+        <h3>Top 5 Expenses</h3>
+        <ul id="topExpensesList"></ul>
+      </div>
+      <div class="report-section" id="frequentSection">
+        <h3>Frequent Transactions</h3>
+        <ul id="frequentList"></ul>
+      </div>
+      <div class="report-section" id="recurringSection">
+        <h3>Recurring Transactions</h3>
+        <ul id="recurringList"></ul>
+      </div>
+    </section>
+
+    <!-- Upcoming Expected -->
+    <section class="card">
+      <h2><i class="fa-solid fa-clock"></i> Upcoming Expected Transactions</h2>
+      <div class="report-section" id="upcomingSection">
+        <ul id="upcomingList"></ul>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <h2 style="text-align: center;"><i class="fa-solid fa-chart-pie"></i> Visual Insights</h2>
+    <div id="chartContainer" class="chart-container">
+      <div class="chart-card">
+        <canvas id="pieChart"></canvas>
+        <button onclick="downloadChart('pieChart')" class="export-btn">Download Pie Chart</button>
+      </div>
+      <div class="chart-card">
+        <canvas id="barChart"></canvas>
+        <button onclick="downloadChart('barChart')" class="export-btn">Download Bar Chart</button>
+      </div>
+      <div class="chart-card">
+        <canvas id="lineChart"></canvas>
+        <button onclick="downloadChart('lineChart')" class="export-btn">Download Line Chart</button>
+      </div>
+    </div>
+
+    <!-- Special Insights -->
+    <div class="special-insights card">
+      <h2><i class="fa-solid fa-lightbulb"></i> Special Insights</h2>
+      <p id="highestIncome">Highest Income: -</p>
+      <p id="highestExpense">Highest Expense: -</p>
+      <p id="zeroDays">Zero Spent Days: -</p>
+      <p id="incomeRatio">Income Ratio: -</p>
+    </div>
+
+    <footer>
+      <hr />
+      <p>Made by Nandhu | Fully offline & secure | Data stored via JSON</p>
+    </footer>
+  </div>
+
+  <script src="../scripts/utilitys.js"></script>
+  <script src="../scripts/reports.js"></script>
+</body>
 </html>

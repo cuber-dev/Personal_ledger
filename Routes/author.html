@@ -1,14 +1,62 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Author</title>
+  <link rel="stylesheet" href="../styles/style.css" />
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
-
 <body>
-  
-</body>
+  <nav class="navbar">
+  <h1 class="nav-brand">Vault Ledger</h1>
+  <button class="hamburger" id="hamburger">&#9776;</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../Routes/author.html">Author</a></li>
+    <li><a href="../Routes/docs.html">Docs</a></li>
+  <!--   <li><a href="../Routes/reports.html">Reports</a></li> -->
+  </ul>
+</nav>
+<div class="theme-selector">
+  <label for="themeSelect">🎨 Theme:</label>
+  <select id="themeSelect">
+    <option value="light">🌞 Light</option>
+    <option value="dark">🌙 Dark</option>
+    <option value="blue">🔵 Blue</option>
+    <option value="green">🟢 Green</option>
+    <option value="sunset">🌅 Sunset</option>
+    <option value="neon">💡 Neon</option>
+    <option value="pastel">🎨 Pastel</option>
+    <option value="coffee">☕ Coffee</option>
+    <option value="solarized">🌐 Solarized</option>
+    <option value="purple">💜 Purple</option>
+    <option value="mono">⚪ Mono</option>
+    <option value="gradient">🌈 Gradient</option>
+    <option value="rose">🌹 Rose</option>
+    <option value="aqua">💧 Aqua</option>
+    <option value="forest">🌲 Forest</option>
+    <option value="gold">🥇 Gold</option>
+    <option value="silver">🥈 Silver</option>
+    <option value="crimson">❤️ Crimson</option>
+    <option value="indigo">🔮 Indigo</option>
+    <option value="cyberpunk">⚡ Cyberpunk</option>
+  </select>
+</div>
+  <div class="container">
+    <h1><i class="fa-solid fa-lists"></i> Author</h1>
 
+    <p>This page explains about the Author</p>
+
+
+
+    <footer>
+      <hr />
+      <p>Made by Nandhu | Fully offline & secure | Data stored via JSON</p>
+    </footer>
+  </div>
+
+  <script src="../scripts/utilitys.js"></script>
+</body>
 </html>

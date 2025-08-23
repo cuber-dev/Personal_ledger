@@ -46,7 +46,17 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1>Vault Ledger</h1>
+  <!-- Add inside body (preferably at top) -->
+<nav class="navbar">
+    <h1 class="nav-brand">Vault Ledger</h1>
+  <button class="hamburger" id="hamburger">&#9776;</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="Routes/author.html">Author</a></li>
+    <li><a href="Routes/docs.html">Docs</a></li>
+<!--     <li><a href="Routes/reports.html">Reports</a></li> -->
+  </ul>
+</nav>
 <div class="theme-selector">
   <label for="themeSelect">🎨 Theme:</label>
   <select id="themeSelect">
@@ -92,7 +102,7 @@
   <button id="deleteLedgerBtn" class="primary-button delete-btn">Delete Current Ledger</button>
 
 </div>
-  <form id="entryForm">
+<form id="entryForm">
     <label for="desc"><i class="fa-solid fa-pencil"></i> Add Transaction:</label>
   <div class="account-container">
     <select id="account" required>
@@ -217,8 +227,8 @@
  </div>
 
 <!-- Smart Plan Section -->
-<div id="planSection" class="plan-section card">
-  <!-- Smart plan will be shown here when balance < 800 -->
+<div id="planSection" class="plan-section card">Smart plan will be shown here when balance < 800
+  
 </div>
  <section id="reportsSection" class="card">
   <h2><i class="fa-solid fa-basic"></i> Basic Reports</h2>
@@ -273,7 +283,7 @@
   </div>
   
 </div>
-<!-- Special Insights -->
+Special Insights
 <div class="special-insights card">
   <h2><i class="fa-solid fa-chart-column"></i> Special Insights</h2>
   <p id="highestIncome" class="line">Highest Income: -</p>

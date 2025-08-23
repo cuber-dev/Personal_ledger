@@ -272,3 +272,23 @@ window.addEventListener("DOMContentLoaded", () => {
 themeSelect.addEventListener("change", (e) => {
   applyTheme(e.target.value);
 });
+
+
+  const hamburger = document.getElementById("hamburger");
+  const navLinks = document.getElementById("navLinks");
+
+  // Toggle menu
+  hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+  });
+
+  // Highlight active link based on current page
+  const currentPath = window.location.pathname.split("/").pop(); 
+  const links = navLinks.querySelectorAll("a");
+
+  links.forEach(link => {
+    const linkPath = link.getAttribute("href").split("/").pop();
+    if (linkPath === currentPath || (currentPath === "" && linkPath === "index.html")) {
+      link.classList.add("active");
+    }
+  });
