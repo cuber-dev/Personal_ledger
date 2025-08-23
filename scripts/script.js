@@ -1214,7 +1214,7 @@ function showLowBalancePlan(balance) {
     alertDiv.innerHTML = `
       <h2><i class="fa-solid fa-warning"></i> Low Balance Alert</h2>
       <p>Your balance is below ₹${lowAmount}.</p>
-      <p>Suggested expense plan (equal split):</p>
+      <p>Suggested expense plan for this Month (equal split):</p>
       <ul>
         <li>Total Remaining Days: ${remainingDays}</li>
         <li>Daily Allowance: ~₹${perDay} per day</li>

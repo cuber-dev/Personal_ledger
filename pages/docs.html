@@ -4,13 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ledger App - Documentation</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="../styles/style.css" />
   <!-- Font Awesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-  <button id="themeToggle" class="export-btn"><i class="fa-solid fa-moon"></i> Toggle Dark Mode</button>
-
+<div class="theme-selector">
+  <label for="themeSelect">🎨 Theme:</label>
+  <select id="themeSelect">
+    <option value="light">🌞 Light</option>
+    <option value="dark">🌙 Dark</option>
+    <option value="blue">🔵 Blue</option>
+    <option value="green">🟢 Green</option>
+    <option value="sunset">🌅 Sunset</option>
+    <option value="neon">💡 Neon</option>
+    <option value="pastel">🎨 Pastel</option>
+    <option value="coffee">☕ Coffee</option>
+    <option value="solarized">🌐 Solarized</option>
+    <option value="purple">💜 Purple</option>
+    <option value="mono">⚪ Mono</option>
+    <option value="gradient">🌈 Gradient</option>
+    <option value="rose">🌹 Rose</option>
+    <option value="aqua">💧 Aqua</option>
+    <option value="forest">🌲 Forest</option>
+    <option value="gold">🥇 Gold</option>
+    <option value="silver">🥈 Silver</option>
+    <option value="crimson">❤️ Crimson</option>
+    <option value="indigo">🔮 Indigo</option>
+    <option value="cyberpunk">⚡ Cyberpunk</option>
+  </select>
+</div>
   <div class="container">
     <h1><i class="fa-solid fa-book"></i> Personal Ledger App - User Guide</h1>
 
@@ -19,7 +42,7 @@
 <nav class="nav-docs card">
   <strong><i class="fa-solid fa-link"></i> Quick Links:</strong>
   <ul>
-    <li><a href="./index.html"><i class="fa-solid fa-house"></i> Back to Home</a></li>
+    <li><a href="../index.html"><i class="fa-solid fa-house"></i> Back to Home</a></li>
     <li><a href="#add-entry"><i class="fa-solid fa-plus"></i> Add Entry</a></li>
     <li><a href="#edit-entry"><i class="fa-solid fa-pen"></i> Edit Entry</a></li>
     <li><a href="#delete-entry"><i class="fa-solid fa-trash"></i> Delete Entry</a></li>
@@ -146,6 +169,6 @@
     </footer>
   </div>
 
-  <script src="utilitys.js"></script>
+  <script src="../scripts/utilitys.js"></script>
 </body>
 </html>
