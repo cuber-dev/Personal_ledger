@@ -1065,7 +1065,7 @@ function renderAdvancedReports(data = ledger) {
     topIncomes
     .map(
       txn =>
-      `<li>${txn.date} | ${txn.account} | ${txn.desc} – ₹${txn.amount}</li>`
+      `<li>${txn.account} | ${txn.desc} – ₹${txn.amount} on ${txn.date}</li>`
     )
     .join("") :
     "<li>No transactions found</li>";
@@ -1075,7 +1075,7 @@ function renderAdvancedReports(data = ledger) {
     topExpenses
     .map(
       txn =>
-      `<li>${txn.date} | ${txn.account} | ${txn.desc} – ₹${txn.amount}</li>`
+      `<li>${txn.account} | ${txn.desc} – ₹${txn.amount} on ${txn.date}</li>`
     )
     .join("") :
     "<li>No transactions found</li>";
