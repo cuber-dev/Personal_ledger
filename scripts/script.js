@@ -301,7 +301,21 @@ if (editingId !== null) {
   saveToLocalStorage();
   renderCharts(ledger);
 });
-
+function clearEntry() {
+  const account = document.getElementById("account");
+  const date = document.getElementById("date");
+  const description = document.getElementById("desc");
+  const amount = document.getElementById("amount");
+  const type = document.getElementById("type");
+  
+  account.value = "";
+  date.value = "";
+  description.value = "";
+  amount.value = "";
+  type.value = "income";
+  setToday();
+  
+}
 function editEntry(id) {
   scrollToTop(300);
   // Find entry in ledger by ID
@@ -625,6 +639,31 @@ function handleImport(event) {
 }
 
 // exports 
+function handleExport() {
+  const format = document.getElementById("exportFormat").value;
+  
+  if (!format) {
+    alert("Please select an export format.");
+    return;
+  }
+  
+  switch (format) {
+    case "json":
+      exportJSON();
+      break;
+    case "excel":
+      exportToExcel();
+      break;
+    case "pdf":
+      exportToPDF();
+      break;
+    case "png":
+      exportToPNG();
+      break;
+    default:
+      alert("Unsupported export format!");
+  }
+}
 function exportToExcel() {
   const table = document.querySelector('table');
   const wb = XLSX.utils.book_new();

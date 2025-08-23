@@ -121,6 +121,7 @@
     </div>
 
     <button class="submit" type="submit">Add Entry</button>
+    <button id="clearEntryBtn" type="button" onclick="clearEntry()" class=" delete-btn">Clear Entry</button>
   </form>
 
  <!-- Wealth Light Section -->
@@ -150,11 +151,16 @@
 
   <label>Export or download File: </label>
 <div class="export-container">
-  
-  <button class="export-btn" onclick="exportJSON()"><i class="fa-solid fa-table"></i> Export table as JSON</button>
-  <button class="export-btn" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> Export table as Excel</button>
-<button  class="export-btn" onclick="exportToPDF()"><i class="fa-solid fa-file-pdf"></i> Export table as PDF</button>
-<button  class="export-btn" onclick="exportToPNG()"><i class="fa-solid fa-photo"></i> Export table as PNG</button>
+  <select id="exportFormat" class="export-select">
+    <option value="" disabled selected>-- Select Export Format --</option>
+    <option value="json">📑 JSON</option>
+    <option value="excel">📊 Excel</option>
+    <option value="pdf">📄 PDF</option>
+    <option value="png">🖼️ PNG</option>
+  </select>
+  <button class="export-btn" onclick="handleExport()">
+    <i class="fa-solid fa-download"></i> Download Table Data
+  </button>
 <!-- Google Drive Integration Buttons -->
   <!-- <button id="exportDriveBtn" class="export-btn" onclick="exportLedgerToDrive()">Export to Google Drive</button> -->
 </div>
