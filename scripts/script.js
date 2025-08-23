@@ -243,7 +243,7 @@ if (editingId !== null) {
 });
 
 function editEntry(id) {
-  scrollToTop();
+  scrollToTop(300);
   // Find entry in ledger by ID
   const entry = ledger.find(tx => tx.id === id);
   if (!entry) {
@@ -1226,8 +1226,8 @@ window.addEventListener("beforeunload", function() {
 });
 
 
-function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function scrollToTop(top = 0) {
+  window.scrollTo({ top: top, behavior: 'smooth' });
 }
 
 // Show button only when scrolled down
