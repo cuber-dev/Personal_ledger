@@ -958,7 +958,7 @@ function renderReports(data = ledger) {
     <p class="line"><strong>Lowest:</strong> Income ₹${reports.lowestIncome}, Expense ₹${reports.lowestExpense}</p>
   `;
 }
-
+/*
 function generateAdvancedReports(data) {
   // Separate income & expense transactions
   const incomes = data.filter(txn => txn.type === "income");
@@ -1020,7 +1020,82 @@ function renderAdvancedReports(data = ledger) {
     .map(txn => `<li>${txn.desc} – ₹${txn.amount} (${txn.count} times)</li>`)
     .join("") :"<li>No transactions found</li>";
 }
+*/
+function generateAdvancedReports(data = ledger) {
+  // Separate income & expense transactions
+  const incomes = data.filter(txn => txn.type === "income");
+  const expenses = data.filter(txn => txn.type === "expense");
+  
+  // Top 5 incomes & expenses (with all details)
+  const topIncomes = [...incomes].sort((a, b) => b.amount - a.amount).slice(0, 5);
+  const topExpenses = [...expenses].sort((a, b) => b.amount - a.amount).slice(0, 5);
+  
+  // Frequent transactions (by account only)
+  const accountCount = {};
+  data.forEach(txn => {
+    let account = txn.account?.trim() || "No Account";
+    accountCount[account] = (accountCount[account] || 0) + 1;
+  });
+  const frequentTransactions = Object.entries(accountCount)
+    .filter(([account, count]) => count > 1)
+    .sort((a, b) => b[1] - a[1]);
+  
+  // Recurring transactions (same account + amount + type)
+  const recurringMap = {};
+  data.forEach(txn => {
+    let account = txn.account?.trim() || "No Account";
+    const key = JSON.stringify({ account, amount: txn.amount, type: txn.type });
+    if (!recurringMap[key]) {
+      recurringMap[key] = { ...txn, count: 0 };
+    }
+    recurringMap[key].count++;
+  });
+  
+  const recurringTransactions = Object.values(recurringMap).filter(r => r.count > 1);
+  
+  return { topIncomes, topExpenses, frequentTransactions, recurringTransactions };
+}
 
+function renderAdvancedReports(data = ledger) {
+  const { topIncomes, topExpenses, frequentTransactions, recurringTransactions } = generateAdvancedReports(data);
+  
+  // Top incomes
+  document.getElementById("topIncomesList").innerHTML = topIncomes.length ?
+    topIncomes
+    .map(
+      txn =>
+      `<li>${txn.date} | ${txn.account} | ${txn.desc} – ₹${txn.amount}</li>`
+    )
+    .join("") :
+    "<li>No transactions found</li>";
+  
+  // Top expenses
+  document.getElementById("topExpensesList").innerHTML = topExpenses.length ?
+    topExpenses
+    .map(
+      txn =>
+      `<li>${txn.date} | ${txn.account} | ${txn.desc} – ₹${txn.amount}</li>`
+    )
+    .join("") :
+    "<li>No transactions found</li>";
+  
+  // Frequent accounts
+  document.getElementById("frequentList").innerHTML = frequentTransactions.length ?
+    frequentTransactions
+    .map(([account, count]) => `<li>${account} – ${count} transactions</li>`)
+    .join("") :
+    "<li>No transactions found</li>";
+  
+  // Recurring
+  document.getElementById("recurringList").innerHTML = recurringTransactions.length ?
+    recurringTransactions
+    .map(
+      txn =>
+      `<li>${txn.date} | ${txn.account} | ${txn.desc} – ₹${txn.amount} (${txn.count} times)</li>`
+    )
+    .join("") :
+    "<li>No transactions found</li>";
+}
 function generateUpcomingExpectations(data) {
   const now = new Date();
   const currentMonth = now.getMonth();

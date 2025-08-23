@@ -128,10 +128,6 @@ h2{
   padding: 0;
 }
 
-#upcomingSection li {
-  padding: 5px 0;
-  border-bottom: 1px dashed var(--border-color);
-}
 
 #upcomingSection li:last-child {
   border-bottom: none;
@@ -154,9 +150,14 @@ h2{
   padding: 0;
 }
 
-.report-section li {
-  padding: 5px 0;
+.report-section li,
+#upcomingSection li {
+  padding: .5rem 1rem;
+  line-height: 1.7rem;
+  margin-bottom: .5rem;
+  background: var(--bg-color);
   border-bottom: 1px dashed var(--border-color);
+  border-radius: 4px;
 }
 
 .report-section li:last-child {
@@ -357,6 +358,10 @@ tr:nth-child(even) {
   button {
     width: 100%;
   }
+  .report-section li,#upcomingSection li {
+    padding: .5rem .6rem;
+}
+
   .export-btn,
 .import-btn,.import-label {
   max-width: 100%;
