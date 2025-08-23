@@ -663,6 +663,7 @@ function handleExport() {
     default:
       alert("Unsupported export format!");
   }
+  return;
 }
 function exportToExcel() {
   const table = document.querySelector('table');
@@ -818,20 +819,20 @@ async function exportToPDF() {
   // ====== SAVE ======
   doc.save(`${ledgerName}.pdf`);
 }
-function exportToPNG(param) {
+function exportToPNG() {
   // Tab to edit
   const table = document.querySelector('table');
 if (!table) {
   alert("No table found to export!");
   return;
 }
-
 html2canvas(table, { scale: 2 }).then(canvas => {
   const link = document.createElement("a");
   link.download = `${currentLedgerKey || "ledger"}.png`;
   link.href = canvas.toDataURL("image/png");
   link.click();
 }).catch(err => {
+  alert('error')
   console.error("Error exporting table as PNG:", err);
 });
 }
