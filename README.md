@@ -1,111 +1,114 @@
-# 📘 Personal Ledger App - User Guide
+# 📖 Vault Ledger - Documentation
 
-This guide explains how to use your daily income & expense ledger with all its powerful features.
-
----
-
-## 🔗 Quick Links
-- [🏠 Back to Home](./index.html)
-- [➕ Add Entry](#add-entry)
-- [✏️ Edit Entry](#edit-entry)
-- [🗑 Delete Entry](#delete-entry)
-- [📥 Import / Export](#import-export)
-- [👛 View Balance](#view-balance)
-- [↩️ Undo / Redo](#undo-redo)
-- [📈 Closing Balance](#closing-balance)
-- [🥧 Charts](#charts)
-- [💡 Special Insights](#special-insights)
-- [🌙 Dark Mode](#dark-mode)
-- [🌿 Version Info](#version)
+Vault Ledger is a **secure, offline-first daily income & expense tracker** built with simplicity in mind.  
+This guide explains all the features and also introduces the **Author (cuber-dev)**.  
 
 ---
 
-## ➕ Add Entry
-1. Choose a **date** (defaults to today automatically).
-2. Enter a **description** (e.g., "Bus fare", "Salary").
-3. Input the **amount**.
-4. Select **Income** or **Expense**.
-5. Click **"Add / Update"** to save the record.
+## ✨ Features
+
+### ➕ Add Entry
+- Select a **date** (defaults to today).
+- Enter a **description** (e.g., Salary, Groceries).
+- Input the **amount**.
+- Choose **Income** or **Expense**.
+- Click **Add / Update** to save.
 
 ---
 
-## ✏️ Edit Entry
-1. Click the **Edit** button beside any transaction.
-2. The form auto-fills with the selected data.
-3. Make necessary changes and click **"Add / Update"**.
+### ✏️ Edit Entry
+- Click **Edit** on any record.
+- The form pre-fills automatically.
+- Make changes → **Update**.
 
 ---
 
-## 🗑 Delete Entry
-- Click the **Delete** button beside any transaction.  
-- This will permanently remove the record from your ledger.
+### 🗑 Delete Entry
+- Click **Delete** beside a transaction.
+- Entry removed instantly + balances auto-update.
 
 ---
 
-## 📥 Import / Export
-- **Import:** Load a `.json` file to continue from a previous session.
-- **Export:** Choose **JSON, Excel, or PDF** for backup or sharing.
-- You can also give a **custom filename** before exporting.
+### 📂 Import / Export
+- **Import:** Restore from a `.json` file.
+- **Export:** Save as **JSON, Excel, or PDF**.
+- Custom filenames supported.
+- PDF excludes buttons → clean report.
 
 ---
 
-## 👛 View Balance
-- A summary card shows **Income**, **Expenses**, and **Current Balance**.
+### 💰 Balance Summary
+- Always see **Total Income**, **Total Expenses**, and **Balance** in a live card.
 
 ---
 
-## ↩️ Undo / Redo
-- **Undo:** Revert your last change.  
-- **Redo:** Bring it back again.  
-- Prevents accidental deletions or edits.
+### ⏪ Undo / Redo
+- **Undo:** Revert last action.
+- **Redo:** Apply it back.
 
 ---
 
-## 📈 Closing Balance
-- Each row shows the **closing balance** after that transaction.  
-- Gives a real-time snapshot after every entry.
+### 📊 Closing Balance
+- Every row shows **closing balance** → live running balance.
 
 ---
 
-## 🥧 Charts
-- Bar, pie, and line charts represent your financial activity.  
-- Charts update automatically as you add, edit, or delete entries.
+### 📈 Charts & Visuals
+- Interactive **Pie, Bar, Line** charts.
+- Live update as you add/edit.
+- Downloadable as **PNG**.
 
 ---
 
-## 💡 Special Insights
-- **Highest Income:** Largest income with description & date.
-- **Highest Expense:** Largest expense with description & date.
-- **Zero Spent Days:** List of dates with no expenses.
-- **Income Ratio:** Expense-to-income percentage.
-- Updates automatically.
+### 🔍 Filters
+- Filter by **Date Range**, **Type**, or **Keyword**.
+- Reset anytime.
 
 ---
 
-## 🌙 Dark Mode
-- Click **Toggle Dark Mode** to switch themes.
-- Uses **CSS variables** for dynamic color changes.
-- Charts and text adapt for better readability.
+### 💡 Insights
+- **Highest Income**: with details.  
+- **Highest Expense**: with details.  
+- **Zero Spend Days** listed.  
+- **Income Ratio** (Expense / Income %).  
 
 ---
 
-## 🌿 Version Info & Changelog
-**Current Version:** `v1.7.0`
-
-### ✅ Added
-- Closing balance per transaction
-- Export to PDF and Excel
-- Undo & Redo functionality
-- Auto-save using Local Storage
-- Visual charts (bar, pie, line)
-- Custom filename for export
-- Special Insights (Highest Income, Highest Expense, Zero Spent Days, Income Ratio)
-
-### 🔧 Fixed
-- Text visibility issues in dark mode
-- Ledger reset logic on empty state
+### 🎨 Themes
+- 20+ themes (Light, Dark, Cyberpunk, Sunset, Pastel, Neon, etc.).
+- Charts & tables auto-adapt.
+- Built with **CSS variables**.
 
 ---
 
-## 📌 Footer
-Made by **Nandhu** | Fully offline & secure | Data stored via JSON
+### 🛠 Version Info
+**Current Version:** `v2.1.0`  
+
+- ✅ Live Charts (Pie, Bar, Line)  
+- ✅ Filtering transactions  
+- ✅ Undo / Redo  
+- ✅ Insights (Highest Income, Expense, etc.)  
+- ✅ 20+ Themes  
+- 🔧 Fixes for localStorage + dark mode charts  
+
+---
+
+# 👨‍💻 Author – About Me
+
+Hi 👋 I’m **Nandhu (aka cuber-dev)**, a **web developer** and gamer 🎮.  
+I build offline-first apps, explore new IT stacks, and sometimes get lost in Free Fire.  
+
+---
+
+## 📂 My GitHub Profile
+👉 [github.com/cuber-dev](https://github.com/cuber-dev)  
+
+---
+
+## 📬 Contact Me
+- 📧 **Email:** [novajames099@gmail.com](mailto:novajames099@gmail.com)  
+- 🐙 **GitHub:** [github.com/cuber-dev](https://github.com/cuber-dev)  
+
+---
+
+⭐ **Made by Nandhu (cuber-dev)** | Fully offline & secure | JSON-based storage
