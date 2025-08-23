@@ -1,6 +1,6 @@
 {
-  "name": "My Valut Ledger",
-  "short_name": "Ledger",
+  "name": "Valut Ledger",
+  "short_name": "Vault Ledger",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
