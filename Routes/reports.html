@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Reports</title>
   <link rel="stylesheet" href="../styles/style.css" />
+  <link rel="stylesheet" href="../styles/reports.css" />
   <!-- Font Awesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="download-png.js"></script>
 </head>
 <body>
   <!-- Navbar -->
@@ -49,119 +52,70 @@
     </select>
   </div>
 
-  <div class="container">
-    <h1><i class="fa-solid fa-clipboard-list"></i> Reports</h1>
-    <p>This page shows the detailed reports of a selected ledger</p>
+  <!-- Main Report Section -->
+  <main class="report-main">
+    <h1 class="report-title"><i class="fa-solid fa-clipboard-list"></i> Combined Ledgers Report</h1>
 
-    <!-- Ledger Selector -->
-    <section class="report-section">
-      <h2><i class="fa-solid fa-book"></i> Select Ledger</h2>
-      <select id="ledgerSelect">
-        <option value="">Untitled</option>
-      </select>
-    </section>
-
-    <!-- Filter Section -->
-    <div id="filterSection" class="filter-section">
-      <h2><i class="fa-solid fa-filter"></i> Filters</h2>
-      <div class="filter-row">
-        <input type="text" id="searchDesc" placeholder="Search Description" oninput="applyFilters()" />
+    <!-- Ledger Filter -->
+    <section class="report-filter">
+      <h3><i class="fa-solid fa-filter"></i> Ledger Filter</h3>
+      <div class="report-filter-options">
+        <label>
+          <input type="radio" name="ledgerMode" value="all" checked>
+          All
+        </label>
+        <label>
+          <input type="radio" name="ledgerMode" value="custom">
+          Custom
+        </label>
+        <label>
+          <input type="radio" name="ledgerMode" value="exclude">
+          Exclude Some
+        </label>
       </div>
-      <div class="filter-row">
-        <select id="filterType" onchange="applyFilters()">
-          <option value="">All Types</option>
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
+
+      <!-- Dropdowns -->
+      <div class="report-filter-dropdowns">
+        <select id="includeLedgers" class="report-dropdown" multiple>
+          <!-- Populated by JS -->
+        </select>
+
+        <select id="excludeLedgers" class="report-dropdown" multiple style="display:none;">
+          <!-- Populated by JS -->
         </select>
       </div>
-      <div class="filter-row">
-        <select id="filter-accounts" onchange="applyFilters()">
-          <option value="">All Accounts</option>
-        </select>
-      </div>
-      <div class="filter-row">
-        <input type="number" id="minAmount" placeholder="Min Amount" step="0.01" oninput="applyFilters()" />
-        <input type="number" id="maxAmount" placeholder="Max Amount" step="0.01" oninput="applyFilters()" />
-      </div>
-      <div class="filter-row date-labels">
-        <label for="startDate">From</label>
-        <label for="endDate">To</label>
-      </div>
-      <div class="filter-row">
-        <input type="date" id="startDate" onchange="applyFilters()" />
-        <input type="date" id="endDate" onchange="applyFilters()" />
-      </div>
-      <div class="filter-row">
-        <button onclick="clearFilters()"><i class="fa-solid fa-circle-xmark"></i> Clear Filters</button>
-      </div>
-    </div>
 
-    <!-- Basic Reports -->
-    <section id="reportsSection" class="card">
-      <h2><i class="fa-solid fa-file-lines"></i> Basic Reports</h2>
-      <div id="reportsOutput"></div>
+      <button class="report-btn" id="generateReport">
+        <i class="fa-solid fa-table"></i> Generate Report
+      </button>
     </section>
 
-    <!-- Advanced Reports -->
-    <section id="advancedReports" class="card">
-      <h2><i class="fa-solid fa-chart-simple"></i> Advanced Reports</h2>
-      <div class="report-section" id="topIncomesSection">
-        <h3>Top 5 Incomes</h3>
-        <ul id="topIncomesList"></ul>
-      </div>
-      <div class="report-section" id="topExpensesSection">
-        <h3>Top 5 Expenses</h3>
-        <ul id="topExpensesList"></ul>
-      </div>
-      <div class="report-section" id="frequentSection">
-        <h3>Frequent Transactions</h3>
-        <ul id="frequentList"></ul>
-      </div>
-      <div class="report-section" id="recurringSection">
-        <h3>Recurring Transactions</h3>
-        <ul id="recurringList"></ul>
-      </div>
+    <!-- Report Table -->
+    <section class="report-table-section">
+      <table class="report-table" id="reportTable">
+        <thead>
+          <tr>
+            <th>Ledger Name</th>
+            <th>Total Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS will populate rows -->
+        </tbody>
+        <tfoot>
+          <tr>
+            <td><strong>Final Balance</strong></td>
+            <td id="finalBalance">0</td>
+          </tr>
+        </tfoot>
+      </table>
+
     </section>
-
-    <!-- Upcoming Expected -->
-    <section class="card">
-      <h2><i class="fa-solid fa-clock"></i> Upcoming Expected Transactions</h2>
-      <div class="report-section" id="upcomingSection">
-        <ul id="upcomingList"></ul>
-      </div>
-    </section>
-
-    <!-- Charts -->
-    <h2 style="text-align: center;"><i class="fa-solid fa-chart-pie"></i> Visual Insights</h2>
-    <div id="chartContainer" class="chart-container">
-      <div class="chart-card">
-        <canvas id="pieChart"></canvas>
-        <button onclick="downloadChart('pieChart')" class="export-btn">Download Pie Chart</button>
-      </div>
-      <div class="chart-card">
-        <canvas id="barChart"></canvas>
-        <button onclick="downloadChart('barChart')" class="export-btn">Download Bar Chart</button>
-      </div>
-      <div class="chart-card">
-        <canvas id="lineChart"></canvas>
-        <button onclick="downloadChart('lineChart')" class="export-btn">Download Line Chart</button>
-      </div>
-    </div>
-
-    <!-- Special Insights -->
-    <div class="special-insights card">
-      <h2><i class="fa-solid fa-lightbulb"></i> Special Insights</h2>
-      <p id="highestIncome">Highest Income: -</p>
-      <p id="highestExpense">Highest Expense: -</p>
-      <p id="zeroDays">Zero Spent Days: -</p>
-      <p id="incomeRatio">Income Ratio: -</p>
-    </div>
-
-    <footer>
-      <hr />
-      <p>Made by Nandhu | Fully offline & secure | Data stored via JSON</p>
-    </footer>
-  </div>
+           <!-- Download PNG Button -->
+       <button id="downloadPngBtn" class="export-btn">
+         <i class="fa-solid fa-image"></i> Download as PNG
+       </button>
+  </main>
 
   <script src="../scripts/utilitys.js"></script>
   <script src="../scripts/reports.js"></script>
