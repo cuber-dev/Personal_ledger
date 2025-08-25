@@ -300,6 +300,7 @@ if (editingId !== null) {
   renderTable();
   saveToLocalStorage();
   renderCharts(ledger);
+  clearFilters();
 });
 function clearEntry() {
   const account = document.getElementById("account");
@@ -316,6 +317,11 @@ function clearEntry() {
   setToday();
   
 }
+function formatDateForInput(dateString) {
+  // Split by "-" → [DD, MM, YYYY]
+  let [day, month, year] = dateString.split("-");
+  return `${day.padStart(2,"0")}-${month.padStart(2,"0")}-${year}`;
+}
 function editEntry(id) {
   scrollToTop(300);
   // Find entry in ledger by ID
@@ -324,9 +330,9 @@ function editEntry(id) {
     console.error("Entry not found for ID:", id);
     return;
   }
-  
   // Fill form with entry values
-  document.getElementById("date").value = entry.date;
+  document.getElementById("date").value = formatDateForInput(entry.date);
+
   document.getElementById("desc").value = entry.desc;
   document.getElementById("account").value = entry.account;
   document.getElementById("amount").value = entry.amount;
@@ -339,7 +345,6 @@ function editEntry(id) {
   saveToLocalStorage();
   saveLastState();
   renderCharts(ledger);
-  clearFilters();
 }
 
 function deleteEntry(id,desc) {
