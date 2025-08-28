@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Reports</title>
+  <title>Transfer Funds</title>
   <link rel="stylesheet" href="../styles/style.css" />
   <link rel="stylesheet" href="../styles/reports.css" />
-  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="../styles/transfer.css" />
+
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="download-png.js"></script>
 </head>
 <body>
   <!-- Navbar -->
@@ -21,11 +20,10 @@
       <li><a href="../index.html">Home</a></li>
       <li><a href="../Routes/author.html">Author</a></li>
       <li><a href="../Routes/docs.html">Docs</a></li>
-      <li><a href="../Routes/reports.html" class="active">Reports</a></li>
-      <li><a href="../Routes/transfer.html" >Transfer</a></li>
+      <li><a href="../Routes/reports.html">Reports</a></li>
+      <li><a href="../Routes/transfer.html" class="active">Transfer</a></li>
     </ul>
   </nav>
-
   <!-- Theme Selector -->
   <div class="theme-selector">
     <label for="themeSelect">🎨 Theme:</label>
@@ -53,56 +51,57 @@
     </select>
   </div>
 
-  <!-- Main Report Section -->
-  <main class="report-main">
-    <h1 class="report-title"><i class="fa-solid fa-clipboard-list"></i> Combined Ledgers Report</h1>
+  <!-- Main Section -->
+    <h1 class="report-title"><i class="fa-solid fa-right-left"></i> Transfer Funds Between Ledgers</h1>
 
-    <!-- Ledger Filter -->
-    <section class="report-filter">
-      <h3><i class="fa-solid fa-filter"></i> Ledger Filter</h3>
-      <div class="report-filter-options">
-        <label>
-          <input type="radio" name="ledgerMode" value="all" checked>
-          All
-        </label>
-        <label>
-          <input type="radio" name="ledgerMode" value="custom">
-          Custom
-        </label>
-        <label>
-          <input type="radio" name="ledgerMode" value="exclude">
-          Exclude Some
-        </label>
-      </div>
+    <!-- Transfer Form -->
+<form id="transferForm">
+  <label for="fromLedger"><i class="fa-solid fa-exchange"></i> Transfer Funds:</label>
+  
+  <!-- From Ledger -->
+  <div class="account-container">
+    <select id="fromLedger" required>
+      <option value="">Select From Ledger</option>
+    </select>
+  </div>
+  
+  <!-- Transaction Details -->
+  <div class="inputs-container">
+    <input type="date" id="date" required />
+    <input type="text" id="desc" placeholder="Description" required />
+    <input type="number" id="amount" placeholder="Amount" required />
+    
 
-      <!-- Dropdowns -->
-      <div class="report-filter-dropdowns">
-        <select id="includeLedgers" class="report-dropdown" multiple>
-          <!-- Populated by JS -->
-        </select>
-
-        <select id="excludeLedgers" class="report-dropdown" multiple style="display:none;">
-          <!-- Populated by JS -->
-        </select>
-      </div>
-
-      <button class="report-btn" id="generateReport">
-        <i class="fa-solid fa-table"></i> Generate Report
-      </button>
-    </section>
-
-    <!-- Report Table -->
+  </div>
+  
+  <!-- Transaction Account (from your accounts array) -->
+  <div class="account-container">
+    <select id="txnAccount" required>
+      <option value="">Select Transaction Account</option>
+    </select>
+  </div>
+  
+  <!-- To Ledger -->
+  <div class="account-container">
+    <select id="toLedger" required>
+      <option value="">Select To Ledger</option>
+    </select>
+  </div>
+  
+  <button class="submit" type="submit">Transfer</button>
+  <button type="button" id="clearBtn" class="delete-btn">Clear</button>
+</form>
+    <!-- Ledger Balances -->
     <section class="report-table-section">
-      <table class="report-table" id="reportTable">
+      <h2><i class="fa-solid fa-table"></i> Ledger Balances</h2>
+      <table class="report-table" id="ledgerTable">
         <thead>
           <tr>
             <th>Ledger Name</th>
             <th>Total Balance</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- JS will populate rows -->
-        </tbody>
+        <tbody></tbody>
         <tfoot>
           <tr>
             <td><strong>Final Balance</strong></td>
@@ -110,15 +109,10 @@
           </tr>
         </tfoot>
       </table>
-
     </section>
-           <!-- Download PNG Button -->
-       <button id="downloadPngBtn" class="export-btn">
-         <i class="fa-solid fa-image"></i> Download as PNG
-       </button>
-  </main>
 
+  <script src="../scripts/transfer.js"></script>
   <script src="../scripts/utilitys.js"></script>
-  <script src="../scripts/reports.js"></script>
+
 </body>
 </html>
