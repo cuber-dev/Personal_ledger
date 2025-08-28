@@ -1,20 +1,3 @@
-function setToday() {
-  const dateInput = document.getElementById('date');
-  const today = new Date().toISOString().split('T')[0];
-  dateInput.value = today;
-  return today;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  setToday();
-
-  const fromLedger = document.getElementById("fromLedger");
-  const toLedger = document.getElementById("toLedger");
-  const txnAccount = document.getElementById("txnAccount");
-  const transferForm = document.getElementById("transferForm");
-  const ledgerTableBody = document.querySelector("#ledgerTable tbody");
-  const finalBalanceCell = document.getElementById("finalBalance");
-
   // ✅ Your transaction accounts
   const accounts = [
     "Bank","Cash","Accounts Receivable","Fixed Assets","Investments","Prepaid Expenses","Inventory","Savings",
@@ -26,46 +9,42 @@ document.addEventListener("DOMContentLoaded", () => {
     "Telecom","Service Charges","Family Support","Vehicle","Cash Reimbursement","Household","Bank Charges"
   ].sort();
 
-  // ✅ Populate transaction accounts dropdown
-  function populateAccounts() {
-    txnAccount.innerHTML = "<option value=''>Select Transaction Account</option>";
-    accounts.forEach(acc => txnAccount.add(new Option(acc, acc)));
-  }
-
+const fromLedger = document.getElementById("fromLedger");
+  const toLedger = document.getElementById("toLedger");
+  const txnAccount = document.getElementById("txnAccount");
+  const transferForm = document.getElementById("transferForm");
+  const ledgerTableBody = document.querySelector("#ledgerTable tbody");
+  const finalBalanceCell = document.getElementById("finalBalance");
   // ✅ Load ledgers
   let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
 
-  // Populate ledger dropdowns
-  function populateDropdowns() {
-    fromLedger.innerHTML = "<option value=''>Select From Ledger</option>";
-    toLedger.innerHTML = "<option value=''>Select To Ledger</option>";
-    ledgers.forEach(l => {
-      fromLedger.add(new Option(l, l));
-      toLedger.add(new Option(l, l));
-    });
-  }
-
-  populateAccounts();
-  populateDropdowns();
-
-  // ✅ Balance calculation
-  function getLedgerBalance(ledgerName) {
-    try {
-      let data = JSON.parse(localStorage.getItem(ledgerName) || "[]");
-      if (!Array.isArray(data)) return 0;
-
-      let income = 0, expense = 0;
-      data.forEach(tx => {
-        let amt = parseFloat(tx.amount) || 0;
-        if (tx.type === "income") income += amt;
-        if (tx.type === "expense") expense += amt;
-      });
-      return income - expense;
-    } catch {
-      return 0;
-    }
-  }
-
+function setToday() {
+  const dateInput = document.getElementById('date');
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.value = today;
+  return today;
+}
+async function generateTransactionId(date, desc, amount) {
+  // Normalize values
+  const normalizedDate = new Date(date).toISOString().split("T")[0]; // yyyy-mm-dd
+  const normalizedDesc = desc;
+  const normalizedAmount = parseFloat(amount).toFixed(2);
+  
+  // Add a salt (timestamp + random)
+  const salt = Date.now().toString() + Math.random().toString(36).substring(2, 6);
+  
+  // Build string
+  const baseString = `${normalizedDate}|${normalizedDesc}|${normalizedAmount}|${salt}`;
+  
+  // Hash using SHA-256
+  const buffer = new TextEncoder().encode(baseString);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  
+  // Return shorter, prefixed ID
+  return "tx_" + hashHex.substring(0, 12);
+}
   // ✅ Refresh balances table
   function refreshLedgerTable() {
     ledgerTableBody.innerHTML = "";
@@ -79,10 +58,43 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     finalBalanceCell.textContent = total.toFixed(2);
   }
-  refreshLedgerTable();
+    // ✅ Balance calculation
+  function getLedgerBalance(ledgerName) {
+    try {
+      let data = JSON.parse(localStorage.getItem(ledgerName) || "[]");
+      if (!Array.isArray(data)) return 0;
+      
+      let income = 0,
+        expense = 0;
+      data.forEach(tx => {
+        let amt = parseFloat(tx.amount) || 0;
+        if (tx.type === "income") income += amt;
+        if (tx.type === "expense") expense += amt;
+      });
+      return income - expense;
+    } catch {
+      return 0;
+    }
+  }
+  // ✅ Populate transaction accounts dropdown
+  function populateAccounts() {
+    txnAccount.innerHTML = "<option value=''>Select Transaction Account</option>";
+    accounts.forEach(acc => txnAccount.add(new Option(acc, acc)));
+  }
+
+
+  // Populate ledger dropdowns
+  function populateDropdowns() {
+    fromLedger.innerHTML = "<option value=''>Select From Ledger</option>";
+    toLedger.innerHTML = "<option value=''>Select To Ledger</option>";
+    ledgers.forEach(l => {
+      fromLedger.add(new Option(l, l));
+      toLedger.add(new Option(l, l));
+    });
+  }
 
   // ✅ Handle transfer
-  transferForm.addEventListener("submit", e => {
+  transferForm.addEventListener("submit",async e => {
     e.preventDefault();
 
     const from = fromLedger.value;
@@ -95,25 +107,27 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!from || !to || from === to || !acc || isNaN(amount) || amount <= 0) {
       return alert("Please fill all fields correctly.");
     }
-
+console.log(desc)
     // Create transaction objects
     const txOut = {
-      id: Date.now() + "-out",
+      id: await generateTransactionId(date,amount,desc),
       date,
       account: acc,
       type: "expense",
-      transactionType: "transfer-out",
+      transactionName: "transfer-out",
+      transactionType: "linked-transaction",
       transferredTo : to,
       amount,
       desc: desc + ` To Ledger: ${to}`
     };
 
     const txIn = {
-      id: Date.now() + "-in",
+      id: await generateTransactionId(date,amount,desc),
       date,
       account: acc,
       type: "income",
-      transactionType: "transfer-in",
+      transactionName: "transfer-in",
+      transactionType: "linked-transaction",
       transferredFrom : from,
       amount,
       desc: desc + ` From Ledger: ${from}`
@@ -137,10 +151,14 @@ document.addEventListener("DOMContentLoaded", () => {
     setToday();
   });
 
-  // ✅ Clear button
-  document.getElementById("clearBtn").addEventListener("click", () => {
-    transferForm.reset();
-    setToday();
-  });
+document.addEventListener("DOMContentLoaded",async () => {
+  setToday();
+  populateAccounts();
+  populateDropdowns();
+  refreshLedgerTable();
+});
 
+document.getElementById("clearBtn").addEventListener("click", () => {
+  transferForm.reset();
+  setToday();
 });
