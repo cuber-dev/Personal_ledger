@@ -3,7 +3,7 @@
    ===================== */
 
 .report-main {
-  padding: 1.5rem;
+  padding: .7rem 1.3rem;
   background: var(--bg-color);
   color: var(--text-color);
 }
