@@ -119,7 +119,7 @@ async function generateTransactionId(date, desc, amount) {
       transferredFrom : from,
       transferredTo : to,
       amount,
-      desc: desc + ` To Ledger: ${to}`
+      desc: desc
     };
 
     const txIn = {
@@ -132,7 +132,7 @@ async function generateTransactionId(date, desc, amount) {
       transferredFrom : from,
       transferredTo : to,
       amount,
-      desc: desc + ` From Ledger: ${from}`
+      desc: desc
     };
     // Save to localStorage
     let fromData = JSON.parse(localStorage.getItem(from) || "[]");

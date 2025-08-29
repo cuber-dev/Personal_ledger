@@ -647,7 +647,9 @@ ul {
 #clearEntryBtn{
   margin-top: 0;
 }
-
+.highlight{
+  color: var(--accent-color);
+}
 .scroll-top-btn {
   position: fixed;
   bottom: 20px;

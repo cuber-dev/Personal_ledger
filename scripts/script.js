@@ -58,22 +58,24 @@ const accounts = [
   "Telecom",
   "Service Charges",
   "Family Support",
-"Vehicle",
-"Cash Reimbursement",
-"Household",
-"Bank Charges"
+  "Vehicle",
+  "Cash Reimbursement",
+  "Household",
+  "Bank Charges"
 ].sort();
+
 function buildAccountSelector() {
   const accountSelector = document.getElementById("account");
   
   accountSelector.innerHTML = `<option value="" disabled selected>Select Account</option>`;
-accounts.forEach(acc => {
-  const option = document.createElement("option");
-  option.value = acc;
-  option.textContent = acc;
-  accountSelector.appendChild(option);
-});
+  accounts.forEach(acc => {
+    const option = document.createElement("option");
+    option.value = acc;
+    option.textContent = acc;
+    accountSelector.appendChild(option);
+  });
 }
+
 function buildFilterAccounts() {
   const filterAccounts = document.getElementById("filter-accounts");
   const currentValue = filterAccounts.value; // save what user selected before refresh
@@ -159,8 +161,16 @@ function renderTable(data = ledger, showRecurringOnly = false) {
       <td>${index + 1}</td>
       <td>${entry.date}</td>
       <td>${entry.account}</td>
-      <td>${entry.desc} ${isRecurring ? '<span class="recurring-badge">🔁</span>' : ''}</td>
-      <td>${entry.type}</td>
+<td>
+  ${entry.desc}
+  ${isRecurring ? '<span class="recurring-badge">®</span>' : ''}
+  ${entry.transactionType === "linked-transaction" 
+      ? (entry.transferredFrom === currentLedgerKey 
+          ? '<span class="highlight">to Ledger: ' + entry.transferredTo + '</span>' 
+          : '<span class="highlight">from Ledger: ' + entry.transferredFrom + '</span>') 
+      : ''}
+</td>  
+<td>${entry.type}</td>
       <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
         ${entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
       </td>
@@ -177,10 +187,11 @@ function renderTable(data = ledger, showRecurringOnly = false) {
   totalIncomeSpan.textContent = totalIncome.toFixed(2);
   totalExpenseSpan.textContent = totalExpense.toFixed(2);
   finalBalanceSpan.textContent = balance.toFixed(2);
-  updateWealthLight(totalIncome,totalExpense);
+  updateWealthLight(totalIncome, totalExpense);
   showLowBalancePlan(balance);
   refreshReports();
 }
+
 function getRecurringIndices(data) {
   const ledgerKeyMap = {};
   
@@ -218,32 +229,32 @@ function sortTableColumn(colKey) {
   
   // perform sorting
   // perform sorting
-sortedLedger.sort((a, b) => {
-  let valA = a[colKey];
-  let valB = b[colKey];
-  
-  // Amount and Closing Balance should always be numeric
-  if (colKey === "amount" || colKey === "closingBalance") {
-    valA = parseFloat(String(valA).replace(/[+,]/g, ""));
-    valB = parseFloat(String(valB).replace(/[+,]/g, ""));
-  }
-  
-  // Date
-  else if (colKey === "date") {
-    valA = new Date(valA);
-    valB = new Date(valB);
-  }
-  
-  // Default: compare as string (case-insensitive)
-  else {
-    valA = String(valA).toLowerCase();
-    valB = String(valB).toLowerCase();
-  }
-  
-  if (valA < valB) return sortState.dir === "asc" ? -1 : 1;
-  if (valA > valB) return sortState.dir === "asc" ? 1 : -1;
-  return 0;
-});
+  sortedLedger.sort((a, b) => {
+    let valA = a[colKey];
+    let valB = b[colKey];
+    
+    // Amount and Closing Balance should always be numeric
+    if (colKey === "amount" || colKey === "closingBalance") {
+      valA = parseFloat(String(valA).replace(/[+,]/g, ""));
+      valB = parseFloat(String(valB).replace(/[+,]/g, ""));
+    }
+    
+    // Date
+    else if (colKey === "date") {
+      valA = new Date(valA);
+      valB = new Date(valB);
+    }
+    
+    // Default: compare as string (case-insensitive)
+    else {
+      valA = String(valA).toLowerCase();
+      valB = String(valB).toLowerCase();
+    }
+    
+    if (valA < valB) return sortState.dir === "asc" ? -1 : 1;
+    if (valA > valB) return sortState.dir === "asc" ? 1 : -1;
+    return 0;
+  });
   // update indicators
   document.querySelectorAll(".sort-indicator").forEach(el => {
     el.textContent = "⇅";
@@ -270,38 +281,27 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
   const amount = parseFloat(document.getElementById("amount").value);
   const type = document.getElementById("type").value;
   
- /* if (editingId !== null) {
-    // Update existing entry by ID
+  if (editingId !== null) {
     const idx = ledger.findIndex(tx => tx.id === editingId);
     if (idx !== -1) {
-      ledger[idx] = { ...ledger[idx], date, desc, amount, type };
+      ledger[idx] = { ...ledger[idx], date, account, desc: description, amount, type };
+      if (ledger[idx].transactionType === "linked-transaction") {
+        linkedModify(editingId, ledger[idx], 'edit', idx);
+      }
     }
     editingId = null;
   } else {
-    // Create new entry with ID
-    const id = await generateTransactionId(date, desc, amount);
-    const entry = { id, date, desc, amount, type };
+    const id = await generateTransactionId(date, description, amount);
+    const entry = { id, date, desc: description, account, amount, type };
     ledger.push(entry);
   }
-  */
-
-if (editingId !== null) {
-  const idx = ledger.findIndex(tx => tx.id === editingId);
-  if (idx !== -1) {
-    ledger[idx] = { ...ledger[idx], date, account, desc : description, amount, type };
-  }
-  editingId = null;
-} else {
-  const id = await generateTransactionId(date, description, amount);
-  const entry = { id, date, desc : description, account, amount, type };
-  ledger.push(entry);
-}
   e.target.reset();
   renderTable();
   saveToLocalStorage();
   renderCharts(ledger);
   clearFilters();
 });
+
 function clearEntry() {
   const account = document.getElementById("account");
   const date = document.getElementById("date");
@@ -317,11 +317,30 @@ function clearEntry() {
   setToday();
   
 }
+
+function linkedModify(id, entry, type, idx) {
+  let fromLedger = ledger;
+  let toLedger = JSON.parse(localStorage.getItem(entry.transferredTo) || "[]");
+  
+  if (type === 'edit') {
+    toLedger[idx] = entry;
+  } else {
+    // Remove from both
+    fromLedger = fromLedger.filter(tx => tx.id !== id);
+    toLedger = toLedger.filter(tx => tx.id !== id);
+    ledger = fromLedger;
+  }
+  // Save both back
+  localStorage.setItem(entry.transferredFrom, JSON.stringify(fromLedger));
+  localStorage.setItem(entry.transferredTo, JSON.stringify(toLedger));
+}
+
 function formatDateForInput(dateString) {
   // Split by "-" → [DD, MM, YYYY]
   let [day, month, year] = dateString.split("-");
   return `${day.padStart(2,"0")}-${month.padStart(2,"0")}-${year}`;
 }
+
 function editEntry(id) {
   scrollToTop(300);
   // Find entry in ledger by ID
@@ -330,9 +349,10 @@ function editEntry(id) {
     console.error("Entry not found for ID:", id);
     return;
   }
+  
   // Fill form with entry values
   document.getElementById("date").value = formatDateForInput(entry.date);
-
+  
   document.getElementById("desc").value = entry.desc;
   document.getElementById("account").value = entry.account;
   document.getElementById("amount").value = entry.amount;
@@ -347,42 +367,31 @@ function editEntry(id) {
   renderCharts(ledger);
 }
 
-function deleteEntry(id,desc) {
+function deleteEntry(id, desc) {
   if (confirm(`Delete ${desc} entry?`)) {
     saveLastState();
     // Find which ledger contains the entry
-  let entry = ledger.find(tx => tx.id === id);
-  if (!entry) return alert("not found"); // not found in any ledger
-
-  if (entry.transactionType === "linked-transaction") {
-    const note = `NOTE: This is a linked-transaction meaning it will delete the transaction from both ${entry.transferredFrom} and ${entry.transferredTo} ledgers,Do you want to you continue?`;
-    if(!confirm(note)) return;
+    let entry = ledger.find(tx => tx.id === id);
+    if (!entry) return alert("not found"); // not found in any ledger
     
-    let fromLedger = ledger;
-    let toLedger = JSON.parse(localStorage.getItem(entry.transferredTo) || "[]");
-    
-    // Remove from both
-    fromLedger = fromLedger.filter(tx => tx.id !== id);
-    toLedger = toLedger.filter(tx => tx.id !== id);
-    
-    ledger = fromLedger;
-    // Save both back
-    localStorage.setItem(entry.transferredFrom, JSON.stringify(fromLedger));
-    localStorage.setItem(entry.transferredTo, JSON.stringify(toLedger));
-  }else {
-
-    const idx = ledger.findIndex(tx => tx.id === id);
-    // Find index of entry by ID
-    if (idx !== -1) {
-      ledger.splice(idx, 1);
+    if (entry.transactionType === "linked-transaction") {
+      const note = `NOTE: This is a linked-transaction meaning it will delete the transaction from both ${entry.transferredFrom} and ${entry.transferredTo} ledgers,Do you want to you continue?`;
+      if (!confirm(note)) return;
+      linkedModify(id, entry, 'delete')
+    } else {
+      const idx = ledger.findIndex(tx => tx.id === id);
+      // Find index of entry by ID
+      if (idx !== -1) {
+        ledger.splice(idx, 1);
+      }
+      saveToLocalStorage();
     }
-    saveToLocalStorage();
-  }
-  renderTable();
-  renderCharts(ledger);
-  clearFilters();
+    renderTable();
+    renderCharts(ledger);
+    clearFilters();
   }
 }
+
 function exportJSON() {
   const blob = new Blob([JSON.stringify(ledger, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -470,7 +479,7 @@ async function importTXT(file) {
     try {
       const lines = e.target.result.split("\n").filter(l => l.trim() !== "");
       let importedLedger = [];
-
+      
       for (let line of lines) {
         const [date, account, desc, type, amount] = line.split(",");
         importedLedger.push({
@@ -482,7 +491,7 @@ async function importTXT(file) {
           amount: parseFloat(amount) || 0
         });
       }
-
+      
       finalizeImport(file, importedLedger);
     } catch (err) {
       alert("Error importing TXT ❌");
@@ -500,14 +509,14 @@ async function importCSV(file) {
       const rows = e.target.result.split("\n").map(r => r.split(","));
       const headers = rows.shift().map(h => h.trim().toLowerCase());
       let importedLedger = [];
-
+      
       for (let row of rows) {
         if (row.length < 4) continue;
         const entry = {};
         headers.forEach((h, i) => {
           entry[h] = row[i]?.trim();
         });
-
+        
         importedLedger.push({
           id: await generateTransactionId(entry.date, entry.description, parseFloat(entry.amount)),
           date: entry.date,
@@ -517,7 +526,7 @@ async function importCSV(file) {
           amount: parseFloat(entry.amount) || 0
         });
       }
-
+      
       finalizeImport(file, importedLedger);
     } catch (err) {
       alert("Error importing CSV ❌");
@@ -547,7 +556,7 @@ async function importXLSX(file) {
           amount: parseFloat(row.Amount) || 0
         });
       }
-
+      
       finalizeImport(file, importedLedger);
     } catch (err) {
       alert("Error importing Excel ❌");
@@ -564,18 +573,18 @@ async function importPDF(file) {
     try {
       const pdfData = new Uint8Array(e.target.result);
       const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
-
+      
       let textContent = "";
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
         textContent += content.items.map(i => i.str).join(" ") + "\n";
       }
-
+      
       // Very basic assumption: CSV-like format inside PDF text
       const lines = textContent.split("\n").filter(l => l.includes(","));
       let importedLedger = [];
-
+      
       for (let line of lines) {
         const [date, account, desc, type, amount] = line.split(",");
         importedLedger.push({
@@ -587,7 +596,7 @@ async function importPDF(file) {
           amount: parseFloat(amount) || 0
         });
       }
-
+      
       finalizeImport(file, importedLedger);
     } catch (err) {
       alert("Error importing PDF ❌");
@@ -603,7 +612,7 @@ async function finalizeImport(file, importedLedger) {
     const baseName = file.name.replace(/\.[^/.]+$/, ""); // remove extension
     let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
     ledgers = [...new Set(ledgers)];
-
+    
     if (ledgers.includes(baseName)) {
       let newName = prompt(`A ledger named "${baseName}" already exists. Enter a different name:`);
       if (!newName || ledgers.includes(newName)) {
@@ -616,7 +625,7 @@ async function finalizeImport(file, importedLedger) {
       currentLedgerKey = baseName;
       fileName = baseName;
     }
-
+    
     // Ensure IDs
     for (let entry of importedLedger) {
       if (!entry.id) {
@@ -624,22 +633,22 @@ async function finalizeImport(file, importedLedger) {
       }
       if (!entry.account) entry.account = "Miscellaneous";
     }
-
+    
     ledger = importedLedger;
     localStorage.setItem(currentLedgerKey, JSON.stringify(ledger));
-
+    
     if (!ledgers.includes(currentLedgerKey)) {
       ledgers.push(currentLedgerKey);
       localStorage.setItem("ledgers", JSON.stringify(ledgers));
     }
-
+    
     localStorage.setItem("currentLedgerKey", currentLedgerKey);
-
+    
     document.getElementById("filename").value = fileName;
     updateLedgerSelect();
     renderTable();
     renderCharts(ledger);
-
+    
     alert(`Ledger ${currentLedgerKey} imported successfully ✅`);
   } catch (err) {
     alert("Error finalizing import ❌");
@@ -654,14 +663,15 @@ function handleImport(event) {
   // other import formats pending
   const ext = file.name.split(".").pop().toLowerCase();
   switch (ext) {
-    case "json": return importJSON(event);
-   /* case "txt": return importTXT(file);
-    case "csv": return importCSV(file);
-    case "xls":
-    case "xlsx": return importXLSX(file);
-    case "pdf": return importPDF(file);
-   */
-   default:
+    case "json":
+      return importJSON(event);
+      /* case "txt": return importTXT(file);
+       case "csv": return importCSV(file);
+       case "xls":
+       case "xlsx": return importXLSX(file);
+       case "pdf": return importPDF(file);
+      */
+    default:
       alert("Unsupported file format ❌");
   }
 }
@@ -693,18 +703,19 @@ function handleExport() {
   }
   return;
 }
+
 function exportToExcel() {
   const table = document.querySelector('table');
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.table_to_sheet(table);
-
+  
   // Calculate closing balance
   let closingBalance = 0;
   ledger.forEach(entry => {
     if (entry.type === "income") closingBalance += entry.amount;
     else closingBalance -= entry.amount;
   });
-
+  
   // Add closing balance row after table
   const rowIndex = XLSX.utils.decode_range(ws['!ref']).e.r + 2;
   const cellRef = `A${rowIndex + 1}`;
@@ -715,7 +726,7 @@ function exportToExcel() {
       font: { bold: true, sz: 14 }
     }
   };
-
+  
   XLSX.utils.book_append_sheet(wb, ws, "Records");
   XLSX.writeFile(wb, currentLedgerKey + ".xlsx");
 }
@@ -847,28 +858,35 @@ async function exportToPDF() {
   // ====== SAVE ======
   doc.save(`${ledgerName}.pdf`);
 }
+
 function exportToPNG() {
   const table = document.querySelector('table');
-if (!table) {
-  alert("No table found to export!");
-  return;
+  if (!table) {
+    alert("No table found to export!");
+    return;
+  }
+  html2canvas(table, { scale: 2 }).then(canvas => {
+    const link = document.createElement("a");
+    link.download = `${currentLedgerKey || "ledger"}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }).catch(err => {
+    alert('error')
+    console.error("Error exporting table as PNG:", err);
+  });
 }
-html2canvas(table, { scale: 2 }).then(canvas => {
-  const link = document.createElement("a");
-  link.download = `${currentLedgerKey || "ledger"}.png`;
-  link.href = canvas.toDataURL("image/png");
-  link.click();
-}).catch(err => {
-  alert('error')
-  console.error("Error exporting table as PNG:", err);
-});
+
+function downloadAllJSON() {
+  
+  alert(true)
 }
+
 function setToday() {
   const dateInput = document.getElementById('date');
-const today = new Date().toISOString().split('T')[0];
-dateInput.value = today;
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.value = today;
   return today;
-
+  
 }
 // Set today's date as default in the date input
 window.addEventListener('DOMContentLoaded', () => {
@@ -877,7 +895,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function applyFilters() {
   isUsingFilter = true;
-
+  
   const desc = document.getElementById('searchDesc').value.toLowerCase();
   const type = document.getElementById('filterType').value;
   const startDate = document.getElementById('startDate').value;
@@ -885,7 +903,7 @@ function applyFilters() {
   const minAmount = parseFloat(document.getElementById('minAmount').value);
   const maxAmount = parseFloat(document.getElementById('maxAmount').value);
   const selectedAccount = document.getElementById('filter-accounts').value;
-
+  
   const filtered = ledger.filter(entry => {
     const matchesDesc = desc ? entry.desc.toLowerCase().includes(desc) : true;
     const matchesType = type ? entry.type === type : true;
@@ -894,7 +912,7 @@ function applyFilters() {
     const matchesMinAmount = !isNaN(minAmount) ? entry.amount >= minAmount : true;
     const matchesMaxAmount = !isNaN(maxAmount) ? entry.amount <= maxAmount : true;
     const matchesAccount = selectedAccount ? entry.account === selectedAccount : true;
-
+    
     return (
       matchesDesc &&
       matchesType &&
@@ -905,7 +923,7 @@ function applyFilters() {
       matchesAccount
     );
   });
-
+  
   globalFilterData = filtered;
   renderTable(filtered);
   renderCharts(filtered);
@@ -924,10 +942,11 @@ function clearFilters() {
   document.getElementById('minAmount').value = '';
   document.getElementById('maxAmount').value = '';
   document.getElementById('filter-accounts').value = '';
-
+  
   renderTable();
-  refreshReports() ;
+  refreshReports();
 }
+
 function saveToLocalStorage() {
   localStorage.setItem(currentLedgerKey, JSON.stringify(ledger));
   localStorage.setItem("fileName_" + currentLedgerKey, fileName);
@@ -937,6 +956,7 @@ function saveLastState() {
   lastState = JSON.stringify(ledger);
   redoState = null; // Clear redo history on new action
 }
+
 function undoChange() {
   if (lastState) {
     redoState = JSON.stringify(ledger);
@@ -967,19 +987,19 @@ function renderCharts(data = ledger) {
   const ctxPie = document.getElementById("pieChart").getContext("2d");
   const ctxBar = document.getElementById("barChart").getContext("2d");
   const ctxLine = document.getElementById("lineChart").getContext("2d");
-
+  
   let totalIncome = 0;
   let totalExpense = 0;
   let balance = 0;
   let monthlyTotals = {};
   let balanceOverTime = [];
-
+  
   const sortedData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
-
+  
   sortedData.forEach(entry => {
     const month = new Date(entry.date).toISOString().slice(0, 7); // YYYY-MM
     if (!monthlyTotals[month]) monthlyTotals[month] = { income: 0, expense: 0 };
-
+    
     if (entry.type === "income") {
       totalIncome += entry.amount;
       monthlyTotals[month].income += entry.amount;
@@ -989,15 +1009,15 @@ function renderCharts(data = ledger) {
       monthlyTotals[month].expense += entry.amount;
       balance -= entry.amount;
     }
-
+    
     balanceOverTime.push({ date: entry.date, balance });
   });
-
+  
   // Destroy old charts if exist
   pieChart?.destroy();
   barChart?.destroy();
   lineChart?.destroy();
-
+  
   pieChart = new Chart(ctxPie, {
     type: "pie",
     data: {
@@ -1012,23 +1032,22 @@ function renderCharts(data = ledger) {
       plugins: { title: { display: true, text: "Income vs Expense" } }
     }
   });
-
+  
   barChart = new Chart(ctxBar, {
     type: "bar",
     data: {
       labels: Object.keys(monthlyTotals),
       datasets: [
-        {
-          label: "Income",
-          data: Object.values(monthlyTotals).map(m => m.income),
-          backgroundColor: "#4caf50"
-        },
-        {
-          label: "Expense",
-          data: Object.values(monthlyTotals).map(m => m.expense),
-          backgroundColor: "#f44336"
-        }
-      ]
+      {
+        label: "Income",
+        data: Object.values(monthlyTotals).map(m => m.income),
+        backgroundColor: "#4caf50"
+      },
+      {
+        label: "Expense",
+        data: Object.values(monthlyTotals).map(m => m.expense),
+        backgroundColor: "#f44336"
+      }]
     },
     options: {
       responsive: true,
@@ -1038,7 +1057,7 @@ function renderCharts(data = ledger) {
       }
     }
   });
-
+  
   lineChart = new Chart(ctxLine, {
     type: "line",
     data: {
@@ -1118,8 +1137,8 @@ async function createNewLedger() {
   }
   
   const newLedger = [{
-    id : await generateTransactionId(getCurrentDate(),"Opening Balance",0),
-    account : 'Capital',
+    id: await generateTransactionId(getCurrentDate(), "Opening Balance", 0),
+    account: 'Capital',
     date: getCurrentDate(),
     desc: "Opening Balance",
     type: "Income",
@@ -1145,13 +1164,13 @@ async function createNewLedger() {
 document.getElementById("ledgerSelect").addEventListener("change", function(e) {
   const selected = e.target.value;
   if (!selected) return;
-
+  
   const data = JSON.parse(localStorage.getItem(selected) || "[]");
   currentLedgerKey = selected;
   localStorage.setItem("currentLedgerKey", currentLedgerKey);
   ledger = data;
   document.getElementById("filename").value = currentLedgerKey;
-
+  
   renderTable();
   renderCharts(ledger);
 });
@@ -1161,19 +1180,19 @@ window.onload = async function() {
   buildAccountSelector();
   
   let savedLedgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
-
+  
   // Remove duplicates
   savedLedgers = [...new Set(savedLedgers)];
-
+  
   // Save cleaned version
   localStorage.setItem("ledgers", JSON.stringify(savedLedgers));
-
+  
   // If no ledgers, create only one "Untitled"
   if (savedLedgers.length === 0) {
     const defaultLedger = [{
-      id : await generateTransactionId(getCurrentDate(),"Opening Balance",0),
+      id: await generateTransactionId(getCurrentDate(), "Opening Balance", 0),
       date: getCurrentDate(),
-      account : 'Capital',
+      account: 'Capital',
       desc: "Opening Balance",
       type: "Income",
       amount: 0
@@ -1184,14 +1203,14 @@ window.onload = async function() {
     localStorage.setItem(defaultName, JSON.stringify(defaultLedger));
     localStorage.setItem("currentLedgerKey", defaultName);
   }
-
+  
   // Load the current ledger
   currentLedgerKey = localStorage.getItem("currentLedgerKey") || "Untitled";
   ledger = JSON.parse(localStorage.getItem(currentLedgerKey) || "[]");
-
+  
   fileName = currentLedgerKey;
   document.getElementById("filename").value = fileName;
-
+  
   updateLedgerSelect();
   renderTable();
   renderCharts(ledger);
@@ -1286,65 +1305,70 @@ document.getElementById("deleteLedgerBtn").addEventListener("click", () => {
 
 
 
-function generateReports(data ) {
+function generateReports(data) {
   let dailyTotals = {};
   let monthlyTotals = {};
   let yearlyTotals = {};
   let incomes = [];
   let expenses = [];
-
+  
   data.forEach(txn => {
     let dateObj = new Date(txn.date);
     let dayKey = txn.date;
     let monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}`;
     let yearKey = dateObj.getFullYear();
-
+    
     // Group totals
     if (txn.type === "income") {
       incomes.push(txn.amount);
       dailyTotals[dayKey] = (dailyTotals[dayKey] || { income: 0, expense: 0 });
       dailyTotals[dayKey].income += txn.amount;
-
+      
       monthlyTotals[monthKey] = (monthlyTotals[monthKey] || { income: 0, expense: 0 });
       monthlyTotals[monthKey].income += txn.amount;
-
+      
       yearlyTotals[yearKey] = (yearlyTotals[yearKey] || { income: 0, expense: 0 });
       yearlyTotals[yearKey].income += txn.amount;
     } else {
       expenses.push(txn.amount);
       dailyTotals[dayKey] = (dailyTotals[dayKey] || { income: 0, expense: 0 });
       dailyTotals[dayKey].expense += txn.amount;
-
+      
       monthlyTotals[monthKey] = (monthlyTotals[monthKey] || { income: 0, expense: 0 });
       monthlyTotals[monthKey].expense += txn.amount;
-
+      
       yearlyTotals[yearKey] = (yearlyTotals[yearKey] || { income: 0, expense: 0 });
       yearlyTotals[yearKey].expense += txn.amount;
     }
   });
-
+  
   // Averages
   const avgDailyIncome = (Object.values(dailyTotals).reduce((sum, day) => sum + day.income, 0) / Object.keys(dailyTotals).length) || 0;
   const avgDailyExpense = (Object.values(dailyTotals).reduce((sum, day) => sum + day.expense, 0) / Object.keys(dailyTotals).length) || 0;
-
+  
   const avgMonthlyIncome = (Object.values(monthlyTotals).reduce((sum, m) => sum + m.income, 0) / Object.keys(monthlyTotals).length) || 0;
   const avgMonthlyExpense = (Object.values(monthlyTotals).reduce((sum, m) => sum + m.expense, 0) / Object.keys(monthlyTotals).length) || 0;
-
+  
   const avgYearlyIncome = (Object.values(yearlyTotals).reduce((sum, y) => sum + y.income, 0) / Object.keys(yearlyTotals).length) || 0;
   const avgYearlyExpense = (Object.values(yearlyTotals).reduce((sum, y) => sum + y.expense, 0) / Object.keys(yearlyTotals).length) || 0;
-
+  
   // Min/Max
   const highestIncome = incomes.length ? Math.max(...incomes) : 0;
   const lowestIncome = incomes.length ? Math.min(...incomes) : 0;
   const highestExpense = expenses.length ? Math.max(...expenses) : 0;
   const lowestExpense = expenses.length ? Math.min(...expenses) : 0;
-
+  
   return {
-    avgDailyIncome, avgDailyExpense,
-    avgMonthlyIncome, avgMonthlyExpense,
-    avgYearlyIncome, avgYearlyExpense,
-    highestIncome, lowestIncome,
-    highestExpense, lowestExpense
+    avgDailyIncome,
+    avgDailyExpense,
+    avgMonthlyIncome,
+    avgMonthlyExpense,
+    avgYearlyIncome,
+    avgYearlyExpense,
+    highestIncome,
+    lowestIncome,
+    highestExpense,
+    lowestExpense
   };
 }
 
@@ -1435,19 +1459,20 @@ function renderAdvancedReports(data = ledger) {
     .join("") :
     "<li>No transactions found</li>";
 }
+
 function generateUpcomingExpectations(data) {
   const now = new Date();
   const currentMonth = now.getMonth();
   const lastMonth = (currentMonth - 1 + 12) % 12;
   const currentYear = now.getFullYear();
   const lastMonthYear = lastMonth === 11 ? currentYear - 1 : currentYear;
-
+  
   // Filter last month's transactions
   const lastMonthData = data.filter(txn => {
     const txnDate = new Date(txn.date);
     return txnDate.getMonth() === lastMonth && txnDate.getFullYear() === lastMonthYear;
   });
-
+  
   // Group last month's transactions by desc + amount + type
   const recurringMap = {};
   lastMonthData.forEach(txn => {
@@ -1455,7 +1480,7 @@ function generateUpcomingExpectations(data) {
     const key = JSON.stringify({ desc, amount: txn.amount, type: txn.type });
     recurringMap[key] = (recurringMap[key] || 0) + 1;
   });
-
+  
   // Get current month's transactions
   const currentMonthData = data.filter(txn => {
     const txnDate = new Date(txn.date);
@@ -1464,12 +1489,12 @@ function generateUpcomingExpectations(data) {
   const currentMonthKeys = new Set(
     currentMonthData.map(txn => JSON.stringify({ desc: txn.desc?.trim() || "No Description", amount: txn.amount, type: txn.type }))
   );
-
+  
   // Expected transactions for this month (not yet recorded)
   const expectedTransactions = Object.entries(recurringMap)
     .filter(([key, count]) => count >= 1 && !currentMonthKeys.has(key))
     .map(([key]) => JSON.parse(key));
-
+  
   return expectedTransactions;
 }
 
@@ -1531,11 +1556,11 @@ function updateSpecialInsights(data = ledger) {
 // Auto-update on changes
 function refreshReports() {
   setToday();
-saveToLocalStorage();
-renderCharts();
-renderReports();
-renderAdvancedReports();
-renderUpcomingExpectations();
+  saveToLocalStorage();
+  renderCharts();
+  renderReports();
+  renderAdvancedReports();
+  renderUpcomingExpectations();
   updateSpecialInsights();
   buildFilterAccounts();
 }
@@ -1608,7 +1633,7 @@ function showLowBalancePlan(balance) {
   // Get remaining days in this month
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const remainingDays = daysInMonth - today.getDate() + 1; // include today
-  if(balance < 0){
+  if (balance < 0) {
     alertDiv.style.display = "block";
     alertDiv.innerHTML = `
       <h2><i class="fa-solid fa-warning"></i> Low Balance Alert</h2>
