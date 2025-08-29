@@ -293,7 +293,6 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
           desc: description,
           amount
         };
-        console.log(correctEntry)
         // Update both ledgers properly
         linkedModify(editingId, correctEntry, 'edit');
       } else {
