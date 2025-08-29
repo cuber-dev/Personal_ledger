@@ -291,11 +291,9 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
           date,
           account,
           desc: description,
-          amount,
-          type
+          amount
         };
-        correctEntry.type = ledger[idx].type;
-        
+        console.log(correctEntry)
         // Update both ledgers properly
         linkedModify(editingId, correctEntry, 'edit');
       } else {
@@ -316,6 +314,8 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
     const entry = { id, date, desc: description, account, amount, type };
     ledger.push(entry);
   }
+  document.getElementById("type").disabled= false
+
   e.target.reset();
   renderTable();
   saveToLocalStorage();
@@ -340,27 +340,27 @@ function clearEntry() {
 }
 
 function linkedModify(id, entry, action) {
-  // Load both ledgers fresh
   let fromLedger = JSON.parse(localStorage.getItem(entry.transferredFrom) || "[]");
   let toLedger = JSON.parse(localStorage.getItem(entry.transferredTo) || "[]");
   
   if (action === 'edit') {
-    // Find the entry in toLedger by ID
-    const linkedIdx = toLedger.findIndex(tx => tx.id === id);
-    if (linkedIdx !== -1) {
-      toLedger[linkedIdx] = entry; // Update existing
-    } else {
-      toLedger.push(entry); // If missing, add once (not duplicate blindly)
-    }
-    
-    // Update also in fromLedger
+    // Force expense in fromLedger
     const fromIdx = fromLedger.findIndex(tx => tx.id === id);
     if (fromIdx !== -1) {
-      fromLedger[fromIdx] = entry;
+      fromLedger[fromIdx] = { ...entry, type: "expense" };
+    } else {
+      fromLedger.push({ ...entry, type: "expense" });
+    }
+    
+    // Force income in toLedger
+    const linkedIdx = toLedger.findIndex(tx => tx.id === id);
+    if (linkedIdx !== -1) {
+      toLedger[linkedIdx] = { ...entry, type: "income" };
+    } else {
+      toLedger.push({ ...entry, type: "income" });
     }
     
   } else if (action === 'delete') {
-    // Remove only the matching transaction by ID
     fromLedger = fromLedger.filter(tx => tx.id !== id);
     toLedger = toLedger.filter(tx => tx.id !== id);
   }
@@ -369,14 +369,13 @@ function linkedModify(id, entry, action) {
   localStorage.setItem(entry.transferredFrom, JSON.stringify(fromLedger));
   localStorage.setItem(entry.transferredTo, JSON.stringify(toLedger));
   
-  // If current in-memory ledger is the one we modified, refresh it
+  // Refresh in-memory ledger
   if (currentLedgerKey === entry.transferredFrom) {
     ledger = fromLedger;
   } else if (currentLedgerKey === entry.transferredTo) {
     ledger = toLedger;
   }
 }
-
 function formatDateForInput(dateString) {
   // Split by "-" → [DD, MM, YYYY]
   let [day, month, year] = dateString.split("-");
@@ -400,6 +399,7 @@ function editEntry(id) {
   document.getElementById("amount").value = entry.amount;
   document.getElementById("type").value = entry.type.toLowerCase();
   
+  if(entry.transactionType) document.getElementById("type").disabled= true
   // Store ID instead of index
   editingId = id;
   
