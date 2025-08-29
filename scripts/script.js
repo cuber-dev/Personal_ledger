@@ -355,7 +355,7 @@ function deleteEntry(id,desc) {
   if (!entry) return alert("not found"); // not found in any ledger
 
   if (entry.transactionType === "linked-transaction") {
-    const note = `NOTE: This will also delete the transaction from both ${entry.transferredFrom} and ${entry.transferredTo} ledgers?`;
+    const note = `NOTE: This is a linked-transaction meaning it will delete the transaction from both ${entry.transferredFrom} and ${entry.transferredTo} ledgers,Do you want to you continue?`;
     if(!confirm(note)) return;
     
     let fromLedger = ledger;
