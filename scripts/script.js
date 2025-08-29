@@ -1297,19 +1297,13 @@ document.getElementById("filename").addEventListener("change", function() {
   updateLedgerSelect();
 });
 
-
-document.getElementById("deleteLedgerBtn").addEventListener("click", () => {
-  if (!currentLedgerKey) return alert("No ledger selected to delete.");
-  
-  const confirmation = confirm(`Are you sure you want to delete "${fileName}"?`);
-  if (!confirmation) return;
-  
+function deleteLedger(ledgerName) {
   // Remove from localStorage
-  localStorage.removeItem(currentLedgerKey);
+  localStorage.removeItem(ledgerName);
   
   // Remove from ledger list
   let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
-  ledgers = ledgers.filter(key => key !== currentLedgerKey);
+  ledgers = ledgers.filter(key => key !== ledgerName);
   localStorage.setItem("ledgers", JSON.stringify(ledgers));
   
   // Reset variables and UI
@@ -1343,6 +1337,18 @@ document.getElementById("deleteLedgerBtn").addEventListener("click", () => {
   ledgerSelect.value = currentLedgerKey; // ← set selected <option>
   updateLedgerSelect();
   document.getElementById("filename").value = fileName; // ← update filename input
+}
+document.getElementById("deleteLedgerBtn").addEventListener("click", () => {
+  if (!currentLedgerKey) return alert("No ledger selected to delete.");
+  const hasLinked = ledger.some(tx => tx.transactionType === "linked-transaction");
+  if (hasLinked) {
+    alert("Cannot delete the current Ledger because of linked-transactions, please delete them first");
+    return;
+  }
+  const confirmation = confirm(`Are you sure you want to delete "${currentLedgerKey}"?`);
+  if (!confirmation) return;
+  
+  deleteLedger(currentLedgerKey);
 });
 
 
