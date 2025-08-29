@@ -107,28 +107,31 @@ async function generateTransactionId(date, desc, amount) {
     if (!from || !to || from === to || !acc || isNaN(amount) || amount <= 0) {
       return alert("Please fill all fields correctly.");
     }
+    const txId = await generateTransactionId(date,amount,desc);
 console.log(desc)
     // Create transaction objects
     const txOut = {
-      id: await generateTransactionId(date,amount,desc),
+      id: txId,
       date,
       account: acc,
       type: "expense",
       transactionName: "transfer-out",
       transactionType: "linked-transaction",
+      transferredFrom : from,
       transferredTo : to,
       amount,
       desc: desc + ` To Ledger: ${to}`
     };
 
     const txIn = {
-      id: await generateTransactionId(date,amount,desc),
+      id: txId,
       date,
       account: acc,
       type: "income",
       transactionName: "transfer-in",
       transactionType: "linked-transaction",
       transferredFrom : from,
+      transferredTo : to,
       amount,
       desc: desc + ` From Ledger: ${from}`
     };
