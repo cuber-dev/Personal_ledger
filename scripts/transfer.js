@@ -108,7 +108,6 @@ async function generateTransactionId(date, desc, amount) {
       return alert("Please fill all fields correctly.");
     }
     const txId = await generateTransactionId(date,amount,desc);
-console.log(desc)
     // Create transaction objects
     const txOut = {
       id: txId,
@@ -135,7 +134,6 @@ console.log(desc)
       amount,
       desc: desc + ` From Ledger: ${from}`
     };
-    console.log(txOut,txIn)
     // Save to localStorage
     let fromData = JSON.parse(localStorage.getItem(from) || "[]");
     fromData.push(txOut);

@@ -350,16 +350,37 @@ function editEntry(id) {
 function deleteEntry(id,desc) {
   if (confirm(`Delete ${desc} entry?`)) {
     saveLastState();
+    // Find which ledger contains the entry
+  let entry = ledger.find(tx => tx.id === id);
+  if (!entry) return alert("not found"); // not found in any ledger
+
+  if (entry.transactionType === "linked-transaction") {
+    const note = `NOTE: This will also delete the transaction from both ${entry.transferredFrom} and ${entry.transferredTo} ledgers?`;
+    if(!confirm(note)) return;
+    
+    let fromLedger = ledger;
+    let toLedger = JSON.parse(localStorage.getItem(entry.transferredTo) || "[]");
+    
+    // Remove from both
+    fromLedger = fromLedger.filter(tx => tx.id !== id);
+    toLedger = toLedger.filter(tx => tx.id !== id);
+    
+    ledger = fromLedger;
+    // Save both back
+    localStorage.setItem(entry.transferredFrom, JSON.stringify(fromLedger));
+    localStorage.setItem(entry.transferredTo, JSON.stringify(toLedger));
+  }else {
+
     const idx = ledger.findIndex(tx => tx.id === id);
     // Find index of entry by ID
     if (idx !== -1) {
       ledger.splice(idx, 1);
     }
-    
-    renderTable();
     saveToLocalStorage();
-    renderCharts(ledger);
-    clearFilters();
+  }
+  renderTable();
+  renderCharts(ledger);
+  clearFilters();
   }
 }
 function exportJSON() {
