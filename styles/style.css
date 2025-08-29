@@ -12,10 +12,11 @@
 * {
   box-sizing: border-box;
 }
+
 .theme-selector {
   max-width: 230px;
   margin: 0 auto;
-  margin-bottom : 1rem;
+  margin-bottom: 1rem;
   background: var(--bg-color);
   padding: 8px 12px;
   border: 1px solid var(--border-color);
@@ -40,9 +41,11 @@
   font-size: 14px;
   cursor: pointer;
 }
-select{
+
+select {
   border: 1px solid var(--border-color);
 }
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--secondary-color);
@@ -56,28 +59,32 @@ body {
   font-style: normal;
 }
 
-a{
-  color : var(--accent-color);
+a {
+  color: var(--accent-color);
 }
+
 h1 {
   text-align: center;
   margin-bottom: 30px;
   color: var(--primary-color);
   line-height: 2.3rem;
-
+  
 }
 
-.heading{
-  margin-top : 0;
+.heading {
+  margin-top: 0;
 }
-h2{
+
+h2 {
   text-align: center;
   line-height: 2.5rem;
-
+  
 }
+
 #fileHeading {
   font-size: 1.5rem;
 }
+
 #note {
   margin: 40px auto;
   padding: 20px;
@@ -87,32 +94,39 @@ h2{
   border-radius: 5px;
   color: var(--text-color);
   font-size: 15px;
-  width : max-content;
+  width: max-content;
   max-width: 100%;
-  word-wrap : break-word;
-   word-break: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
-.white-card,.card{
+
+.white-card,
+.card {
   background: var(--bg-color);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(106, 13, 173, 0.1); /* subtle purple shadow */
+  box-shadow: 0 4px 12px rgba(106, 13, 173, 0.1);
+  /* subtle purple shadow */
   margin-bottom: 20px;
 }
-.card h2{
+
+.card h2 {
   margin-top: 0;
 }
-.card .line{
+
+.card .line {
   background: var(--secondary-color);
-  padding:.8rem .3rem;
+  padding: .8rem .3rem;
   border-radius: .2rem;
   text-align: center;
   line-height: 1.6rem;
 }
+
 #advancedReports {
   margin-top: 20px;
   padding: 15px;
 }
+
 #upcomingSection {
   background: var(--secondary-color);
   border: 1px solid var(--border-color);
@@ -135,6 +149,7 @@ h2{
 #upcomingSection li:last-child {
   border-bottom: none;
 }
+
 .report-section {
   background: var(--secondary-color);
   border: 1px solid var(--border-color);
@@ -166,11 +181,13 @@ h2{
 .report-section li:last-child {
   border-bottom: none;
 }
+
 form {
   background: var(--bg-color);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(106, 13, 173, 0.1); /* subtle purple shadow */
+  box-shadow: 0 4px 12px rgba(106, 13, 173, 0.1);
+  /* subtle purple shadow */
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
@@ -181,14 +198,16 @@ form .inputs-container {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 15px;
 }
-form .account-container{
- margin-bottom: 1rem;
+
+form .account-container {
+  margin-bottom: 1rem;
 }
 
 form input,
 form select,
-form button ,
-input,select{
+form button,
+input,
+select {
   padding: 10px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -203,7 +222,7 @@ form .submit {
 
 form input:focus,
 form select:focus,
-select:focus{
+select:focus {
   border-color: var(--accent-color);
   outline: none;
 }
@@ -219,12 +238,14 @@ form button {
 form button:hover {
   background-color: var(--hover-color);
 }
+
 .export-container {
-  display :flex;
+  display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap:0 1rem;
+  gap: 0 1rem;
 }
+
 /* Balance summary */
 .summary {
   margin-top: 10px;
@@ -257,18 +278,19 @@ button {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
- width: 100%;
+  width: 100%;
 }
 
 button:hover {
   background-color: var(--hover-color);
 }
 
-.export-btn,.import-btn {
+.export-btn,
+.import-btn {
   margin: .5rem 0;
   padding: 12px 18px;
   max-width: 12rem;
-
+  
 }
 
 /* Table container for mobile scroll */
@@ -323,54 +345,61 @@ tr:nth-child(even) {
   background-color: var(--danger-color);
   color: white;
 }
+
 .import-label {
   display: inline-block;
   padding: 8px 16px;
   background-color: var(--accent-color);
   color: #fff;
-
+  
   border: 1px solid var(--border-color);
   border-radius: 5px;
   cursor: pointer;
   text-align: center;
   transition: background-color 0.3s ease;
-  width : 100%;
+  width: 100%;
   max-width: 12rem;
-
+  
 }
 
 .import-label:hover {
   background-color: var(--hover-color);
 }
+
 /* Responsive tweaks */
 @media (max-width: 600px) {
   body {
     padding: 10px;
   }
-.theme-selector {
-  max-width: 100%;
-}
+  
+  .theme-selector {
+    max-width: 100%;
+  }
+  
   form {
     grid-template-columns: 1fr;
   }
-
+  
   .summary {
     text-align: center;
     margin-top: 20px;
   }
-
+  
   button {
     width: 100%;
   }
-  .report-section li,#upcomingSection li {
-    padding: .5rem .6rem;
-}
-
-  .export-btn,
-.import-btn,.import-label {
-  max-width: 100%;
   
-}
+  .report-section li,
+  #upcomingSection li {
+    padding: .5rem .6rem;
+  }
+  
+  .export-btn,
+  .import-btn,
+  .import-label {
+    max-width: 100%;
+    
+  }
 }
 
 /* Conditional colors for amounts */
@@ -417,6 +446,7 @@ ul {
   gap: 10px;
   margin-bottom: 1rem;
 }
+
 .date-labels {
   justify-content: space-around;
 }
@@ -433,6 +463,7 @@ ul {
   flex: 1;
   transition: border 0.3s ease;
 }
+
 /* Navbar base */
 .navbar {
   display: flex;
@@ -462,11 +493,13 @@ ul {
   border-radius: 6px;
   transition: background 0.3s;
 }
+
 .nav-links li a.active {
   background: var(--accent-color);
   color: var(--bg-color);
   font-weight: bold;
 }
+
 .nav-links li a:hover {
   background: var(--hover-color);
   color: var(--bg-color);
@@ -508,6 +541,7 @@ ul {
     display: block;
   }
 }
+
 .filter-row button {
   background-color: var(--accent-color);
   color: #fff;
@@ -531,7 +565,8 @@ ul {
   text-align: center;
 }
 
-.filename-container label ,label{
+.filename-container label,
+label {
   font-weight: bold;
   color: var(--text-color);
 }
@@ -543,17 +578,19 @@ ul {
 #filename:focus {
   border-color: var(--primary-color);
 }
-.summary-container{
+
+.summary-container {
   background-color: var(--bg-color);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
- padding : 1.5rem 1.2rem;
- margin : 1.5rem 0;
- border-radius: .5rem;
- display: flex;
- flex-direction: column;
+  padding: 1.5rem 1.2rem;
+  margin: 1.5rem 0;
+  border-radius: .5rem;
+  display: flex;
+  flex-direction: column;
 }
+
 #summarySection {
-  flex:1;
+  flex: 1;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -582,20 +619,23 @@ ul {
 }
 
 .income-summary {
-  border-left: 5px solid #27ae60; /* Green border */
+  border-left: 5px solid #27ae60;
+  /* Green border */
 }
 
 .expense-summary {
-  border-left: 5px solid #c0392b; /* Red border */
+  border-left: 5px solid #c0392b;
+  /* Red border */
 }
 
 .balance-summary {
-  border-left: 5px solid #2980b9; /* Blue border */
+  border-left: 5px solid #2980b9;
+  /* Blue border */
 }
 
-.changes-container{
+.changes-container {
   display: flex;
-  gap : 1rem;
+  gap: 1rem;
 }
 
 .chart-card {
@@ -604,8 +644,8 @@ ul {
   border-radius: 12px;
   padding: 1rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  margin : 1rem 0;
-
+  margin: 1rem 0;
+  
 }
 
 .chart-card canvas {
@@ -640,16 +680,19 @@ ul {
   
 }
 
-.delete-btn{
+.delete-btn {
   background-color: var(--danger-color);
   color: white;
 }
-#clearEntryBtn{
+
+#clearEntryBtn {
   margin-top: 0;
 }
-.highlight{
+
+.highlight {
   color: var(--accent-color);
 }
+
 .scroll-top-btn {
   position: fixed;
   bottom: 20px;
@@ -661,17 +704,20 @@ ul {
   width: 50px;
   height: 50px;
   font-size: 22px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  display: none; /* Hidden until scrolled down */
+  display: none;
+  /* Hidden until scrolled down */
   z-index: 999;
   transition: background 0.3s ease, transform 0.2s ease;
 }
-.scroll-top-btn.show{
+
+.scroll-top-btn.show {
   display: flex;
   background: var(--primary-color);
 }
-.scroll-top-btn.hide{
+
+.scroll-top-btn.hide {
   display: none;
 }
 
@@ -697,6 +743,7 @@ ul {
   font-size: 0.8rem;
   margin-left: 5px;
 }
+
 .wealth-light-section {
   text-align: center;
   margin: 1rem 0;
@@ -713,15 +760,18 @@ ul {
 }
 
 .wealth-light.green {
-  background-color: #2ecc71; /* Green */
+  background-color: #2ecc71;
+  /* Green */
 }
 
 .wealth-light.yellow {
-  background-color: #f1c40f; /* Yellow */
+  background-color: #f1c40f;
+  /* Yellow */
 }
 
 .wealth-light.red {
-  background-color: #e74c3c; /* Red */
+  background-color: #e74c3c;
+  /* Red */
 }
 
 .plan-section {
@@ -729,6 +779,7 @@ ul {
   padding: 1rem;
   border-radius: 8px;
 }
+
 .plan-section ul {
   margin: 0.5rem 0;
   padding-left: 1.5rem;

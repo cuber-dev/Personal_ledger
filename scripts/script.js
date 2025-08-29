@@ -314,8 +314,8 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
     const entry = { id, date, desc: description, account, amount, type };
     ledger.push(entry);
   }
-  document.getElementById("type").disabled= false
-
+  document.getElementById("type").disabled = false
+  
   e.target.reset();
   renderTable();
   saveToLocalStorage();
@@ -376,6 +376,7 @@ function linkedModify(id, entry, action) {
     ledger = toLedger;
   }
 }
+
 function formatDateForInput(dateString) {
   // Split by "-" → [DD, MM, YYYY]
   let [day, month, year] = dateString.split("-");
@@ -399,7 +400,7 @@ function editEntry(id) {
   document.getElementById("amount").value = entry.amount;
   document.getElementById("type").value = entry.type.toLowerCase();
   
-  if(entry.transactionType) document.getElementById("type").disabled= true
+  if (entry.transactionType) document.getElementById("type").disabled = true
   // Store ID instead of index
   editingId = id;
   
