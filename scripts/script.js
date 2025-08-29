@@ -919,8 +919,30 @@ function exportToPNG() {
 }
 
 function downloadAllJSON() {
+  const zip = new JSZip();
+  const folder = zip.folder("ledgers");
   
-  alert(true)
+  // Get the ledgers array
+  const ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+  
+  // Loop through each ledger name
+  ledgers.forEach(ledgerName => {
+    const value = localStorage.getItem(ledgerName);
+    if (value) {
+      try {
+        const parsed = JSON.parse(value);
+        // Add each ledger JSON as a file
+        folder.file(`${ledgerName}.json`, JSON.stringify(parsed, null, 2));
+      } catch (e) {
+        console.warn(`Skipping ${ledgerName}, invalid JSON`);
+      }
+    }
+  });
+  
+  // Generate the zip
+  zip.generateAsync({ type: "blob" }).then(function(content) {
+    saveAs(content, "all_ledgers.zip");
+  });
 }
 
 function setToday() {
