@@ -938,10 +938,10 @@ function downloadAllJSON() {
       }
     }
   });
-  
+  const id = Date.now();
   // Generate the zip
   zip.generateAsync({ type: "blob" }).then(function(content) {
-    saveAs(content, "all_ledgers.zip");
+    saveAs(content, id + "all_ledgers.zip");
   });
 }
 
