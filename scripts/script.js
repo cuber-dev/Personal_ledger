@@ -1108,6 +1108,11 @@ function clearFilters() {
   document.getElementById('maxAmount').value = '';
   document.getElementById('filter-accounts').value = '';
   
+  const dateRange = document.getElementById("dateRange");
+  dateRange.value = "thisMonth";
+  handleDateRangeChange();
+  
+  
   renderTable();
   refreshReports();
 }
