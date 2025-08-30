@@ -957,6 +957,107 @@ window.addEventListener('DOMContentLoaded', () => {
   setToday();
 });
 
+function handleDateRangeChange() {
+  const range = document.getElementById("dateRange").value;
+  const startInput = document.getElementById("startDate");
+  const endInput = document.getElementById("endDate");
+  const customFields = document.getElementById("customDateFields");
+  
+  const today = new Date();
+  let from = "",
+    to = "";
+  
+  // Helpers
+  const fmt = d => d.toISOString().split("T")[0]; // YYYY-MM-DD for input[type=date]
+  const startOfMonth = d => new Date(d.getFullYear(), d.getMonth(), 1);
+  const endOfMonth = d => new Date(d.getFullYear(), d.getMonth() + 1, 0);
+  const startOfQuarter = d => new Date(d.getFullYear(), Math.floor(d.getMonth() / 3) * 3, 1);
+  const endOfQuarter = d => new Date(d.getFullYear(), Math.floor(d.getMonth() / 3) * 3 + 3, 0);
+  const startOfHalfYear = d => d.getMonth() < 6 ? new Date(d.getFullYear(), 0, 1) : new Date(d.getFullYear(), 6, 1);
+  const endOfHalfYear = d => d.getMonth() < 6 ? new Date(d.getFullYear(), 5, 30) : new Date(d.getFullYear(), 11, 31);
+  const startOfFY = d => (d.getMonth() < 3 ? new Date(d.getFullYear() - 1, 3, 1) : new Date(d.getFullYear(), 3, 1)); // FY Apr–Mar
+  const endOfFY = d => (d.getMonth() < 3 ? new Date(d.getFullYear(), 2, 31) : new Date(d.getFullYear() + 1, 2, 31));
+  
+  switch (range) {
+    case "today":
+      from = to = today;
+      break;
+    case "yesterday":
+      from = new Date(today); // clone today
+      from.setDate(today.getDate() - 1);
+      to = new Date(from); // copy "from" so both match
+      break;
+    case "thisWeek":
+      from = new Date(today);
+      from.setDate(today.getDate() - today.getDay());
+      to = new Date();
+      break;
+    case "prevWeek":
+      from = new Date(today);
+      from.setDate(today.getDate() - today.getDay() - 7);
+      to = new Date(from);
+      to.setDate(from.getDate() + 6);
+      break;
+    case "thisMonth":
+      from = startOfMonth(today);
+      to = endOfMonth(today);
+      break;
+    case "prevMonth":
+      from = startOfMonth(new Date(today.getFullYear(), today.getMonth() - 1, 1));
+      to = endOfMonth(new Date(today.getFullYear(), today.getMonth() - 1, 1));
+      break;
+    case "thisQuarter":
+      from = startOfQuarter(today);
+      to = endOfQuarter(today);
+      break;
+    case "prevQuarter":
+      let prevQ = new Date(today.getFullYear(), today.getMonth() - 3, 1);
+      from = startOfQuarter(prevQ);
+      to = endOfQuarter(prevQ);
+      break;
+    case "thisHalfYear":
+      from = startOfHalfYear(today);
+      to = endOfHalfYear(today);
+      break;
+    case "prevHalfYear":
+      let prevHY = today.getMonth() < 6 ? new Date(today.getFullYear() - 1, 6, 1) : new Date(today.getFullYear(), 0, 1);
+      from = startOfHalfYear(prevHY);
+      to = endOfHalfYear(prevHY);
+      break;
+    case "thisFY":
+      from = startOfFY(today);
+      to = endOfFY(today);
+      break;
+    case "prevFY":
+      let prevFY = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+      from = startOfFY(prevFY);
+      to = endOfFY(prevFY);
+      break;
+    case "thisCY":
+      from = new Date(today.getFullYear(), 0, 1);
+      to = new Date(today.getFullYear(), 11, 31);
+      break;
+    case "prevCY":
+      from = new Date(today.getFullYear() - 1, 0, 1);
+      to = new Date(today.getFullYear() - 1, 11, 31);
+      break;
+    case "custom":
+    default:
+      customFields.style.display = "block";
+      return; // Don't overwrite manual input
+  }
+  
+  // Hide custom date fields when not needed
+  customFields.style.display = "none";
+  
+  // Set values to inputs
+  startInput.value = fmt(from);
+  endInput.value = fmt(to);
+  
+  // Apply filter immediately
+  applyFilters();
+}
+
 function applyFilters() {
   isUsingFilter = true;
   

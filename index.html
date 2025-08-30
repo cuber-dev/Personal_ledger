@@ -195,16 +195,49 @@
       <input type="number" id="maxAmount" placeholder="Max Amount" step="0.01" oninput="applyFilters()" />
     </div>
     
-    <div class="filter-row date-labels">
-      <label for="startDate">From Date</label>
-      <label for="endDate">To Date</label>
-    </div>
-    
-    <div class="filter-row">
-      <input type="date" id="startDate" onchange="applyFilters()" />
-      <input type="date" id="endDate" onchange="applyFilters()" />
-    </div>
-    
+<!--     <div class="filter-row date-labels">
+  <label for="startDate">From Date</label>
+  <label for="endDate">To Date</label>
+</div>
+
+<div class="filter-row">
+  <input type="date" id="startDate" onchange="applyFilters()" />
+  <input type="date" id="endDate" onchange="applyFilters()" />
+</div>
+ -->    
+ <div class="filter-row">
+  <label for="dateRange"><b>Date Range</b></label>
+  <select id="dateRange" onchange="handleDateRangeChange()" class="filter-input">
+    <option value="custom">Custom</option>
+    <option value="today">Today</option>
+    <option value="yesterday">Yesterday</option>
+    <option value="thisWeek">Current Week</option>
+    <option value="prevWeek">Previous Week</option>
+    <option value="thisMonth">Current Month</option>
+    <option value="prevMonth">Previous Month</option>
+    <option value="thisQuarter">Current Quarter</option>
+    <option value="prevQuarter">Previous Quarter</option>
+    <option value="thisHalfYear">Current Half Year</option>
+    <option value="prevHalfYear">Previous Half Year</option>
+    <option value="thisFY">Current Financial Year</option>
+    <option value="prevFY">Previous Financial Year</option>
+    <option value="thisCY">Current Calendar Year</option>
+    <option value="prevCY">Previous Calendar Year</option>
+  </select>
+</div>
+
+<!-- Wrap custom date fields -->
+<div id="customDateFields">
+  <div class="filter-row date-labels">
+    <label for="startDate">From Date</label>
+    <label for="endDate">To Date</label>
+  </div>
+  
+  <div class="filter-row">
+    <input type="date" id="startDate" onchange="applyFilters()" />
+    <input type="date" id="endDate" onchange="applyFilters()" />
+  </div>
+</div>
     <div class="filter-row">
       <button onclick="clearFilters()"><i class="fa-solid fa-circle-xmark"></i> Clear Filters</button>
     </div>
