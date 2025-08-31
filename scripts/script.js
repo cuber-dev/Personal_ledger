@@ -171,10 +171,13 @@ function renderTable(data = ledger, showRecurringOnly = false) {
       : ''}
 </td>  
 <td>${entry.type}</td>
-      <td class="${entry.type === 'income' ? 'income-label' : 'expense-label'}">
-        ${entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
-      </td>
-      <td>${balance.toFixed(2)}</td>
+<td class="expense-label">
+  ${entry.type === 'expense' ? '-' + entry.amount.toFixed(2) : '0.00'}
+</td> 
+<td class = "income-label" >
+${ entry.type === 'income' ? '+' + entry.amount.toFixed(2) : '0.00' }
+</td>    
+<td>${balance.toFixed(2)}</td>
       <td class="actions">
         <button onclick="editEntry('${entry.id}')">Edit</button>
         <button class="delete-btn" onclick="deleteEntry('${entry.id}','${entry.desc}')">Delete</button>
@@ -871,8 +874,9 @@ async function exportToPDF() {
       { header: 'Account', dataKey: 2 },
       { header: 'Description', dataKey: 3 },
       { header: 'Type', dataKey: 4 },
-      { header: 'Amount', dataKey: 5 },
-      { header: 'Closing Balance', dataKey: 6 }
+      { header: 'Debit', dataKey: 5 },
+      { header: 'Credit', dataKey: 6 },
+      { header: 'Closing Balance', dataKey: 7 }
     ],
   });
   
