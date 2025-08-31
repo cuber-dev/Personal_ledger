@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Transfer Funds</title>
   <link rel="stylesheet" href="../styles/style.css" />
-  <link rel="stylesheet" href="../styles/reports.css" />
-  <link rel="stylesheet" href="../styles/transfer.css" />
+  <link rel="stylesheet" href="../styles/settings.css" />
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -21,8 +20,8 @@
       <li><a href="../Routes/author.html">Author</a></li>
       <li><a href="../Routes/docs.html">Docs</a></li>
       <li><a href="../Routes/reports.html">Reports</a></li>
-      <li><a href="../Routes/transfer.html" class="active">Transfer</a></li>
-      <li><a href="../Routes/settings.html" class="">Settings</a></li>
+      <li><a href="../Routes/transfer.html" class="">Transfer</a></li>
+      <li><a href="../Routes/settings.html" class="active">Settings</a></li>
     </ul>
   </nav>
   <!-- Theme Selector -->
@@ -52,62 +51,9 @@
     </select>
   </div>
 
-  <!-- Main Section -->
-    <h1 class="report-title"><i class="fa-solid fa-right-left"></i> Transfer Funds Between Ledgers</h1>
+<div id="settingsContainer" class="p-4"></div>
 
-    <!-- Transfer Form -->
-<form id="transferForm">
-  <label for="fromLedger"><i class="fa-solid fa-exchange"></i> Transfer Funds:</label>
-  
-  <!-- From Ledger -->
-  <div class="account-container">
-    <select id="fromLedger" required>
-      <option value="">Select From Ledger</option>
-    </select>
-  </div>
-  
-  <!-- Transaction Details -->
-  <div class="inputs-container">
-    <input type="date" id="date" required />
-    <input type="text" id="desc" placeholder="Description" required />
-    <input type="number" id="amount" placeholder="Amount" required />
-        <select id="txnAccount" required>
-      <option value="">Select Transaction Account</option>
-    </select>
-  </div>
-  
-  <!-- To Ledger -->
-  <div class="account-container">
-    <select id="toLedger" required>
-      <option value="">Select To Ledger</option>
-    </select>
-  </div>
-  
-  <button class="submit" type="submit">Transfer</button>
-  <button type="button" id="clearBtn" class="delete-btn">Clear</button>
-</form>
-    <!-- Ledger Balances -->
-    <section class="report-table-section">
-      <h2><i class="fa-solid fa-table"></i> Ledger Balances</h2>
-      <table class="report-table" id="ledgerTable">
-        <thead>
-          <tr>
-            <th>Ledger Name</th>
-            <th>Total Balance</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-        <tfoot>
-          <tr>
-            <td><strong>Final Balance</strong></td>
-            <td id="finalBalance">0</td>
-          </tr>
-        </tfoot>
-      </table>
-    </section>
-
-  <script src="../scripts/transfer.js"></script>
+  <script src="../scripts/settings.js"></script>
   <script src="../scripts/utilitys.js"></script>
-
 </body>
 </html>

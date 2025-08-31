@@ -1385,6 +1385,7 @@ window.onload = async function() {
   renderTable();
   renderCharts(ledger);
   buildFilterAccounts()
+  handleDateRangeChange()
 };
 // 🧠 Bind + New Ledger button
 document.getElementById("newLedgerBtn").addEventListener("click", createNewLedger);
