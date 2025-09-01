@@ -61,7 +61,9 @@ const accounts = [
   "Vehicle",
   "Cash Reimbursement",
   "Household",
-  "Bank Charges"
+  "Bank Charges",
+  "Attendence",
+  "Exchange"
 ].sort();
 
 function buildAccountSelector() {
