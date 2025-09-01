@@ -1047,6 +1047,16 @@ function handleDateRangeChange() {
       from = new Date(today.getFullYear() - 1, 0, 1);
       to = new Date(today.getFullYear() - 1, 11, 31);
       break;
+    case "tillDate":
+      if (ledger.length > 0) {
+        // Sort by date to find min and max
+        const sorted = [...ledger].sort((a, b) => new Date(a.date) - new Date(b.date));
+        from = new Date(sorted[0].date); // first entry date
+        to = new Date(sorted[sorted.length - 1].date); // last entry date
+      } else {
+        from = to = today; // fallback if ledger is empty
+      }
+      break;
     case "custom":
     default:
       customFields.style.display = "block";
