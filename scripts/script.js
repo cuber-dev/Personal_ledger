@@ -176,11 +176,11 @@ function renderTable(data = ledger, showRecurringOnly = false) {
       : ''}
 </td>  
 <td>${entry.type}</td>
-<td class="expense-label">
-  ${entry.type === 'expense' ? '-' + entry.amount.toFixed(2) : '0.00'}
+<td class="${entry.type === 'expense' && 'expense-label'}">
+  ${entry.type === 'expense' ? '-' + entry.amount.toFixed(2) : '-'}
 </td> 
-<td class = "income-label" >
-${ entry.type === 'income' ? '+' + entry.amount.toFixed(2) : '0.00' }
+<td class = "${entry.type === 'income' && 'income-label'}" >
+${ entry.type === 'income' ? '+' + entry.amount.toFixed(2) : '-' }
 </td>    
 <td>${balance.toFixed(2)}</td>
       <td class="actions">
