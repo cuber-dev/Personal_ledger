@@ -1113,7 +1113,6 @@ function applyFilters() {
   renderCharts(filtered);
   renderReports(filtered);
   renderAdvancedReports(filtered);
-  renderUpcomingExpectations(filtered);
   updateSpecialInsights(filtered);
 }
 
@@ -1756,7 +1755,6 @@ function refreshReports() {
   renderCharts();
   renderReports();
   renderAdvancedReports();
-  renderUpcomingExpectations();
   updateSpecialInsights();
   buildFilterAccounts();
 }
