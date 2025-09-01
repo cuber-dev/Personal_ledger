@@ -63,7 +63,9 @@ const accounts = [
   "Household",
   "Bank Charges",
   "Attendence",
-  "Exchange"
+  "Exchange",
+  "Leave",
+  "Sunday or Extra duty"
 ].sort();
 
 function buildAccountSelector() {
