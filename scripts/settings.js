@@ -210,11 +210,6 @@ function buildSettingsForm() {
     
     container.appendChild(wrapper);
       }
-      const note = document.createElement("p");
-    note.textContent = "NOTE: Settings are saved on input!";
-    note.className = "text-sm text-gray-600";
-    container.appendChild(note);
-
 }
 
 // Save once more on unload (backup)
