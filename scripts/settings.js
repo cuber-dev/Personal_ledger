@@ -12,23 +12,11 @@ const settings = {
     label: "Auto Save",
     desc: "Automatically save changes to local storage."
   },
-  confirmBeforeDelete: {
-    value: true,
-    type: "checkbox",
-    label: "Confirm Before Delete",
-    desc: "Ask confirmation before deleting."
-  },
   allowLinkedDelete: {
     value: false,
     type: "checkbox",
     label: "Allow Linked Delete",
-    desc: "Permit deletion of ledgers with linked transactions."
-  },
-  undoRedoLimit: {
-    value: 20,
-    type: "number",
-    label: "Undo/Redo Limit",
-    desc: "Maximum history states to store."
+    desc: "Permit deletion of ledgers with linked transactions,it will also remove linked transactions from other ledge."
   },
   
   // Import/Export
@@ -45,52 +33,59 @@ const settings = {
     label: "Export Format",
     desc: "Default export format."
   },
-  exportIncludeSummary: {
-    value: true,
-    type: "checkbox",
-    label: "Export Summary",
-    desc: "Include totals in exports."
-  },
-  exportIncludeCharts: {
-    value: true,
-    type: "checkbox",
-    label: "Export Charts",
-    desc: "Include charts in PDF export."
-  },
-  zipAllLedgers: {
-    value: true,
-    type: "checkbox",
-    label: "Zip All Ledgers",
-    desc: "Export all ledgers into a zip archive."
-  },
-  
   // Display & Charts
   defaultFilter: {
     value: "currentMonth",
     type: "select",
-    options: ["currentMonth", "today", "yesterday", "last7days", "last30days"],
+    options: [
+      "custom",
+      "today",
+      "yesterday",
+      "thisWeek",
+      "prevWeek",
+      "thisMonth",
+      "prevMonth",
+      "thisQuarter",
+      "prevQuarter",
+      "thisHalfYear",
+      "prevHalfYear",
+      "thisFY",
+      "prevFY",
+      "thisCY",
+      "prevCY",
+      "tillDate"
+    ],
     label: "Default Filter",
     desc: "Default filter applied."
   },
-  showClosingBalance: {
-    value: true,
-    type: "checkbox",
-    label: "Show Closing Balance",
-    desc: "Show closing balance in transaction table."
-  },
   currencySymbol: {
     value: "₹",
-    type: "text",
+    type: "select",
+    options: [
+      "$", // US Dollar
+      "€", // Euro
+      "£", // British Pound
+      "₹", // Indian Rupee
+      "¥", // Yen/Yuan
+      "₩", // South Korean Won
+      "₽", // Russian Ruble
+      "₺", // Turkish Lira
+      "R$", // Brazilian Real
+      "₱", // Philippine Peso
+      "฿", // Thai Baht
+      "₦", // Nigerian Naira
+      "₫", // Vietnamese Dong
+      "₴", // Ukrainian Hryvnia
+      "₡", // Costa Rican Colón
+      "₲", // Paraguayan Guaraní
+      "₵", // Ghanaian Cedi
+      "₸", // Kazakhstani Tenge
+      "₪" // Israeli Shekel
+    ],
     label: "Currency Symbol",
     desc: "Symbol for amounts."
   },
-  theme: {
-    value: "light",
-    type: "select",
-    options: ["light", "dark", "system"],
-    label: "Theme",
-    desc: "Ledger theme."
-  },
+  
   chartShowPie: {
     value: true,
     type: "checkbox",
@@ -108,27 +103,6 @@ const settings = {
     type: "checkbox",
     label: "Show Line Chart",
     desc: "Enable or disable line chart."
-  },
-  
-  // Date & Time
-  dateFormat: {
-    value: "DD/MM/YYYY",
-    type: "text",
-    label: "Date Format",
-    desc: "Format for displaying dates (e.g. DD/MM/YYYY)."
-  },
-  defaultDateRange: {
-    value: "currentMonth",
-    type: "select",
-    options: ["currentMonth", "today", "yesterday", "last7days", "last30days"],
-    label: "Default Date Range",
-    desc: "Default range used for filters."
-  },
-  includeTodayInFilters: {
-    value: true,
-    type: "checkbox",
-    label: "Include Today in Filters",
-    desc: "Always include current day."
   },
   
   // Security
@@ -154,22 +128,44 @@ const settings = {
 
 
 
+const SETTINGS_KEY = "vaultSettings";
+
+function loadSettings() {
+  const saved = localStorage.getItem(SETTINGS_KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      for (const key in parsed) {
+        if (settings[key] !== undefined) {
+          settings[key].value = parsed[key].value;
+        }
+      }
+    } catch (e) {
+      console.error("Failed to parse settings from storage", e);
+    }
+  }
+}
+
+function saveSettings() {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
 function buildSettingsForm() {
   const container = document.getElementById("settingsContainer");
   container.innerHTML = "";
-
+  
   for (const key in settings) {
     const setting = settings[key];
-
+    
     const wrapper = document.createElement("div");
     wrapper.className = "mb-4 p-3 border rounded";
-
+    
     const lbl = document.createElement("label");
     lbl.textContent = setting.label;
     lbl.className = "block font-semibold mb-1";
-
+    
     let input;
-
+    
     if (setting.type === "checkbox") {
       input = document.createElement("input");
       input.type = "checkbox";
@@ -190,40 +186,40 @@ function buildSettingsForm() {
         input.appendChild(option);
       });
     }
-
+    
     input.id = key;
     input.classList.add("setting-input");
-
+    
+    // Auto-save whenever changed
+    input.addEventListener("change", () => {
+      if (input.type === "checkbox") {
+        settings[key].value = input.checked;
+      } else {
+        settings[key].value = input.value;
+      }
+      saveSettings();
+    });
+    
     const description = document.createElement("p");
     description.textContent = setting.desc;
     description.className = "text-sm text-gray-600";
-
+    
     wrapper.appendChild(lbl);
     wrapper.appendChild(input);
     wrapper.appendChild(description);
-
+    
     container.appendChild(wrapper);
-  }
+      }
+      const note = document.createElement("p");
+    note.textContent = "NOTE: Settings are saved on input!";
+    note.className = "text-sm text-gray-600";
+    container.appendChild(note);
 
-  // Save button
-  const saveBtn = document.createElement("button");
-  saveBtn.textContent = "Save Settings";
-  saveBtn.className = "mt-4 px-4 py-2 bg-blue-500 text-white rounded";
-  saveBtn.onclick = saveSettings;
-
-  container.appendChild(saveBtn);
 }
 
-function saveSettings() {
-  document.querySelectorAll(".setting-input").forEach(input => {
-    const key = input.id;
-    if (input.type === "checkbox") {
-      settings[key].value = input.checked;
-    } else {
-      settings[key].value = input.value;
-    }
-  });
-  alert("Settings updated:\n" + JSON.stringify(settings, null, 2));
-}
+// Save once more on unload (backup)
+window.addEventListener("beforeunload", saveSettings);
 
+// ==== INIT ====
+loadSettings();
 buildSettingsForm();
