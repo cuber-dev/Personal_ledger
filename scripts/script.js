@@ -2221,6 +2221,7 @@ unlockForm.addEventListener("submit", (e) => {
     lockScreen.style.display = "none";
     lockError.style.display = "none";
     vaultPassword.value = "";
+    sessionStorage.setItem("vaultUnlocked","true");
   } else {
     lockError.style.display = "block";
     vaultPassword.value = "";
