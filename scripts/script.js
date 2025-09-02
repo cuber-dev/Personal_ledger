@@ -309,6 +309,7 @@ document.querySelectorAll(".sort-indicator").forEach(indicator => {
 document.getElementById("entryForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   saveLastState();
+  clearFilters();
   const account = document.getElementById("account").value;
   const date = document.getElementById("date").value;
   const description = document.getElementById("desc").value.trim();
@@ -424,7 +425,8 @@ function editEntry(id) {
     console.error("Entry not found for ID:", id);
     return;
   }
-  
+  clearFilters();
+
   // Fill form with entry values
   document.getElementById("date").value = formatDateForInput(entry.date);
   
@@ -446,6 +448,8 @@ function editEntry(id) {
 function deleteEntry(id, desc) {
   if (confirm(`Delete ${desc} entry?`)) {
     saveLastState();
+    clearFilters();
+
     // Find which ledger contains the entry
     let entry = ledger.find(tx => tx.id === id);
     if (!entry) return alert("Unable delete transaction!"); // not found in any ledger
@@ -464,7 +468,6 @@ function deleteEntry(id, desc) {
     }
     renderTable();
     renderCharts(ledger);
-    clearFilters();
   }
 }
 
@@ -1810,6 +1813,7 @@ window.addEventListener("beforeunload", function() {
 
 
 function scrollToTop(top = 0) {
+  document.getElementById("desc").focus()
   window.scrollTo({ top: top, behavior: 'smooth' });
 }
 
