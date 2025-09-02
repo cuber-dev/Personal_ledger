@@ -1,5 +1,4 @@
 const settings = {
-
   // Import/Export
   defaultFileName: {
     value: "Untitled",
@@ -10,7 +9,7 @@ const settings = {
   exportFormat: {
     value: "json",
     type: "select",
-    options: ["excel", "pdf", "json",'png'],
+    options: ["excel", "pdf", "json", 'png'],
     label: "Export Format",
     desc: "Default export format."
   },
@@ -126,6 +125,7 @@ function loadSettings() {
     }
   }
 }
+
 function saveSettings() {
   const values = {};
   for (const key in settings) {
@@ -133,6 +133,7 @@ function saveSettings() {
   }
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(values));
 }
+
 function buildSettingsForm() {
   const container = document.getElementById("settingsContainer");
   container.innerHTML = "";
@@ -192,7 +193,7 @@ function buildSettingsForm() {
     wrapper.appendChild(description);
     
     container.appendChild(wrapper);
-      }
+  }
 }
 
 // Save once more on unload (backup)

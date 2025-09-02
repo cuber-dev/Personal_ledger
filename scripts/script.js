@@ -19,8 +19,9 @@ function loadSettingsValues() {
   }
   return {}; // fallback
 }
+
 function getSetting(key, fallback) {
-    return settings[key]?.value ?? fallback;
+  return settings[key]?.value ?? fallback;
 }
 
 // Usage:
@@ -1433,7 +1434,7 @@ function clearFilters() {
   document.getElementById('filter-accounts').value = '';
   
   const dateRange = document.getElementById("dateRange");
-  dateRange.value = getSetting("defaultFilter","thisMonth");
+  dateRange.value = getSetting("defaultFilter", "thisMonth");
   handleDateRangeChange();
   refreshReports();
 }
@@ -1568,6 +1569,21 @@ function renderCharts(data = ledger) {
       }
     }
   });
+  const pie = document.getElementById("pieChart-container");
+  const bar = document.getElementById("barChart-container");
+  const line = document.getElementById("lineChart-container");
+  
+  if (pie) {
+    pie.style.display = getSetting("chartShowPie", true) ? "block" : "none";
+  }
+  
+  if (bar) {
+    bar.style.display = getSetting("chartShowBar", true) ? "block" : "none";
+  }
+  
+  if (line) {
+    line.style.display = getSetting("chartShowLine", true) ? "block" : "none";
+  }
 }
 
 function downloadChart(chartId) {
@@ -1668,12 +1684,13 @@ document.getElementById("ledgerSelect").addEventListener("change", function(e) {
   applyFilters();
   renderCharts(ledger);
 });
+
 function applySettings() {
   const format = document.getElementById("exportFormat");
-  format.value = getSetting('exportFormat','json');
+  format.value = getSetting('exportFormat', 'json');
   
   const range = document.getElementById("dateRange");
-  range.value = getSetting('defaultFilter',"thisMonth");
+  range.value = getSetting('defaultFilter', "thisMonth");
   
 }
 // ▶️ Init on load
@@ -1718,7 +1735,7 @@ window.onload = async function() {
   renderCharts(ledger);
   buildFilterAccounts()
   handleDateRangeChange()
-
+  
 };
 // 🧠 Bind + New Ledger button
 document.getElementById("newLedgerBtn").addEventListener("click", createNewLedger);
