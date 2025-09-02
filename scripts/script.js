@@ -132,6 +132,14 @@ async function generateTransactionId(date, desc, amount) {
   return "tx_" + hashHex.substring(0, 12);
 }
 
+function getClosingBalance(data) {
+  return data.reduce((acc, txn) => {
+    if (txn.type === "income") return acc + txn.amount;
+    if (txn.type === "expense") return acc - txn.amount;
+    return acc;
+  }, 0);
+}
+
 function renderTable(data = ledger, showRecurringOnly = false) {
   const table = document.getElementById("tableBody");
   const balanceDiv = document.getElementById("balance");
@@ -147,32 +155,28 @@ function renderTable(data = ledger, showRecurringOnly = false) {
   // Sort the filtered data
   const displayData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
   if (isUsingFilter && displayData.length > 0) {
-  const ledgerSorted = [...ledger].sort((a, b) => new Date(a.date) - new Date(b.date));
-  const firstLedgerDate = new Date(ledgerSorted[0].date);
-  const firstDisplayDate = new Date(displayData[0].date);
-
-  if (firstDisplayDate > firstLedgerDate) {
-    // All transactions before first filtered transaction
-    const beforeRange = ledgerSorted.filter(txn => new Date(txn.date) < firstDisplayDate);
-
-    // Compute closing balance of those transactions
-    const openingBalance = beforeRange.reduce((acc, txn) => {
-      if (txn.type === "income") return acc + txn.amount;
-      if (txn.type === "expense") return acc - txn.amount;
-      return acc;
-    }, 0);
-
-    // Inject opening balance entry at start of displayData
-    displayData.unshift({
-      date: firstDisplayDate.toISOString().split("T")[0], // or keep as "Opening"
-      type: "income",
-      desc: "Opening Balance",
-      amount: openingBalance,
-      account : "Balance Diff"
-    });
+    const ledgerSorted = [...ledger].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const firstLedgerDate = new Date(ledgerSorted[0].date);
+    const firstDisplayDate = new Date(displayData[0].date);
+    
+    if (firstDisplayDate > firstLedgerDate) {
+      // All transactions before first filtered transaction
+      const beforeRange = ledgerSorted.filter(txn => new Date(txn.date) < firstDisplayDate);
+      
+      // Compute closing balance of those transactions
+      const openingBalance = getClosingBalance(beforeRange);
+      
+      // Inject opening balance entry at start of displayData
+      displayData.unshift({
+        date: firstDisplayDate.toISOString().split("T")[0], // or keep as "Opening"
+        type: "income",
+        desc: "Opening Balance",
+        amount: openingBalance,
+        account: "Balance Diff"
+      });
+    }
   }
-}
-
+  
   const recurringIndices = getRecurringIndices(displayData);
   
   displayData.forEach((entry, index) => {
@@ -426,7 +430,7 @@ function editEntry(id) {
     return;
   }
   clearFilters();
-
+  
   // Fill form with entry values
   document.getElementById("date").value = formatDateForInput(entry.date);
   
@@ -449,7 +453,7 @@ function deleteEntry(id, desc) {
   if (confirm(`Delete ${desc} entry?`)) {
     saveLastState();
     clearFilters();
-
+    
     // Find which ledger contains the entry
     let entry = ledger.find(tx => tx.id === id);
     if (!entry) return alert("Unable delete transaction!"); // not found in any ledger
