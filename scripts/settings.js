@@ -1,24 +1,5 @@
 const settings = {
-  // Core
-  overrideFiles: {
-    value: false,
-    type: "checkbox",
-    label: "Override Files",
-    desc: "Overwrite existing ledgers when importing."
-  },
-  autoSave: {
-    value: true,
-    type: "checkbox",
-    label: "Auto Save",
-    desc: "Automatically save changes to local storage."
-  },
-  allowLinkedDelete: {
-    value: false,
-    type: "checkbox",
-    label: "Allow Linked Delete",
-    desc: "Permit deletion of ledgers with linked transactions,it will also remove linked transactions from other ledge."
-  },
-  
+
   // Import/Export
   defaultFileName: {
     value: "Untitled",
