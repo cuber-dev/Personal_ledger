@@ -239,7 +239,7 @@ ${ entry.type === 'income' ? '+' + entry.amount.toFixed(2) : '-' }
     table.appendChild(row);
   });
   
-  balanceDiv.textContent = `Balance : ₹ ${balance.toFixed(2)}`;
+  balanceDiv.textContent = `Balance :  ${ getSetting('currencySymbol',"₹") + ' ' + balance.toFixed(2)}`;
   totalIncomeSpan.textContent = totalIncome.toFixed(2);
   totalExpenseSpan.textContent = totalExpense.toFixed(2);
   finalBalanceSpan.textContent = balance.toFixed(2);
