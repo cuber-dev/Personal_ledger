@@ -1158,8 +1158,6 @@ function clearFilters() {
   const dateRange = document.getElementById("dateRange");
   dateRange.value = "thisMonth";
   handleDateRangeChange();
-  
-  
   renderTable();
   refreshReports();
 }
@@ -1312,6 +1310,7 @@ document.getElementById("filename").addEventListener("input", function() {
 });
 
 function updateLedgerSelect() {
+  clearFilters();
   const select = document.getElementById("ledgerSelect");
   let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
   
@@ -1339,6 +1338,7 @@ function updateLedgerSelect() {
 }
 
 async function createNewLedger() {
+  clearFilters();
   const ledgerName = prompt("Enter new ledger name:");
   if (!ledgerName) {
     alert("Please enter a valid ledger name.");
