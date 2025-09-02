@@ -313,7 +313,6 @@ document.querySelectorAll(".sort-indicator").forEach(indicator => {
 document.getElementById("entryForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   saveLastState();
-  clearFilters();
   const account = document.getElementById("account").value;
   const date = document.getElementById("date").value;
   const description = document.getElementById("desc").value.trim();
@@ -344,6 +343,7 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
           amount,
           type
         };
+        console.log(ledger[idx],date )
       }
     }
     editingId = null;
@@ -432,8 +432,7 @@ function editEntry(id) {
   clearFilters();
   
   // Fill form with entry values
-  document.getElementById("date").value = formatDateForInput(entry.date);
-  
+  document.getElementById("date").value = entry.date;
   document.getElementById("desc").value = entry.desc;
   document.getElementById("account").value = entry.account;
   document.getElementById("amount").value = entry.amount;
@@ -1162,7 +1161,6 @@ function clearFilters() {
   const dateRange = document.getElementById("dateRange");
   dateRange.value = "thisMonth";
   handleDateRangeChange();
-  renderTable();
   refreshReports();
 }
 
@@ -1393,6 +1391,7 @@ document.getElementById("ledgerSelect").addEventListener("change", function(e) {
   document.getElementById("filename").value = currentLedgerKey;
   
   renderTable();
+  applyFilters();
   renderCharts(ledger);
 });
 
