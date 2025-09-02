@@ -2156,7 +2156,9 @@ function showLowBalancePlan(balance) {
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
-  const lowAmount = 500;
+  const lowAmount = getSetting("planLimit",500);
+  const planLimit = document.getElementById("planLimit");
+  if(planLimit) planLimit.textContent = lowAmount;
   // Get remaining days in this month
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const remainingDays = daysInMonth - today.getDate() + 1; // include today
@@ -2191,4 +2193,5 @@ function showLowBalancePlan(balance) {
   } else {
     alertDiv.style.display = "none";
   }
+  alertDiv.style.display =  getSetting('alertSection',true) ? 'block' : 'none';
 }

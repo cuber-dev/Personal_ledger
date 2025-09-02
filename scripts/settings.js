@@ -4,7 +4,7 @@ const settings = {
     value: "Untitled",
     type: "text",
     label: "Default File Name",
-    desc: "File name used during export."
+    desc: "File name used for untitled ledgers."
   },
   exportFormat: {
     value: "json",
@@ -84,7 +84,18 @@ const settings = {
     label: "Show Line Chart",
     desc: "Enable or disable line chart."
   },
-  
+  alertSection: {
+    value: true,
+    type: "checkbox",
+    label: "Show Expense Plan",
+    desc: "Enable or disable expense plan."
+  },
+  planLimit: {
+  value: 500,
+  type: "number",
+  label: "Expense Plan limit",
+  desc: "Show expense plan when the balance is below the defined amount."
+},
   // Security
   requirePassword: {
     value: false,
