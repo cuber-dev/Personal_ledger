@@ -1668,9 +1668,13 @@ document.getElementById("ledgerSelect").addEventListener("change", function(e) {
   applyFilters();
   renderCharts(ledger);
 });
-
+function applySettings() {
+  const format = document.getElementById("exportFormat");
+  format.value = getSetting('exportFormat','json')
+}
 // ▶️ Init on load
 window.onload = async function() {
+  applySettings();
   buildAccountSelector();
   
   let savedLedgers = JSON.parse(localStorage.getItem("ledgers") || "[]");

@@ -27,9 +27,9 @@ const settings = {
     desc: "File name used during export."
   },
   exportFormat: {
-    value: "xlsx",
+    value: "json",
     type: "select",
-    options: ["xlsx", "pdf", "json"],
+    options: ["excel", "pdf", "json",'png'],
     label: "Export Format",
     desc: "Default export format."
   },
