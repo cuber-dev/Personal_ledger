@@ -2208,7 +2208,7 @@ const lockScreen = document.getElementById("lockScreen");
 const unlockForm = document.getElementById("unlockForm");
 const vaultPassword = document.getElementById("vaultPassword");
 const lockError = document.getElementById("lockError");
-
+if(sessionStorage.getItem("vaultUnlocked") === "true") lockScreen.style.display = "none";
 // ===== Unlock Form Submit =====
 unlockForm.addEventListener("submit", (e) => {
   e.preventDefault();
