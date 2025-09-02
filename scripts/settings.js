@@ -103,12 +103,6 @@ const settings = {
     label: "Require Password",
     desc: "Protect vault with a password."
   },
-  autoLockMinutes: {
-    value: 10,
-    type: "number",
-    label: "Auto Lock (Minutes)",
-    desc: "Auto lock vault after inactivity."
-  },
   lockedKey : {
     value: "1234",
     type: "text",
