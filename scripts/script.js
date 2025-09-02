@@ -1005,8 +1005,24 @@ async function downloadAllLedgers() {
     if (!value) continue;
     
     try {
-      const parsed = JSON.parse(value);
+      let parsed = JSON.parse(value);
       
+      // ====== DATE RANGE FILTER ======
+      const startInput = document.getElementById("startDate");
+      const endInput = document.getElementById("endDate");
+      
+      const startDate = startInput?.value ? new Date(startInput.value) : null;
+      const endDate = endInput?.value ? new Date(endInput.value) : null;
+      
+      const filtered = (startDate || endDate) ?
+        parsed.filter(entry => {
+          const entryDate = new Date(entry.date);
+          if (startDate && entryDate < startDate) return false;
+          if (endDate && entryDate > endDate) return false;
+          return true;
+        }) :
+        parsed;
+      parsed = filtered;
       switch (format) {
         case "json": {
           folder.file(`${ledgerName}.json`, JSON.stringify(parsed, null, 2));
@@ -1059,8 +1075,25 @@ async function downloadAllLedgers() {
                   ["Sl.No", "Date", "Account", "Description", "Type", "Debit", "Credit", "Closing Balance"]
                 ],
                 body: (() => {
+                  // ====== DATE RANGE FILTER ======
+                  const startInput = document.getElementById("startDate");
+                  const endInput = document.getElementById("endDate");
+                  
+                  const startDate = startInput?.value ? new Date(startInput.value) : null;
+                  const endDate = endInput?.value ? new Date(endInput.value) : null;
+                  
+                  const data = (startDate || endDate) ?
+                    parsed.filter(entry => {
+                      const entryDate = new Date(entry.date);
+                      if (startDate && entryDate < startDate) return false;
+                      if (endDate && entryDate > endDate) return false;
+                      return true;
+                    }) :
+                    parsed;
+                  
+                  // ====== Closing Balance Calculation ======
                   let closingBalance = 0;
-                  return parsed.map((entry, idx) => {
+                  return data.map((entry, idx) => {
                     if (entry.type === "income") {
                       closingBalance += entry.amount;
                     } else if (entry.type === "expense") {
