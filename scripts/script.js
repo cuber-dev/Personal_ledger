@@ -19,6 +19,9 @@ function loadSettingsValues() {
   }
   return {}; // fallback
 }
+function getSetting(key, fallback) {
+    return settings[key]?.value ?? fallback;
+}
 
 // Usage:
 const settings = loadSettingsValues();
@@ -1268,10 +1271,6 @@ function setToday() {
   return today;
   
 }
-// Set today's date as default in the date input
-window.addEventListener('DOMContentLoaded', () => {
-  setToday();
-});
 
 function handleDateRangeChange() {
   const range = document.getElementById("dateRange").value;
@@ -1692,7 +1691,7 @@ window.onload = async function() {
       type: "Income",
       amount: 0
     }];
-    const defaultName = "Untitled";
+    const defaultName = getSetting("defaultFileName", "Untitled");
     savedLedgers.push(defaultName);
     localStorage.setItem("ledgers", JSON.stringify(savedLedgers));
     localStorage.setItem(defaultName, JSON.stringify(defaultLedger));
@@ -1705,12 +1704,13 @@ window.onload = async function() {
   
   fileName = currentLedgerKey;
   document.getElementById("filename").value = fileName;
-  
+  setToday();
   updateLedgerSelect();
   renderTable();
   renderCharts(ledger);
   buildFilterAccounts()
   handleDateRangeChange()
+
 };
 // 🧠 Bind + New Ledger button
 document.getElementById("newLedgerBtn").addEventListener("click", createNewLedger);
@@ -1768,11 +1768,11 @@ function deleteLedger(ledgerName) {
   
   // If no ledgers left, create new untitled
   if (ledgers.length === 0) {
-    const untitledKey = "ledger_Untitled";
+    const untitledKey = getSetting("defaultFileName", "Untitled");
     localStorage.setItem("ledgers", JSON.stringify([untitledKey]));
     localStorage.setItem(untitledKey, JSON.stringify([]));
     
-    fileName = "Untitled";
+    fileName = untitledKey;
     currentLedgerKey = untitledKey;
     ledger = [];
     renderTable();

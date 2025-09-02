@@ -21,7 +21,7 @@ const settings = {
   
   // Import/Export
   defaultFileName: {
-    value: "ledger",
+    value: "Untitled",
     type: "text",
     label: "Default File Name",
     desc: "File name used during export."
