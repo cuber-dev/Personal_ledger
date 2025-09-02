@@ -103,17 +103,17 @@ const settings = {
     label: "Require Password",
     desc: "Protect vault with a password."
   },
-  encryptStorage: {
-    value: false,
-    type: "checkbox",
-    label: "Encrypt Storage",
-    desc: "Encrypt ledger data in local storage."
-  },
   autoLockMinutes: {
     value: 10,
     type: "number",
     label: "Auto Lock (Minutes)",
     desc: "Auto lock vault after inactivity."
+  },
+  lockedKey : {
+    value: "1234",
+    type: "text",
+    label: "Enter password",
+    desc: "Password for locking vault,this will be enabled when Require password is enabled!"
   }
 };
 

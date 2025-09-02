@@ -1692,6 +1692,12 @@ function applySettings() {
   const range = document.getElementById("dateRange");
   range.value = getSetting('defaultFilter', "thisMonth");
   
+  const requirePassword = getSetting("requirePassword", false);
+  if (requirePassword && getSetting("lockedKey",null)) {
+    lockScreen.style.display = "flex";
+  } else {
+    lockScreen.style.display = "none";
+  }
 }
 // ▶️ Init on load
 window.onload = async function() {
@@ -2156,9 +2162,9 @@ function showLowBalancePlan(balance) {
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
-  const lowAmount = getSetting("planLimit",500);
+  const lowAmount = getSetting("planLimit", 500);
   const planLimit = document.getElementById("planLimit");
-  if(planLimit) planLimit.textContent = lowAmount;
+  if (planLimit) planLimit.textContent = lowAmount;
   // Get remaining days in this month
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const remainingDays = daysInMonth - today.getDate() + 1; // include today
@@ -2193,5 +2199,31 @@ function showLowBalancePlan(balance) {
   } else {
     alertDiv.style.display = "none";
   }
-  alertDiv.style.display =  getSetting('alertSection',true) ? 'block' : 'none';
+  alertDiv.style.display = getSetting('alertSection', true) ? 'block' : 'none';
 }
+
+
+// Elements
+const lockScreen = document.getElementById("lockScreen");
+const unlockForm = document.getElementById("unlockForm");
+const vaultPassword = document.getElementById("vaultPassword");
+const lockError = document.getElementById("lockError");
+
+// ===== Unlock Form Submit =====
+unlockForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  
+  const entered = vaultPassword.value.trim();
+  const stored = getSetting("lockedKey", null);
+  
+  if (entered && stored && entered === stored) {
+    // ✅ Unlock vault
+    lockScreen.style.display = "none";
+    lockError.style.display = "none";
+    vaultPassword.value = "";
+  } else {
+    lockError.style.display = "block";
+    vaultPassword.value = "";
+  }
+});
+

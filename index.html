@@ -359,7 +359,26 @@
         <strong>Note:</strong> Please download the file as <strong>JSON</strong> after entry of transactions to import it again later. for more information please read the <a href="Routes/docs.html">Documentation</a>
         
       </div>
-      <script src="scripts/script.js"></script>
+<!-- ===== Lock Screen Overlay ===== -->
+<div id="lockScreen" class="lock-screen">
+  <div class="lock-card">
+    <h2 class="lock-title">🔒 Vault Locked</h2>
+    <p class="lock-desc">Enter your password to unlock.</p>
+    <p class="lock-desc">Default password: 1234</p>
+    <form id="unlockForm">
+      <input 
+        type="password" 
+        id="vaultPassword" 
+        class="lock-input" 
+        placeholder="Enter Password" 
+        required 
+      />
+      <p id="lockError" class="lock-error" style="display:none;">Invalid password</p>
+      <button type="submit" class="lock-button">Unlock</button>
+    </form>
+  </div>
+</div>
+<script src="scripts/script.js"></script>
       <script src="scripts/utilitys.js"></script>
       <!-- <script src="drive.js"></script> -->
       
