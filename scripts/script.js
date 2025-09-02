@@ -735,7 +735,40 @@ async function finalizeImport(file, importedLedger) {
     console.error(err);
   }
 }
-
+async function importZip(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  try {
+    const zip = new JSZip();
+    const content = await zip.loadAsync(file);
+    
+    for (const fileName in content.files) {
+      if (fileName.endsWith(".json")) {
+        try {
+          const fileData = await content.files[fileName].async("blob");
+          const baseName = fileName.split('/').pop()
+          const fakeFile = new File([fileData], baseName, { type: "application/json" });
+          
+          // create fake event object
+          const fakeEvent = { target: { files: [fakeFile] } };
+          
+          // call your existing importJSON function
+          await importJSON(fakeEvent);
+          
+        } catch (err) {
+          console.error(`❌ Error importing ${fileName}:`, err);
+          alert(`Error importing ${fileName}`);
+        }
+      }
+    }
+    
+    alert("📦 ZIP import completed successfully!");
+  } catch (err) {
+    alert("Error reading ZIP file ❌");
+    console.error(err);
+  }
+}
 // ===== Master Import Handler =====
 function handleImport(event) {
   const file = event.target.files[0];
@@ -745,6 +778,8 @@ function handleImport(event) {
   switch (ext) {
     case "json":
       return importJSON(event);
+    case "zip":
+      return importZip(event);
       /* case "txt": return importTXT(file);
        case "csv": return importCSV(file);
        case "xls":
