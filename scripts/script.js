@@ -6,6 +6,22 @@ let isUsingFilter = false;
 let globalFilterData = [];
 let sortState = { col: null, dir: "asc" };
 let sortedLedger = [];
+const SETTINGS_KEY = "vaultSettings";
+
+function loadSettingsValues() {
+  const saved = localStorage.getItem(SETTINGS_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved); // gives you { autoSave: {value: true}, ... }
+    } catch (e) {
+      console.error("Failed to parse settings", e);
+    }
+  }
+  return {}; // fallback
+}
+
+// Usage:
+const settings = loadSettingsValues();
 
 const accounts = [
   // Assets
