@@ -117,7 +117,7 @@ function loadSettings() {
     try {
       const parsed = JSON.parse(saved);
       for (const key in parsed) {
-        if (settings[key] !== undefined) {
+        if (settings[key] !== undefined && "value" in parsed[key]) {
           settings[key].value = parsed[key].value;
         }
       }
@@ -126,11 +126,13 @@ function loadSettings() {
     }
   }
 }
-
 function saveSettings() {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  const values = {};
+  for (const key in settings) {
+    values[key] = { value: settings[key].value };
+  }
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(values));
 }
-
 function buildSettingsForm() {
   const container = document.getElementById("settingsContainer");
   container.innerHTML = "";
