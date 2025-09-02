@@ -1090,10 +1090,33 @@ async function downloadAllLedgers() {
                       return true;
                     }) :
                     parsed;
+                  const displayData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
+                  if (isUsingFilter && displayData.length > 0) {
+                    const ledgerSorted = [...ledger].sort((a, b) => new Date(a.date) - new Date(b.date));
+                    const firstLedgerDate = new Date(ledgerSorted[0].date);
+                    const firstDisplayDate = new Date(displayData[0].date);
+                    
+                    if (firstDisplayDate > firstLedgerDate) {
+                      // ✅ Only consider transactions BEFORE the filter's first date  
+                      const beforeRange = ledgerSorted.filter(txn => new Date(txn.date) < firstDisplayDate);
+                      
+                      // Compute closing balance of all previous transactions  
+                      const openingBalance = getClosingBalance(beforeRange);
+                      
+                      // Inject opening balance entry dated exactly at filter start  
+                      displayData.unshift({
+                        date: firstDisplayDate.toISOString().split("T")[0], // ensures it matches filter start date  
+                        type: "income",
+                        desc: "Opening Balance",
+                        amount: openingBalance,
+                        account: "Balance Diff"
+                      });
+                    }
+                  }
                   
                   // ====== Closing Balance Calculation ======
                   let closingBalance = 0;
-                  return data.map((entry, idx) => {
+                  return displayData.map((entry, idx) => {
                     if (entry.type === "income") {
                       closingBalance += entry.amount;
                     } else if (entry.type === "expense") {
