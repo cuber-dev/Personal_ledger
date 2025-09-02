@@ -35,7 +35,7 @@ const settings = {
   },
   // Display & Charts
   defaultFilter: {
-    value: "currentMonth",
+    value: "thisMonth",
     type: "select",
     options: [
       "custom",

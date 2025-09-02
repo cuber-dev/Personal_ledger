@@ -1433,7 +1433,7 @@ function clearFilters() {
   document.getElementById('filter-accounts').value = '';
   
   const dateRange = document.getElementById("dateRange");
-  dateRange.value = "thisMonth";
+  dateRange.value = getSetting("defaultFilter","thisMonth");
   handleDateRangeChange();
   refreshReports();
 }
@@ -1670,7 +1670,11 @@ document.getElementById("ledgerSelect").addEventListener("change", function(e) {
 });
 function applySettings() {
   const format = document.getElementById("exportFormat");
-  format.value = getSetting('exportFormat','json')
+  format.value = getSetting('exportFormat','json');
+  
+  const range = document.getElementById("dateRange");
+  range.value = getSetting('defaultFilter',"thisMonth");
+  
 }
 // ▶️ Init on load
 window.onload = async function() {
