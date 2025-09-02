@@ -956,31 +956,201 @@ function exportToPNG() {
     console.error("Error exporting table as PNG:", err);
   });
 }
+/*
+ function downloadAllJSON() {
+const zip = new JSZip();
+const folder = zip.folder("ledgers");
 
-function downloadAllJSON() {
+// Get the ledgers array
+const ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+
+// Loop through each ledger name
+ledgers.forEach(ledgerName => {
+  const value = localStorage.getItem(ledgerName);
+  if (value) {
+    try {
+      const parsed = JSON.parse(value);
+      // Add each ledger JSON as a file
+      folder.file(`${ledgerName}.json`, JSON.stringify(parsed, null, 2));
+    } catch (e) {
+      console.warn(`Skipping ${ledgerName}, invalid JSON`);
+    }
+  }
+});
+const id = Date.now();
+// Generate the zip
+zip.generateAsync({ type: "blob" }).then(function(content) {
+  saveAs(content, id + "all_ledgers.zip");
+});
+}
+*/
+async function downloadAllLedgers() {
+  const format = document.getElementById("exportFormat").value;
+  if (!format) {
+    alert("Please select an export format.");
+    return;
+  }
+  
   const zip = new JSZip();
   const folder = zip.folder("ledgers");
-  
-  // Get the ledgers array
   const ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
   
-  // Loop through each ledger name
-  ledgers.forEach(ledgerName => {
+  if (ledgers.length === 0) {
+    alert("No ledgers found to export.");
+    return;
+  }
+  
+  for (const ledgerName of ledgers) {
     const value = localStorage.getItem(ledgerName);
-    if (value) {
-      try {
-        const parsed = JSON.parse(value);
-        // Add each ledger JSON as a file
-        folder.file(`${ledgerName}.json`, JSON.stringify(parsed, null, 2));
-      } catch (e) {
-        console.warn(`Skipping ${ledgerName}, invalid JSON`);
+    if (!value) continue;
+    
+    try {
+      const parsed = JSON.parse(value);
+      
+      switch (format) {
+        case "json": {
+          folder.file(`${ledgerName}.json`, JSON.stringify(parsed, null, 2));
+          break;
+        }
+        
+        case "excel": {
+          const wb = XLSX.utils.book_new();
+          const ws = XLSX.utils.json_to_sheet(parsed);
+          XLSX.utils.book_append_sheet(wb, ws, "Records");
+          
+          const excelData = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+          folder.file(`${ledgerName}.xlsx`, excelData);
+          break;
+        }
+        
+        case "pdf": {
+          const { jsPDF } = window.jspdf;
+          
+          // Loop through each ledger individually
+          for (const ledgerName of ledgers) {
+            const value = localStorage.getItem(ledgerName);
+            if (!value) continue;
+            
+            try {
+              const parsed = JSON.parse(value);
+              const doc = new jsPDF();
+              
+              // ====== THEME COLORS FROM CSS ======
+              const rootStyles = getComputedStyle(document.documentElement);
+              const primaryColor = rootStyles.getPropertyValue("--primary-color")?.trim() || "#6a0dad";
+              const secondaryColor = rootStyles.getPropertyValue("--secondary-color")?.trim() || "#f3e8ff";
+              const textColor = rootStyles.getPropertyValue("--text-color")?.trim() || "#000000";
+              
+              // ====== META DATA ======
+              const downloadDate = new Date().toLocaleString();
+              const appURL = window.location.href;
+              
+              // ====== HEADER ======
+              doc.setFontSize(20).setTextColor(primaryColor).setFont(undefined, "bold");
+              doc.text("Vault Ledger Report", 14, 15);
+              doc.setFontSize(12).setTextColor(textColor).setFont(undefined, "normal");
+              doc.text(`Ledger Name: ${ledgerName}`, 14, 25);
+              doc.text(`Date of Download: ${downloadDate}`, 14, 37);
+              doc.text(`URL: ${appURL}`, 14, 43);
+              
+              // ====== TABLE (built from data, not DOM) ======
+              doc.autoTable({
+                head: [
+                  ["Sl.No", "Date", "Account", "Description", "Type", "Debit", "Credit", "Closing Balance"]
+                ],
+                body: (() => {
+                  let closingBalance = 0;
+                  return parsed.map((entry, idx) => {
+                    if (entry.type === "income") {
+                      closingBalance += entry.amount;
+                    } else if (entry.type === "expense") {
+                      closingBalance -= entry.amount;
+                    }
+                    return [
+                      idx + 1,
+                      entry.date,
+                      entry.account,
+                      entry.desc,
+                      entry.type,
+                      entry.type === "expense" ? entry.amount : "-",
+                      entry.type === "income" ? entry.amount : "-",
+                      closingBalance.toFixed(2) // dynamically calculated closing balance
+                    ];
+                  });
+                })(),
+                startY: 50,
+                styles: { fontSize: 10, textColor: textColor, lineColor: primaryColor, lineWidth: 0.2 },
+                headStyles: { fillColor: primaryColor, textColor: "#ffffff", fontStyle: "bold" },
+                bodyStyles: { fillColor: secondaryColor },
+                alternateRowStyles: { fillColor: "#ffffff" },
+              });
+              
+              let y = doc.lastAutoTable.finalY + 10;
+              
+              // ====== SUMMARY (calculated from parsed ledger) ======
+              let totalIncome = 0,
+                totalExpense = 0;
+              parsed.forEach(entry => {
+                if (entry.type === "income") totalIncome += entry.amount;
+                else if (entry.type === "expense") totalExpense += entry.amount;
+              });
+              const finalBalance = totalIncome - totalExpense;
+              
+              doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
+              doc.text("Summary", 14, y);
+              
+              doc.setFontSize(12).setTextColor(textColor);
+              doc.text(`Total Income: ₹${totalIncome.toFixed(2)}`, 14, y + 8);
+              doc.text(`Total Expense: ₹${totalExpense.toFixed(2)}`, 14, y + 16);
+              doc.text(`Final Balance: ₹${finalBalance.toFixed(2)}`, 14, y + 24);
+              
+              // ====== FOOTER ======
+              doc.setFontSize(10).setTextColor("#666666").setFont(undefined, "italic");
+              doc.text("Generated by Vault Ledger App", 14, 290);
+              
+              // Save PDF into ZIP
+              const pdfData = doc.output("arraybuffer");
+              folder.file(`${ledgerName}.pdf`, pdfData);
+            } catch (e) {
+              console.warn(`Skipping PDF for ${ledgerName}, invalid JSON`, e);
+            }
+          }
+          break;
+        }
+        case "png": {
+          const tempTable = document.createElement("table");
+          const headerRow = document.createElement("tr");
+          ["Date", "Account", "Description", "Type", "Amount"].forEach(h => {
+            const th = document.createElement("th");
+            th.textContent = h;
+            headerRow.appendChild(th);
+          });
+          tempTable.appendChild(headerRow);
+          
+          parsed.forEach(entry => {
+            const tr = document.createElement("tr");
+            [entry.date, entry.account, entry.description, entry.type, entry.amount].forEach(val => {
+              const td = document.createElement("td");
+              td.textContent = val;
+              tr.appendChild(td);
+            });
+            tempTable.appendChild(tr);
+          });
+          
+          const canvas = await html2canvas(tempTable, { scale: 2 });
+          const pngData = canvas.toDataURL("image/png").split(",")[1];
+          folder.file(`${ledgerName}.png`, pngData, { base64: true });
+          break;
+        }
       }
+    } catch (e) {
+      console.warn(`Skipping ${ledgerName}, invalid JSON`, e);
     }
-  });
+  }
+  
   const id = Date.now();
-  // Generate the zip
-  zip.generateAsync({ type: "blob" }).then(function(content) {
-    saveAs(content, id + "all_ledgers.zip");
+  zip.generateAsync({ type: "blob" }).then(content => {
+    saveAs(content, `${id}_all_ledgers_${format}.zip`);
   });
 }
 
