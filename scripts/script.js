@@ -66,7 +66,8 @@ const accounts = [
   "Exchange",
   "Leave",
   "Sunday or Extra duty",
-  "Half-day"
+  "Half-day",
+  "Balance Diff"
 ].sort();
 
 function buildAccountSelector() {
@@ -145,8 +146,33 @@ function renderTable(data = ledger, showRecurringOnly = false) {
   
   // Sort the filtered data
   const displayData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
-  
-  // Fix: get recurring indices based on filtered & sorted displayData
+  if (isUsingFilter && displayData.length > 0) {
+  const ledgerSorted = [...ledger].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const firstLedgerDate = new Date(ledgerSorted[0].date);
+  const firstDisplayDate = new Date(displayData[0].date);
+
+  if (firstDisplayDate > firstLedgerDate) {
+    // All transactions before first filtered transaction
+    const beforeRange = ledgerSorted.filter(txn => new Date(txn.date) < firstDisplayDate);
+
+    // Compute closing balance of those transactions
+    const openingBalance = beforeRange.reduce((acc, txn) => {
+      if (txn.type === "income") return acc + txn.amount;
+      if (txn.type === "expense") return acc - txn.amount;
+      return acc;
+    }, 0);
+
+    // Inject opening balance entry at start of displayData
+    displayData.unshift({
+      date: firstDisplayDate.toISOString().split("T")[0], // or keep as "Opening"
+      type: "income",
+      desc: "Opening Balance",
+      amount: openingBalance,
+      account : "Balance Diff"
+    });
+  }
+}
+
   const recurringIndices = getRecurringIndices(displayData);
   
   displayData.forEach((entry, index) => {
@@ -422,7 +448,7 @@ function deleteEntry(id, desc) {
     saveLastState();
     // Find which ledger contains the entry
     let entry = ledger.find(tx => tx.id === id);
-    if (!entry) return alert("not found"); // not found in any ledger
+    if (!entry) return alert("Unable delete transaction!"); // not found in any ledger
     
     if (entry.transactionType === "linked-transaction") {
       const note = `NOTE: This is a linked-transaction meaning it will delete the transaction from both ${entry.transferredFrom} and ${entry.transferredTo} ledgers,Do you want to you continue?`;
