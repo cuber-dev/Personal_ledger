@@ -160,15 +160,15 @@ function renderTable(data = ledger, showRecurringOnly = false) {
     const firstDisplayDate = new Date(displayData[0].date);
     
     if (firstDisplayDate > firstLedgerDate) {
-      // All transactions before first filtered transaction
+      // ✅ Only consider transactions BEFORE the filter's first date
       const beforeRange = ledgerSorted.filter(txn => new Date(txn.date) < firstDisplayDate);
       
-      // Compute closing balance of those transactions
+      // Compute closing balance of all previous transactions
       const openingBalance = getClosingBalance(beforeRange);
       
-      // Inject opening balance entry at start of displayData
+      // Inject opening balance entry dated exactly at filter start
       displayData.unshift({
-        date: firstDisplayDate.toISOString().split("T")[0], // or keep as "Opening"
+        date: firstDisplayDate.toISOString().split("T")[0], // ensures it matches filter start date
         type: "income",
         desc: "Opening Balance",
         amount: openingBalance,
@@ -176,7 +176,6 @@ function renderTable(data = ledger, showRecurringOnly = false) {
       });
     }
   }
-  
   const recurringIndices = getRecurringIndices(displayData);
   
   displayData.forEach((entry, index) => {
@@ -343,7 +342,6 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
           amount,
           type
         };
-        console.log(ledger[idx],date )
       }
     }
     editingId = null;
