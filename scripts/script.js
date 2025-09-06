@@ -1463,6 +1463,7 @@ function undoChange() {
     ledger = JSON.parse(lastState);
     lastState = null;
     renderTable();
+    applyFilters();
   } else {
     alert("Nothing to undo");
   }
@@ -1474,6 +1475,8 @@ function redoChange() {
     ledger = JSON.parse(redoState);
     redoState = null;
     renderTable();
+    applyFilters();
+
   } else {
     alert("Nothing to redo");
   }
