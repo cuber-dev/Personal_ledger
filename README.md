@@ -1,114 +1,97 @@
-# 📖 Vault Ledger - Documentation
+# 📖 Vault Ledger - User Guide
 
-Vault Ledger is a **secure, offline-first daily income & expense tracker** built with simplicity in mind.  
-This guide explains all the features and also introduces the **Author (cuber-dev)**.  
-
----
-
-## ✨ Features
-
-### ➕ Add Entry
-- Select a **date** (defaults to today).
-- Enter a **description** (e.g., Salary, Groceries).
-- Input the **amount**.
-- Choose **Income** or **Expense**.
-- Click **Add / Update** to save.
+Welcome to **Vault Ledger** — a secure, offline-first income & expense tracker with advanced features like multiple ledgers, wealth insights, secure vault lock, transfers, and detailed reporting.
 
 ---
 
-### ✏️ Edit Entry
-- Click **Edit** on any record.
-- The form pre-fills automatically.
-- Make changes → **Update**.
+## 📂 Ledger Management
+- Create multiple **ledgers** for personal, business, or projects.  
+- Ledger name is **permanent** once created (cannot be edited).  
+- Each ledger saves independently in **LocalStorage**.  
 
 ---
 
-### 🗑 Delete Entry
-- Click **Delete** beside a transaction.
-- Entry removed instantly + balances auto-update.
+## 📋 Transactions
+- **Add:** Enter date, description, amount, and type (Income/Expense).  
+- **Edit:** Click Edit to auto-fill form, update, then save.  
+- **Delete:** Removes entry instantly and recalculates balances.  
+- Default action buttons appear on every entry row.  
 
 ---
 
-### 📂 Import / Export
-- **Import:** Restore from a `.json` file.
-- **Export:** Save as **JSON, Excel, or PDF**.
-- Custom filenames supported.
-- PDF excludes buttons → clean report.
+## 🔄 Transfer Funds
+- Move money between **two ledgers** with a single action.  
+- Source ledger is deducted, destination ledger credited.  
+- Both ledgers auto-update with new balances.  
 
 ---
 
-### 💰 Balance Summary
-- Always see **Total Income**, **Total Expenses**, and **Balance** in a live card.
+## 📤 Import / Export
+- **Import:** Restore data from a `.json` file.  
+- **Export:** Save to **JSON**, **Excel**, or **PDF**.  
+- Supports **custom filenames**.  
+- PDF excludes action buttons and shows **ledger balances**.  
 
 ---
 
-### ⏪ Undo / Redo
-- **Undo:** Revert last action.
-- **Redo:** Apply it back.
+## 💰 Balance Summary
+- Live summary of **Total Income**, **Total Expenses**, and **Current Balance**.  
+- Reports also display **ledger-wise balances**.  
 
 ---
 
-### 📊 Closing Balance
-- Every row shows **closing balance** → live running balance.
+## 🪙 Wealth Indicators
+- Monthly **net savings**.  
+- Expense-to-income **ratio**.  
+- Wealth growth trend line.  
+- Alerts if you cross your **plan limit**.  
 
 ---
 
-### 📈 Charts & Visuals
-- Interactive **Pie, Bar, Line** charts.
-- Live update as you add/edit.
-- Downloadable as **PNG**.
+## 💡 Insights
+- **Highest Income** and **Highest Expense** with details.  
+- **Zero Spend Days** highlighted in calendar view.  
+- **Expense Categories** breakdown.  
 
 ---
 
-### 🔍 Filters
-- Filter by **Date Range**, **Type**, or **Keyword**.
-- Reset anytime.
+## 📊 Charts & Visuals
+- Interactive **Pie**, **Bar**, and **Line** charts.  
+- Charts update live with your transactions.  
+- Download charts as **PNG**.  
+- Charts auto-adapt to the selected **theme**.  
 
 ---
 
-### 💡 Insights
-- **Highest Income**: with details.  
-- **Highest Expense**: with details.  
-- **Zero Spend Days** listed.  
-- **Income Ratio** (Expense / Income %).  
+## 🔎 Filters
+- Filter by **Date Range**, **Ledger**, **Type**, or **Keyword**.  
+- Supports **multi-select** with include/exclude options.  
+- Selected count shown directly in filter box.  
+- Clear filters anytime to reset view.  
 
 ---
 
-### 🎨 Themes
-- 20+ themes (Light, Dark, Cyberpunk, Sunset, Pastel, Neon, etc.).
-- Charts & tables auto-adapt.
-- Built with **CSS variables**.
+## ⚙️ Settings
+- **Theme Changer:** Switch between 20+ themes (available only in Settings page).  
+- **Password Protection:** Lock/unlock your Vault with a custom password.  
+- **Plan Limit:** Set a monthly spending cap with alerts.  
+- **Auto-Lock:** Vault locks after inactivity (customizable).  
 
 ---
 
-### 🛠 Version Info
-**Current Version:** `v2.1.0`  
+## 🏷️ Version Info & Changelog
+**Current Version:** `v2.5.0`
 
-- ✅ Live Charts (Pie, Bar, Line)  
-- ✅ Filtering transactions  
-- ✅ Undo / Redo  
-- ✅ Insights (Highest Income, Expense, etc.)  
-- ✅ 20+ Themes  
-- 🔧 Fixes for localStorage + dark mode charts  
-
----
-
-# 👨‍💻 Author – About Me
-
-Hi 👋 I’m **Nandhu (aka cuber-dev)**, a **web developer** and gamer 🎮.  
-I build offline-first apps, explore new IT stacks, and sometimes get lost in Free Fire.  
+- ✅ Added: **Settings Page** with Theme Changer, Vault Password, and Plan Limit.  
+- ✅ Added: **Wealth Indicators** & monthly savings insights.  
+- ✅ Added: **Fund Transfer** between ledgers.  
+- ✅ Added: **Ledger Balances** in Reports export (Excel/PDF).  
+- ✅ Enhanced: Multi-ledger filters with include/exclude & selected count.  
+- ✅ Enhanced: Charts auto-adapt fully to themes.  
+- 🔧 Fixed: Vault reset issue when empty.  
+- 🔧 Fixed: Password persistence across reloads.  
 
 ---
 
-## 📂 My GitHub Profile
-👉 [github.com/cuber-dev](https://github.com/cuber-dev)  
-
----
-
-## 📬 Contact Me
-- 📧 **Email:** [novajames099@gmail.com](mailto:novajames099@gmail.com)  
-- 🐙 **GitHub:** [github.com/cuber-dev](https://github.com/cuber-dev)  
-
----
-
-⭐ **Made by Nandhu (cuber-dev)** | Fully offline & secure | JSON-based storage
+## ✨ Footer
+Made by **Nandhu** | Fully offline & secure | All data stored locally via JSON
