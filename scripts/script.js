@@ -474,7 +474,6 @@ function editEntry(id) {
 function deleteEntry(id, desc) {
   if (confirm(`Delete ${desc} entry?`)) {
     saveLastState();
-    clearFilters();
     
     // Find which ledger contains the entry
     let entry = ledger.find(tx => tx.id === id);
@@ -493,6 +492,7 @@ function deleteEntry(id, desc) {
       saveToLocalStorage();
     }
     renderTable();
+    applyFilters();
     renderCharts(ledger);
   }
 }
