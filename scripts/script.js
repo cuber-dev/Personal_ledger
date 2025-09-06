@@ -271,6 +271,11 @@ function getRecurringIndices(data) {
   return recurring;
 }
 
+function setDeafults() {
+  const account = document.getElementById("account");
+  account.value = localStorage.getItem("lastSelectedAccount") || ''
+}
+
 // Sort function triggered from indicators
 function sortTableColumn(colKey) {
   // base data should always come from your current ledger/filters
@@ -371,10 +376,10 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
     ledger.push(entry);
   }
   document.getElementById("type").disabled = false
-  
-  e.target.reset();
-  renderTable();
   saveToLocalStorage();
+  e.target.reset();
+  setDeafults();
+  renderTable();
   renderCharts(ledger);
   clearFilters();
 });
@@ -1442,6 +1447,9 @@ function clearFilters() {
 function saveToLocalStorage() {
   localStorage.setItem(currentLedgerKey, JSON.stringify(ledger));
   localStorage.setItem("fileName_" + currentLedgerKey, fileName);
+  
+  const account = document.getElementById("account").value;
+  localStorage.setItem("lastSelectedAccount",account);
 }
 
 function saveLastState() {
@@ -1735,7 +1743,9 @@ window.onload = async function() {
   
   fileName = currentLedgerKey;
   document.getElementById("filename").value = fileName;
-  setToday();
+ 
+   setToday();
+   setDeafults()
   updateLedgerSelect();
   renderTable();
   renderCharts(ledger);
