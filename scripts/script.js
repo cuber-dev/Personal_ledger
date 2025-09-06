@@ -1449,7 +1449,7 @@ function saveToLocalStorage() {
   localStorage.setItem("fileName_" + currentLedgerKey, fileName);
   
   const account = document.getElementById("account").value;
-  localStorage.setItem("lastSelectedAccount",account);
+  localStorage.setItem("lastSelectedAccount", account);
 }
 
 function saveLastState() {
@@ -1476,7 +1476,7 @@ function redoChange() {
     redoState = null;
     renderTable();
     applyFilters();
-
+    
   } else {
     alert("Nothing to redo");
   }
@@ -1704,7 +1704,7 @@ function applySettings() {
   range.value = getSetting('defaultFilter', "thisMonth");
   
   const requirePassword = getSetting("requirePassword", false);
-  if (requirePassword && getSetting("lockedKey",null)) {
+  if (requirePassword && getSetting("lockedKey", null)) {
     lockScreen.style.display = "flex";
   } else {
     lockScreen.style.display = "none";
@@ -1746,9 +1746,9 @@ window.onload = async function() {
   
   fileName = currentLedgerKey;
   document.getElementById("filename").value = fileName;
- 
-   setToday();
-   setDeafults()
+  
+  setToday();
+  setDeafults()
   updateLedgerSelect();
   renderTable();
   renderCharts(ledger);
@@ -2221,7 +2221,7 @@ const lockScreen = document.getElementById("lockScreen");
 const unlockForm = document.getElementById("unlockForm");
 const vaultPassword = document.getElementById("vaultPassword");
 const lockError = document.getElementById("lockError");
-if(sessionStorage.getItem("vaultUnlocked") === "true") lockScreen.style.display = "none";
+if (sessionStorage.getItem("vaultUnlocked") === "true") lockScreen.style.display = "none";
 // ===== Unlock Form Submit =====
 unlockForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -2234,10 +2234,9 @@ unlockForm.addEventListener("submit", (e) => {
     lockScreen.style.display = "none";
     lockError.style.display = "none";
     vaultPassword.value = "";
-    sessionStorage.setItem("vaultUnlocked","true");
+    sessionStorage.setItem("vaultUnlocked", "true");
   } else {
     lockError.style.display = "block";
     vaultPassword.value = "";
   }
 });
-
