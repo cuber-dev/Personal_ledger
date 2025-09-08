@@ -2278,10 +2278,8 @@ window.onload = async function() {
   buildFilterAccounts()
   handleDateRangeChange()
   const enabled = getSetting("unlockWithBiometric", true);
-  alert(enabled)
   if (!enabled) return;
   const ok = await unlockWithBiometric();
-  alert(ok)
 
   if (!ok) {
     document.body.innerHTML = `
