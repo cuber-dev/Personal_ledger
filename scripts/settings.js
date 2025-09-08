@@ -112,7 +112,7 @@ const settings = {
     desc: "Password for locking vault, this will be enabled when Require password is enabled!"
   },*/
   unlockWithBiometric: {
-  value: false,
+  value: true,
   type: "checkbox",
   label: "Unlock ledger with biometric",
   desc: "Enable this to unlock ledger with registered biometric."

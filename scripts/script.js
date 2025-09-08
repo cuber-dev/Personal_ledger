@@ -1795,7 +1795,16 @@ window.onload = async function() {
   renderCharts(ledger);
   buildFilterAccounts()
   handleDateRangeChange()
-  
+  const enabled = getSetting("unlockWithBiometric", true);
+  if (!enabled) return;
+  const ok = await unlockWithBiometric();
+  if (!ok) {
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;">
+        <h2>🔒 Access Denied</h2>
+        <p>Biometric unlock failed.</p>
+      </div>`;
+  }
 };
 // 🧠 Bind + New Ledger button
 document.getElementById("newLedgerBtn").addEventListener("click", createNewLedger);
@@ -2279,16 +2288,3 @@ async function unlockWithBiometric() {
   }
 }
 
-// Step 3: Gate the app on load
-document.addEventListener("DOMContentLoaded", async () => {
-  const enabled = getSetting("unlockWithBiometric",false);
-  if(!enabled) return;
-  const ok = await unlockWithBiometric();
-  if (!ok) {
-    document.body.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;">
-        <h2>🔒 Access Denied</h2>
-        <p>Biometric unlock failed.</p>
-      </div>`;
-  }
-});
