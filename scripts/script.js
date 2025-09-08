@@ -2196,11 +2196,6 @@ function showLowBalancePlan(balance) {
 }
 
 
-// Save credential ID
-function saveCredentialId(rawId) {
-  const credId = btoa(String.fromCharCode(...new Uint8Array(rawId)));
-  localStorage.setItem("vaultLedgerCredentialId", credId);
-}
 
 // Load credential ID
 function loadCredentialId() {
@@ -2277,10 +2272,10 @@ window.onload = async function() {
   renderCharts(ledger);
   buildFilterAccounts()
   handleDateRangeChange()
+  
   const enabled = getSetting("unlockWithBiometric", true);
   if (!enabled) return;
   const ok = await unlockWithBiometric();
-
   if (!ok) {
     document.body.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;">

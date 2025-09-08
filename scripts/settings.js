@@ -112,7 +112,7 @@ const settings = {
     desc: "Password for locking vault, this will be enabled when Require password is enabled!"
   },*/
   unlockWithBiometric: {
-  value: true,
+  value: false,
   type: "checkbox",
   label: "Unlock ledger with biometric",
   desc: "Enable this to unlock ledger with registered biometric."
@@ -256,7 +256,7 @@ function buildSettingsForm() {
   }
   const button = document.createElement("button");
     button.textContent = "Register Biometric"
-    button.onclick = setupBiometricLock();
+    button.onclick =setupBiometricLock;
     container.appendChild(button)
 }
 
@@ -265,8 +265,18 @@ function addLedgers() {
   let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
   settings.budgetPreferredLedgers.options = ledgers.map(l => l.name || l);
 }
+
+// Save credential ID
+function saveCredentialId(rawId) {
+  const credId = btoa(String.fromCharCode(...new Uint8Array(rawId)));
+  localStorage.setItem("vaultLedgerCredentialId", credId);
+}
+
 // Step 1: Setup biometrics (run when enabling in settings)
 async function setupBiometricLock() {
+  const saved = localStorage.getItem(SETTINGS_KEY);
+  const parsed = JSON.parse(saved);
+  if(!parsed.unlockWithBiometric.value) return;
   try {
     const publicKey = {
       challenge: new Uint8Array(32), // Normally from server
