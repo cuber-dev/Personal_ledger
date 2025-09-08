@@ -65,7 +65,12 @@ const settings = {
     label: "Currency Symbol",
     desc: "Symbol for amounts."
   },
-  
+  autoDownload: {
+    value: true,
+    type: "checkbox",
+    label: "Auto Download",
+    desc: "Auto download all ledgers as zip when page is closed."
+  },
   chartShowPie: {
     value: true,
     type: "checkbox",

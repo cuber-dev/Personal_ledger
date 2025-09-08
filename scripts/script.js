@@ -1016,36 +1016,8 @@ function exportToPNG() {
     console.error("Error exporting table as PNG:", err);
   });
 }
-/*
- function downloadAllJSON() {
-const zip = new JSZip();
-const folder = zip.folder("ledgers");
-
-// Get the ledgers array
-const ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
-
-// Loop through each ledger name
-ledgers.forEach(ledgerName => {
-  const value = localStorage.getItem(ledgerName);
-  if (value) {
-    try {
-      const parsed = JSON.parse(value);
-      // Add each ledger JSON as a file
-      folder.file(`${ledgerName}.json`, JSON.stringify(parsed, null, 2));
-    } catch (e) {
-      console.warn(`Skipping ${ledgerName}, invalid JSON`);
-    }
-  }
-});
-const id = Date.now();
-// Generate the zip
-zip.generateAsync({ type: "blob" }).then(function(content) {
-  saveAs(content, id + "all_ledgers.zip");
-});
-}
-*/
-async function downloadAllLedgers() {
-  const format = document.getElementById("exportFormat").value;
+async function downloadAllLedgers(dnFormat = document.getElementById("exportFormat").value) {
+  const format = dnFormat;
   if (!format) {
     alert("Please select an export format.");
     return;
@@ -2110,30 +2082,12 @@ function refreshReports() {
   buildFilterAccounts();
 }
 
-/*
+
 window.addEventListener("beforeunload", function() {
-  let ledgersList = JSON.parse(localStorage.getItem("ledgers") || "[]");
-  
-  if (ledgersList.length > 0) {
-    ledgersList.forEach(ledgerKey => {
-      let ledgerData = localStorage.getItem(ledgerKey);
-      if (ledgerData) {
-        let blob = new Blob([ledgerData], { type: "application/json" });
-        let url = URL.createObjectURL(blob);
-        
-        let a = document.createElement("a");
-        a.href = url;
-        a.download = `${ledgerKey}.json`; // Use ledger's actual name as filename
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        
-        URL.revokeObjectURL(url);
-      }
-    });
-  }
+  if (!getSetting("autoDownload", false)) return;
+  downloadAllLedgers("json");
 });
-*/
+
 
 
 function scrollToTop(top = 0) {
