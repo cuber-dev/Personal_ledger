@@ -134,7 +134,9 @@ body {
 .hidden{
   display: none;
 }
-
+.danger{
+  color: var(--danger-color);
+}
 a {
   color: var(--accent-color);
 }

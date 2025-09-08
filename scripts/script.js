@@ -6,6 +6,7 @@ let isUsingFilter = false;
 let globalFilterData = [];
 let sortState = { col: null, dir: "asc" };
 let sortedLedger = [];
+let currencySymbol = "";
 const SETTINGS_KEY = "vaultSettings";
 
 function loadSettingsValues() {
@@ -240,7 +241,7 @@ ${ entry.type === 'income' ? '+' + entry.amount.toFixed(2) : '-' }
     table.appendChild(row);
   });
   
-  balanceDiv.textContent = `Balance :  ${ getSetting('currencySymbol',"₹") + ' ' + balance.toFixed(2)}`;
+  balanceDiv.textContent = `Balance :  ${ currencySymbol + balance.toFixed(2)}`;
   totalIncomeSpan.textContent = totalIncome.toFixed(2);
   totalExpenseSpan.textContent = totalExpense.toFixed(2);
   finalBalanceSpan.textContent = balance.toFixed(2);
@@ -1605,11 +1606,39 @@ function renderBudgetPlan() {
     });
   }
   // Update HTML
-  document.getElementById("budgetExpenses").textContent = totalExpenses.toFixed(2);
-  document.getElementById("budgetLimit").textContent = monthlyBudget.toFixed(2);
-  document.getElementById("budgetRemaining").textContent = (monthlyBudget - totalExpenses).toFixed(2);
-  
+  document.getElementById("budgetExpenses").textContent = currencySymbol + totalExpenses.toFixed(2);
+  document.getElementById("budgetLimit").textContent = currencySymbol + monthlyBudget.toFixed(2);
+  document.getElementById("budgetRemaining").textContent =currencySymbol + (monthlyBudget - totalExpenses).toFixed(2);
+  const remaining = (monthlyBudget - totalExpenses).toFixed(2);
+  const remainingEl = document.getElementById("budgetRemaining");
+
+  // Budget status responses
+  const goodResponses = [
+    "✅ Great! You're on track with your budget.",
+    "💰 Spending is under control this month.",
+    "🎯 Perfect! You’re within your planned budget.",
+    "👏 Excellent, your finances are balanced."
+  ];
+  const badResponses = [
+    "⚠️ Uh-oh! You’ve exceeded your budget.",
+    "❌ Careful! Spending has crossed the limit.",
+    "🚨 Budget breached — time to cut expenses.",
+    "😬 Too much spent, watch your finances closely!"
+  ];
+
+  const statusEl = document.getElementById("budgetStatus");
+  if (remaining >= 0) {
+    remainingEl.classList.remove("danger");
+    statusEl.textContent = goodResponses[Math.floor(Math.random() * goodResponses.length)];
+    statusEl.className = "";
+  } else {
+    remainingEl.classList.add("danger");
+    statusEl.textContent = badResponses[Math.floor(Math.random() * badResponses.length)];
+    statusEl.className = "danger";
+  }
+
   planCard.classList.remove("hidden");
+  
 }
 function downloadChart(chartId) {
   const canvas = document.getElementById(chartId);
@@ -1716,6 +1745,8 @@ function applySettings() {
   
   const range = document.getElementById("dateRange");
   range.value = getSetting('defaultFilter', "thisMonth");
+  
+  currencySymbol = getSetting('currencySymbol',"₹");
   
   const requirePassword = getSetting("requirePassword", false);
   if (requirePassword && getSetting("lockedKey", null)) {
@@ -2198,11 +2229,11 @@ function showLowBalancePlan(balance) {
     
     alertDiv.innerHTML = `
       <h2><i class="fa-solid fa-warning"></i> Low Balance Alert</h2>
-      <p>Your balance is below ₹${lowAmount}.</p>
+      <p>Your balance is below ${currencySymbol + lowAmount}.</p>
       <p>Suggested expense plan for this Month (equal split):</p>
       <ul>
         <li>Total Remaining Days: ${remainingDays}</li>
-        <li>Daily Allowance: ~₹${perDay} per day</li>
+        <li>Daily Allowance: ~${currencySymbol + perDay} per day</li>
       </ul>
       <p><b>Total Planned ${perDay + " x " + remainingDays}  = ₹${perDay * remainingDays}</b></p>
     `;
