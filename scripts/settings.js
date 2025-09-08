@@ -254,12 +254,10 @@ function buildSettingsForm() {
     wrapper.appendChild(description);
         container.appendChild(wrapper);
   }
-  /*
   const button = document.createElement("button");
     button.textContent = "Register Biometric"
     button.onclick = setupBiometricLock();
     container.appendChild(button)
-    */
 }
 
 /* ========= LEDGERS INTO MULTISELECT ========= */

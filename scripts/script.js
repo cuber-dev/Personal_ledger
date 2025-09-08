@@ -1752,60 +1752,6 @@ function applySettings() {
   
 }
 // ▶️ Init on load
-window.onload = async function() {
-  applySettings();
-  buildAccountSelector();
-  
-  let savedLedgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
-  
-  // Remove duplicates
-  savedLedgers = [...new Set(savedLedgers)];
-  
-  // Save cleaned version
-  localStorage.setItem("ledgers", JSON.stringify(savedLedgers));
-  
-  // If no ledgers, create only one "Untitled"
-  if (savedLedgers.length === 0) {
-    const defaultLedger = [{
-      id: await generateTransactionId(getCurrentDate(), "Opening Balance", 0),
-      date: getCurrentDate(),
-      account: 'Capital',
-      desc: "Opening Balance",
-      type: "Income",
-      amount: 0
-    }];
-    const defaultName = getSetting("defaultFileName", "Untitled");
-    savedLedgers.push(defaultName);
-    localStorage.setItem("ledgers", JSON.stringify(savedLedgers));
-    localStorage.setItem(defaultName, JSON.stringify(defaultLedger));
-    localStorage.setItem("currentLedgerKey", defaultName);
-  }
-  
-  // Load the current ledger
-  currentLedgerKey = localStorage.getItem("currentLedgerKey") || "Untitled";
-  ledger = JSON.parse(localStorage.getItem(currentLedgerKey) || "[]");
-  
-  fileName = currentLedgerKey;
-  document.getElementById("filename").value = fileName;
-  
-  setToday();
-  setDeafults()
-  updateLedgerSelect();
-  renderTable();
-  renderCharts(ledger);
-  buildFilterAccounts()
-  handleDateRangeChange()
-  const enabled = getSetting("unlockWithBiometric", true);
-  if (!enabled) return;
-  const ok = await unlockWithBiometric();
-  if (!ok) {
-    document.body.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;">
-        <h2>🔒 Access Denied</h2>
-        <p>Biometric unlock failed.</p>
-      </div>`;
-  }
-};
 // 🧠 Bind + New Ledger button
 document.getElementById("newLedgerBtn").addEventListener("click", createNewLedger);
 
@@ -2288,3 +2234,60 @@ async function unlockWithBiometric() {
   }
 }
 
+window.onload = async function() {
+  applySettings();
+  buildAccountSelector();
+  
+  let savedLedgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+  
+  // Remove duplicates
+  savedLedgers = [...new Set(savedLedgers)];
+  
+  // Save cleaned version
+  localStorage.setItem("ledgers", JSON.stringify(savedLedgers));
+  
+  // If no ledgers, create only one "Untitled"
+  if (savedLedgers.length === 0) {
+    const defaultLedger = [{
+      id: await generateTransactionId(getCurrentDate(), "Opening Balance", 0),
+      date: getCurrentDate(),
+      account: 'Capital',
+      desc: "Opening Balance",
+      type: "Income",
+      amount: 0
+    }];
+    const defaultName = getSetting("defaultFileName", "Untitled");
+    savedLedgers.push(defaultName);
+    localStorage.setItem("ledgers", JSON.stringify(savedLedgers));
+    localStorage.setItem(defaultName, JSON.stringify(defaultLedger));
+    localStorage.setItem("currentLedgerKey", defaultName);
+  }
+  
+  // Load the current ledger
+  currentLedgerKey = localStorage.getItem("currentLedgerKey") || "Untitled";
+  ledger = JSON.parse(localStorage.getItem(currentLedgerKey) || "[]");
+  
+  fileName = currentLedgerKey;
+  document.getElementById("filename").value = fileName;
+  
+  setToday();
+  setDeafults()
+  updateLedgerSelect();
+  renderTable();
+  renderCharts(ledger);
+  buildFilterAccounts()
+  handleDateRangeChange()
+  const enabled = getSetting("unlockWithBiometric", true);
+  alert(enabled)
+  if (!enabled) return;
+  const ok = await unlockWithBiometric();
+  alert(ok)
+
+  if (!ok) {
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;">
+        <h2>🔒 Access Denied</h2>
+        <p>Biometric unlock failed.</p>
+      </div>`;
+  }
+};
