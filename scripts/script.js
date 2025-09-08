@@ -2110,6 +2110,7 @@ function refreshReports() {
   buildFilterAccounts();
 }
 
+/*
 window.addEventListener("beforeunload", function() {
   let ledgersList = JSON.parse(localStorage.getItem("ledgers") || "[]");
   
@@ -2132,6 +2133,7 @@ window.addEventListener("beforeunload", function() {
     });
   }
 });
+*/
 
 
 function scrollToTop(top = 0) {
