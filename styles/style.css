@@ -125,7 +125,7 @@ body {
   color: var(--text-color);
   padding: 20px;
   margin: 0 auto;
-  max-width: 900px;
+  max-width: 950px;
   line-height: 1.3rem;
   font-family: "Google Sans Code", monospace;
   font-optical-sizing: auto;
