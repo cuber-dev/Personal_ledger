@@ -247,6 +247,7 @@ ${ entry.type === 'income' ? '+' + entry.amount.toFixed(2) : '-' }
   updateWealthLight(totalIncome, totalExpense);
   showLowBalancePlan(balance);
   refreshReports();
+  renderBudgetPlan();
 }
 
 function getRecurringIndices(data) {
@@ -1568,7 +1569,48 @@ function renderCharts(data = ledger) {
     line.style.display = getSetting("chartShowLine", true) ? "block" : "none";
   }
 }
-
+function renderBudgetPlan() {
+  const planCard = document.getElementById("budgetPlan");
+  // Get settings
+  const monthlyBudget = parseFloat(getSetting("monthlyBudget", 0)) || 0;
+  const preferredLedgers = settings.budgetPreferredLedgers.selected || [];
+  // Hide if invalid
+  if (monthlyBudget <= 0) {
+    planCard.classList.add("hidden");
+    return;
+  }
+  
+  // Check if current ledger is in preferred list
+  if (!preferredLedgers.includes(currentLedgerKey)) {
+    planCard.classList.add("hidden");
+    return;
+  }
+  
+  // Calculate this month’s expenses
+  const now = new Date();
+  const thisMonth = now.getMonth();
+  const thisYear = now.getFullYear();
+  
+  let totalExpenses = 0;
+  if (Array.isArray(ledger)) {
+    ledger.forEach(tx => {
+      const txDate = new Date(tx.date);
+      if (
+        tx.type === "expense" &&
+        txDate.getMonth() === thisMonth &&
+        txDate.getFullYear() === thisYear
+      ) {
+        totalExpenses += parseFloat(tx.amount) || 0;
+      }
+    });
+  }
+  // Update HTML
+  document.getElementById("budgetExpenses").textContent = totalExpenses.toFixed(2);
+  document.getElementById("budgetLimit").textContent = monthlyBudget.toFixed(2);
+  document.getElementById("budgetRemaining").textContent = (monthlyBudget - totalExpenses).toFixed(2);
+  
+  planCard.classList.remove("hidden");
+}
 function downloadChart(chartId) {
   const canvas = document.getElementById(chartId);
   if (!canvas) return;

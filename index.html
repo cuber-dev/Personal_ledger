@@ -62,7 +62,7 @@
       <li><a href="Routes/reports.html">Reports</a></li>
       <li><a href="Routes/transfer.html" class="">Transfer</a></li>
       <li><a href="Routes/accounts.html" class="">Accounts</a></li>
-
+      
       <li><a href="Routes/settings.html" class="">Settings</a></li>
     </ul>
   </nav>
@@ -291,39 +291,48 @@
   
   <!-- Smart Plan Section -->
   <div id="planSection" class="plan-section card">
-    Smart plan will be shown here when balance <
-    <span id="planLimit" class="highlight">
+    Smart plan will be shown here when balance < <span id="planLimit" class="highlight">
       800
-  </span>  
-  (you can modify in settings)</div>
-      <section id="reportsSection" class="card">
-        <h2><i class="fa-solid fa-basic"></i> Basic Reports</h2>
-        <div id="reportsOutput"></div>
-      </section>
-      <section id="advancedReports" class="card">
-        <h2><i class="fa-solid fa-chart-simple"></i> Advanced Reports</h2>
-        
-        <div class="report-section" id="topIncomesSection">
-          <h3>Top 5 Incomes</h3>
-          <ul id="topIncomesList"></ul>
-        </div>
-        
-        <div class="report-section" id="topExpensesSection">
-          <h3>Top 5 Expenses</h3>
-          <ul id="topExpensesList"></ul>
-        </div>
-        
-        <div class="report-section" id="frequentSection">
-          <h3>Frequent Transactions</h3>
-          <ul id="frequentList"></ul>
-        </div>
-        
-        <div class="report-section" id="recurringSection">
-          <h3>Recurring Transactions</h3>
-          <ul id="recurringList"></ul>
-        </div>
-      </section>
-      <!--       <section class="card">
+      </span>
+      (you can modify in settings)
+  </div>
+<!-- Budget Plan Section -->
+<div id="budgetPlan" class="card hidden">
+  <h2 class="">Budget Plan </h2>
+    <div id="summarySection">
+      <div class="summary-box income-summary">This month Expenses: ₹ <span id="budgetExpenses">0.00</span></div>
+      <div class="summary-box expense-summary">Monthly Budget: ₹ <span id="budgetLimit">0.00</span></div>
+      <div class="summary-box balance-summary">Difference: ₹ <span id="budgetRemaining">0.00</span></div>
+    </div>
+</div>
+  <section id="reportsSection" class="card">
+    <h2><i class="fa-solid fa-basic"></i> Basic Reports</h2>
+    <div id="reportsOutput"></div>
+  </section>
+  <section id="advancedReports" class="card">
+    <h2><i class="fa-solid fa-chart-simple"></i> Advanced Reports</h2>
+    
+    <div class="report-section" id="topIncomesSection">
+      <h3>Top 5 Incomes</h3>
+      <ul id="topIncomesList"></ul>
+    </div>
+    
+    <div class="report-section" id="topExpensesSection">
+      <h3>Top 5 Expenses</h3>
+      <ul id="topExpensesList"></ul>
+    </div>
+    
+    <div class="report-section" id="frequentSection">
+      <h3>Frequent Transactions</h3>
+      <ul id="frequentList"></ul>
+    </div>
+    
+    <div class="report-section" id="recurringSection">
+      <h3>Recurring Transactions</h3>
+      <ul id="recurringList"></ul>
+    </div>
+  </section>
+  <!--       <section class="card">
   <h2><i class="fa-solid fa-clock"></i> Upcoming Expected Transactions</h2>
   <div class="report-section" id="upcomingSection">
     <ul id="upcomingList"></ul>
@@ -331,67 +340,61 @@
 </section>
 
      -->
-      <h2 style="text-align: center;"><i class="fa-solid fa-chart-pie"></i> Visual Insights</h2>
-      <div id="chartContainer" class="chart-container">
-        
-        <div class="chart-card" id="pieChart-container">
-          <canvas id="pieChart"></canvas>
-          <button onclick="downloadChart('pieChart')" class="export-btn">Download Pie Chart</button>
-        </div>
-        
-        <div class="chart-card" id="barChart-container">
-          <canvas id="barChart"></canvas>
-          <button onclick="downloadChart('barChart')" class="export-btn">Download Bar Chart</button>
-        </div>
-        
-        <div class="chart-card" id="lineChart-container">
-          <canvas id="lineChart"></canvas>
-          <button onclick="downloadChart('lineChart')" class="export-btn">Download Line Chart</button>
-        </div>
-        
-      </div>
-      <div class="special-insights card">
-        <h2><i class="fa-solid fa-chart-column"></i> Special Insights</h2>
-        <p id="highestIncome" class="line">Highest Income: -</p>
-        <p id="highestExpense" class="line">Highest Expense: -</p>
-        <p id="zeroDays" class="line">Zero Spent Days: -</p>
-        <p id="incomeRatio" class="line">Income Ratio: -</p>
-      </div>
-      <div id="note">
-        <strong>Note:</strong> Please download the file as <strong>JSON</strong> after entry of transactions to import it again later. for more information please read the <a href="Routes/docs.html">Documentation</a>
-        
-      </div>
-<!-- ===== Lock Screen Overlay ===== -->
-<div id="lockScreen" class="lock-screen">
-  <div class="lock-card">
-    <h2 class="lock-title">🔒 Vault Locked</h2>
-    <p class="lock-desc">Enter your password to unlock.</p>
-    <p class="lock-desc">Default password: 1234</p>
-    <form id="unlockForm">
-      <input 
-        type="password" 
-        id="vaultPassword" 
-        class="lock-input" 
-        placeholder="Enter Password" 
-        required 
-      />
-      <p id="lockError" class="lock-error" style="display:none;">Invalid password</p>
-      <button type="submit" class="lock-button">Unlock</button>
-    </form>
+  <h2 style="text-align: center;"><i class="fa-solid fa-chart-pie"></i> Visual Insights</h2>
+  <div id="chartContainer" class="chart-container">
+    
+    <div class="chart-card" id="pieChart-container">
+      <canvas id="pieChart"></canvas>
+      <button onclick="downloadChart('pieChart')" class="export-btn">Download Pie Chart</button>
+    </div>
+    
+    <div class="chart-card" id="barChart-container">
+      <canvas id="barChart"></canvas>
+      <button onclick="downloadChart('barChart')" class="export-btn">Download Bar Chart</button>
+    </div>
+    
+    <div class="chart-card" id="lineChart-container">
+      <canvas id="lineChart"></canvas>
+      <button onclick="downloadChart('lineChart')" class="export-btn">Download Line Chart</button>
+    </div>
+    
   </div>
-</div>
-<script src="scripts/script.js"></script>
-      <script src="scripts/utilitys.js"></script>
-      <!-- <script src="drive.js"></script> -->
-      
-      <!-- <script>
+  <div class="special-insights card">
+    <h2><i class="fa-solid fa-chart-column"></i> Special Insights</h2>
+    <p id="highestIncome" class="line">Highest Income: -</p>
+    <p id="highestExpense" class="line">Highest Expense: -</p>
+    <p id="zeroDays" class="line">Zero Spent Days: -</p>
+    <p id="incomeRatio" class="line">Income Ratio: -</p>
+  </div>
+  <div id="note">
+    <strong>Note:</strong> Please download the file as <strong>JSON</strong> after entry of transactions to import it again later. for more information please read the <a href="Routes/docs.html">Documentation</a>
+    
+  </div>
+  <!-- ===== Lock Screen Overlay ===== -->
+  <div id="lockScreen" class="lock-screen">
+    <div class="lock-card">
+      <h2 class="lock-title">🔒 Vault Locked</h2>
+      <p class="lock-desc">Enter your password to unlock.</p>
+      <p class="lock-desc">Default password: 1234</p>
+      <form id="unlockForm">
+        <input type="password" id="vaultPassword" class="lock-input" placeholder="Enter Password" required />
+        <p id="lockError" class="lock-error" style="display:none;">Invalid password</p>
+        <button type="submit" class="lock-button">Unlock</button>
+      </form>
+    </div>
+  </div>
+  <script src="scripts/script.js"></script>
+  <script src="scripts/utilitys.js"></script>
+  <!-- <script src="drive.js"></script> -->
+  
+  <!-- <script>
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js")
       .then(() => console.log("Service Worker Registered"));
   }
 </script> -->
-
-
+  
+  
 </body>
 
 </html>
