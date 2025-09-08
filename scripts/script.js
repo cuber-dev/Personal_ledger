@@ -1750,12 +1750,6 @@ function applySettings() {
   
   currencySymbol = getSetting('currencySymbol', "₹");
   
-  const requirePassword = getSetting("requirePassword", false);
-  if (requirePassword && getSetting("lockedKey", null)) {
-    lockScreen.style.display = "flex";
-  } else {
-    lockScreen.style.display = "none";
-  }
 }
 // ▶️ Init on load
 window.onload = async function() {
@@ -2246,37 +2240,6 @@ function showLowBalancePlan(balance) {
   alertDiv.style.display = getSetting('alertSection', true) ? 'block' : 'none';
 }
 
-/*
-// Elements
-const lockScreen = document.getElementById("lockScreen");
-const unlockForm = document.getElementById("unlockForm");
-const vaultPassword = document.getElementById("vaultPassword");
-const lockError = document.getElementById("lockError");
-if (sessionStorage.getItem("vaultUnlocked") === "true") lockScreen.style.display = "none";
-// ===== Unlock Form Submit =====
-unlockForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  
-  const entered = vaultPassword.value.trim();
-  const stored = getSetting("lockedKey", null);
-  
-  if (entered && stored && entered === stored) {
-    // ✅ Unlock vault
-    lockScreen.style.display = "none";
-    lockError.style.display = "none";
-    vaultPassword.value = "";
-    sessionStorage.setItem("vaultUnlocked", "true");
-  } else {
-    lockError.style.display = "block";
-    vaultPassword.value = "";
-  }
-});
-
-*/
-
-/* ===========================
- Vault Ledger Biometric Lock
- =========================== */
 
 // Save credential ID
 function saveCredentialId(rawId) {
