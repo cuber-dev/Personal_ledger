@@ -99,7 +99,7 @@ const settings = {
     desc: "Show expense plan when the balance is below the defined amount."
   },
   // Security
-  requirePassword: {
+/*  requirePassword: {
     value: false,
     type: "checkbox",
     label: "Require Password",
@@ -110,7 +110,13 @@ const settings = {
     type: "text",
     label: "Enter password",
     desc: "Password for locking vault, this will be enabled when Require password is enabled!"
-  }
+  },*/
+  unlockWithBiometric: {
+  value: false,
+  type: "checkbox",
+  label: "Unlock ledger with biometric",
+  desc: "Enable this to unlock ledger with registered biometric."
+},
 };
 
 const SETTINGS_KEY = "vaultSettings";
@@ -246,15 +252,47 @@ function buildSettingsForm() {
     wrapper.appendChild(lbl);
     if (input) wrapper.appendChild(input);
     wrapper.appendChild(description);
-    
-    container.appendChild(wrapper);
+        container.appendChild(wrapper);
   }
+  const button = document.createElement("button");
+    button.textContent = "Register Biometric"
+    button.onclick = setupBiometricLock();
+    container.appendChild(button)
 }
 
 /* ========= LEDGERS INTO MULTISELECT ========= */
 function addLedgers() {
   let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
   settings.budgetPreferredLedgers.options = ledgers.map(l => l.name || l);
+}
+// Step 1: Setup biometrics (run when enabling in settings)
+async function setupBiometricLock() {
+  try {
+    const publicKey = {
+      challenge: new Uint8Array(32), // Normally from server
+      rp: { name: "Vault Ledger" },
+      user: {
+        id: new Uint8Array(16), // Random local ID
+        name: "vault-user",
+        displayName: "Vault Ledger User"
+      },
+      pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+      authenticatorSelection: {
+        authenticatorAttachment: "platform", // Use device lock
+        userVerification: "required"
+      },
+      timeout: 60000,
+      attestation: "none"
+    };
+    
+    const credential = await navigator.credentials.create({ publicKey });
+    saveCredentialId(credential.rawId);
+    
+    alert("🔐 Biometric lock enabled!");
+  } catch (err) {
+    console.error("Biometric setup failed:", err);
+    alert("❌ Setup failed or not supported.");
+  }
 }
 
 /* ========= INIT ========= */

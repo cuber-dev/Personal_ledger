@@ -1570,6 +1570,7 @@ function renderCharts(data = ledger) {
     line.style.display = getSetting("chartShowLine", true) ? "block" : "none";
   }
 }
+
 function renderBudgetPlan() {
   const planCard = document.getElementById("budgetPlan");
   // Get settings
@@ -1608,10 +1609,10 @@ function renderBudgetPlan() {
   // Update HTML
   document.getElementById("budgetExpenses").textContent = currencySymbol + totalExpenses.toFixed(2);
   document.getElementById("budgetLimit").textContent = currencySymbol + monthlyBudget.toFixed(2);
-  document.getElementById("budgetRemaining").textContent =currencySymbol + (monthlyBudget - totalExpenses).toFixed(2);
+  document.getElementById("budgetRemaining").textContent = currencySymbol + (monthlyBudget - totalExpenses).toFixed(2);
   const remaining = (monthlyBudget - totalExpenses).toFixed(2);
   const remainingEl = document.getElementById("budgetRemaining");
-
+  
   // Budget status responses
   const goodResponses = [
     "✅ Great! You're on track with your budget.",
@@ -1625,7 +1626,7 @@ function renderBudgetPlan() {
     "🚨 Budget breached — time to cut expenses.",
     "😬 Too much spent, watch your finances closely!"
   ];
-
+  
   const statusEl = document.getElementById("budgetStatus");
   if (remaining >= 0) {
     remainingEl.classList.remove("danger");
@@ -1636,10 +1637,11 @@ function renderBudgetPlan() {
     statusEl.textContent = badResponses[Math.floor(Math.random() * badResponses.length)];
     statusEl.className = "danger";
   }
-
+  
   planCard.classList.remove("hidden");
   
 }
+
 function downloadChart(chartId) {
   const canvas = document.getElementById(chartId);
   if (!canvas) return;
@@ -1746,7 +1748,7 @@ function applySettings() {
   const range = document.getElementById("dateRange");
   range.value = getSetting('defaultFilter', "thisMonth");
   
-  currencySymbol = getSetting('currencySymbol',"₹");
+  currencySymbol = getSetting('currencySymbol', "₹");
   
   const requirePassword = getSetting("requirePassword", false);
   if (requirePassword && getSetting("lockedKey", null)) {
@@ -2244,7 +2246,7 @@ function showLowBalancePlan(balance) {
   alertDiv.style.display = getSetting('alertSection', true) ? 'block' : 'none';
 }
 
-
+/*
 // Elements
 const lockScreen = document.getElementById("lockScreen");
 const unlockForm = document.getElementById("unlockForm");
@@ -2267,5 +2269,63 @@ unlockForm.addEventListener("submit", (e) => {
   } else {
     lockError.style.display = "block";
     vaultPassword.value = "";
+  }
+});
+
+*/
+
+/* ===========================
+ Vault Ledger Biometric Lock
+ =========================== */
+
+// Save credential ID
+function saveCredentialId(rawId) {
+  const credId = btoa(String.fromCharCode(...new Uint8Array(rawId)));
+  localStorage.setItem("vaultLedgerCredentialId", credId);
+}
+
+// Load credential ID
+function loadCredentialId() {
+  const stored = localStorage.getItem("vaultLedgerCredentialId");
+  if (!stored) return null;
+  return Uint8Array.from(atob(stored), c => c.charCodeAt(0));
+}
+
+
+// Step 2: Unlock with biometrics (run on app start)
+async function unlockWithBiometric() {
+  const credId = loadCredentialId();
+  if (!credId) {
+    console.log("No biometric lock set up → opening app normally.");
+    return true; // allow access if not enabled
+  }
+  
+  try {
+    const publicKey = {
+      challenge: new Uint8Array(32),
+      allowCredentials: [{ type: "public-key", id: credId }],
+      userVerification: "required"
+    };
+    
+    const assertion = await navigator.credentials.get({ publicKey });
+    console.log("Biometric unlock success:", assertion);
+    return true;
+  } catch (err) {
+    console.error("Unlock failed:", err);
+    return false;
+  }
+}
+
+// Step 3: Gate the app on load
+document.addEventListener("DOMContentLoaded", async () => {
+  const enabled = getSetting("unlockWithBiometric",false);
+  if(!enabled) return;
+  const ok = await unlockWithBiometric();
+  if (!ok) {
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;">
+        <h2>🔒 Access Denied</h2>
+        <p>Biometric unlock failed.</p>
+      </div>`;
   }
 });
