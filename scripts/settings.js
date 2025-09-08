@@ -9,9 +9,23 @@ const settings = {
   exportFormat: {
     value: "json",
     type: "select",
-    options: ["excel", "pdf", "json", 'png'],
+    options: ["excel", "pdf", "json", "png"],
     label: "Export Format",
     desc: "Default export format."
+  },
+  monthlyBudget: {
+    value: 0,
+    type: "number",
+    label: "Monthly budget",
+    desc: "Enter monthly budget for preferred ledgers (works if the value is greater than 0)"
+  },
+  budgetPreferredLedgers: {
+    value: "",
+    type: "multiselect",
+    options: [],
+    selected: [],
+    label: "Preferred ledgers",
+    desc: "Select Monthly budget preferred ledgers."
   },
   // Display & Charts
   defaultFilter: {
@@ -42,25 +56,8 @@ const settings = {
     value: "₹",
     type: "select",
     options: [
-      "$", // US Dollar
-      "€", // Euro
-      "£", // British Pound
-      "₹", // Indian Rupee
-      "¥", // Yen/Yuan
-      "₩", // South Korean Won
-      "₽", // Russian Ruble
-      "₺", // Turkish Lira
-      "R$", // Brazilian Real
-      "₱", // Philippine Peso
-      "฿", // Thai Baht
-      "₦", // Nigerian Naira
-      "₫", // Vietnamese Dong
-      "₴", // Ukrainian Hryvnia
-      "₡", // Costa Rican Colón
-      "₲", // Paraguayan Guaraní
-      "₵", // Ghanaian Cedi
-      "₸", // Kazakhstani Tenge
-      "₪" // Israeli Shekel
+      "$", "€", "£", "₹", "¥", "₩", "₽", "₺", "R$", "₱",
+      "฿", "₦", "₫", "₴", "₡", "₲", "₵", "₸", "₪"
     ],
     label: "Currency Symbol",
     desc: "Symbol for amounts."
@@ -96,11 +93,11 @@ const settings = {
     desc: "Enable or disable expense plan."
   },
   planLimit: {
-  value: 500,
-  type: "number",
-  label: "Expense Plan limit",
-  desc: "Show expense plan when the balance is below the defined amount."
-},
+    value: 500,
+    type: "number",
+    label: "Expense Plan limit",
+    desc: "Show expense plan when the balance is below the defined amount."
+  },
   // Security
   requirePassword: {
     value: false,
@@ -108,26 +105,30 @@ const settings = {
     label: "Require Password",
     desc: "Protect vault with a password."
   },
-  lockedKey : {
+  lockedKey: {
     value: "1234",
     type: "text",
     label: "Enter password",
-    desc: "Password for locking vault,this will be enabled when Require password is enabled!"
+    desc: "Password for locking vault, this will be enabled when Require password is enabled!"
   }
 };
 
-
-
 const SETTINGS_KEY = "vaultSettings";
 
+/* ========= LOAD SETTINGS ========= */
 function loadSettings() {
   const saved = localStorage.getItem(SETTINGS_KEY);
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
       for (const key in parsed) {
-        if (settings[key] !== undefined && "value" in parsed[key]) {
-          settings[key].value = parsed[key].value;
+        if (settings[key] !== undefined) {
+          if ("value" in parsed[key]) {
+            settings[key].value = parsed[key].value;
+          }
+          if ("selected" in parsed[key]) {
+            settings[key].selected = parsed[key].selected || [];
+          }
         }
       }
     } catch (e) {
@@ -136,14 +137,19 @@ function loadSettings() {
   }
 }
 
+/* ========= SAVE SETTINGS ========= */
 function saveSettings() {
   const values = {};
   for (const key in settings) {
     values[key] = { value: settings[key].value };
+    if (settings[key].selected) {
+      values[key].selected = settings[key].selected;
+    }
   }
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(values));
 }
 
+/* ========= BUILD SETTINGS FORM ========= */
 function buildSettingsForm() {
   const container = document.getElementById("settingsContainer");
   container.innerHTML = "";
@@ -179,36 +185,83 @@ function buildSettingsForm() {
         if (opt === setting.value) option.selected = true;
         input.appendChild(option);
       });
+    } else if (setting.type === "multiselect") {
+      const multiContainer = document.createElement("div");
+      multiContainer.className = "space-y-1";
+      
+      setting.options.forEach(opt => {
+        const label = document.createElement("label");
+        label.className = "flex items-center space-x-2";
+        
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = opt;
+        
+        if (setting.selected.includes(opt)) {
+          checkbox.checked = true;
+        }
+        
+        checkbox.addEventListener("change", () => {
+          if (checkbox.checked) {
+            if (!settings[key].selected.includes(opt)) {
+              settings[key].selected.push(opt);
+            }
+          } else {
+            settings[key].selected = settings[key].selected.filter(x => x !== opt);
+          }
+          saveSettings();
+        });
+        
+        const span = document.createElement("span");
+        span.textContent = opt;
+        
+        label.appendChild(span);
+        label.appendChild(checkbox);
+        multiContainer.appendChild(label);
+      });
+      
+      input = multiContainer;
     }
     
-    input.id = key;
-    input.classList.add("setting-input");
-    
-    // Auto-save whenever changed
-    input.addEventListener("change", () => {
-      if (input.type === "checkbox") {
-        settings[key].value = input.checked;
-      } else {
-        settings[key].value = input.value;
+    if (input) {
+      input.id = key;
+      input.classList.add("setting-input");
+      
+      if (setting.type !== "multiselect") {
+        input.addEventListener("change", () => {
+          if (input.type === "checkbox") {
+            settings[key].value = input.checked;
+          } else {
+            settings[key].value = input.value;
+          }
+          saveSettings();
+        });
       }
-      saveSettings();
-    });
+    }
     
     const description = document.createElement("p");
     description.textContent = setting.desc;
     description.className = "text-sm text-gray-600";
     
     wrapper.appendChild(lbl);
-    wrapper.appendChild(input);
+    if (input) wrapper.appendChild(input);
     wrapper.appendChild(description);
     
     container.appendChild(wrapper);
   }
 }
 
-// Save once more on unload (backup)
+/* ========= LEDGERS INTO MULTISELECT ========= */
+function addLedgers() {
+  let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
+  settings.budgetPreferredLedgers.options = ledgers.map(l => l.name || l);
+}
+
+/* ========= INIT ========= */
 window.addEventListener("beforeunload", saveSettings);
 
-// ==== INIT ====
-loadSettings();
-buildSettingsForm();
+window.onload = () => {
+  addLedgers();
+  loadSettings();
+  buildSettingsForm();
+};
