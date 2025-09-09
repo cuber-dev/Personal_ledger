@@ -88,7 +88,9 @@ const accounts = [
   "Leave",
   "Sunday or Extra duty",
   "Half-day",
-  "Balance Diff"
+  "Balance Diff",
+  "Rapido",
+  "Orders"
 ].sort();
 
 function buildAccountSelector() {
