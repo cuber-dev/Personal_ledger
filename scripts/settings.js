@@ -99,24 +99,24 @@ const settings = {
     desc: "Show expense plan when the balance is below the defined amount."
   },
   // Security
-/*  requirePassword: {
+  /*  requirePassword: {
+      value: false,
+      type: "checkbox",
+      label: "Require Password",
+      desc: "Protect vault with a password."
+    },
+    lockedKey: {
+      value: "1234",
+      type: "text",
+      label: "Enter password",
+      desc: "Password for locking vault, this will be enabled when Require password is enabled!"
+    },*/
+  unlockWithBiometric: {
     value: false,
     type: "checkbox",
-    label: "Require Password",
-    desc: "Protect vault with a password."
+    label: "Unlock ledger with biometric",
+    desc: "Enable this to unlock ledger with registered biometric."
   },
-  lockedKey: {
-    value: "1234",
-    type: "text",
-    label: "Enter password",
-    desc: "Password for locking vault, this will be enabled when Require password is enabled!"
-  },*/
-  unlockWithBiometric: {
-  value: false,
-  type: "checkbox",
-  label: "Unlock ledger with biometric",
-  desc: "Enable this to unlock ledger with registered biometric."
-},
 };
 
 const SETTINGS_KEY = "vaultSettings";
@@ -252,12 +252,12 @@ function buildSettingsForm() {
     wrapper.appendChild(lbl);
     if (input) wrapper.appendChild(input);
     wrapper.appendChild(description);
-        container.appendChild(wrapper);
+    container.appendChild(wrapper);
   }
   const button = document.createElement("button");
-    button.textContent = "Register Biometric"
-    button.onclick =setupBiometricLock;
-    container.appendChild(button)
+  button.textContent = "Register Biometric"
+  button.onclick = setupBiometricLock;
+  container.appendChild(button)
 }
 
 /* ========= LEDGERS INTO MULTISELECT ========= */
@@ -276,7 +276,7 @@ function saveCredentialId(rawId) {
 async function setupBiometricLock() {
   const saved = localStorage.getItem(SETTINGS_KEY);
   const parsed = JSON.parse(saved);
-  if(!parsed.unlockWithBiometric.value) return;
+  if (!parsed.unlockWithBiometric.value) return;
   try {
     const publicKey = {
       challenge: new Uint8Array(32), // Normally from server
@@ -303,12 +303,53 @@ async function setupBiometricLock() {
     console.error("Biometric setup failed:", err);
   }
 }
+// Load credential ID
+function loadCredentialId() {
+  const stored = localStorage.getItem("vaultLedgerCredentialId");
+  if (!stored) return null;
+  return Uint8Array.from(atob(stored), c => c.charCodeAt(0));
+}
+
+
+// Step 2: Unlock with biometrics (run on app start)
+async function unlockWithBiometric() {
+  const credId = loadCredentialId();
+  if (!credId) {
+    console.log("No biometric lock set up → opening app normally.");
+    return true; // allow access if not enabled
+  }
+  
+  try {
+    const publicKey = {
+      challenge: new Uint8Array(32),
+      allowCredentials: [{ type: "public-key", id: credId }],
+      userVerification: "required"
+    };
+    
+    const assertion = await navigator.credentials.get({ publicKey });
+    console.log("Biometric unlock success:", assertion);
+    return true;
+  } catch (err) {
+    console.error("Unlock failed:", err);
+    return false;
+  }
+}
 
 /* ========= INIT ========= */
 window.addEventListener("beforeunload", saveSettings);
 
-window.onload = () => {
+window.onload =async () => {
   addLedgers();
   loadSettings();
   buildSettingsForm();
+  const enabled = settings.unlockWithBiometric.value;
+  if (!enabled) return;
+  const ok = await unlockWithBiometric();
+  if (!ok) {
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;">
+        <h2>🔒 Access Denied</h2>
+        <p>Biometric unlock failed.</p>
+      </div>`;
+  }
 };

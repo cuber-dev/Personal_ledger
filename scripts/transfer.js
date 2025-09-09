@@ -1,4 +1,23 @@
   // ✅ Your transaction accounts
+  const SETTINGS_KEY = "vaultSettings";
+const settings = loadSettingsValues();
+
+function loadSettingsValues() {
+  const saved = localStorage.getItem(SETTINGS_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved); // gives you { autoSave: {value: true}, ... }
+    } catch (e) {
+      console.error("Failed to parse settings", e);
+    }
+  }
+  return {}; // fallback
+}
+
+function getSetting(key, fallback) {
+  return settings[key]?.value ?? fallback;
+}
+  
   const accounts = [
     "Bank", "Cash", "Accounts Receivable", "Fixed Assets", "Investments", "Prepaid Expenses", "Inventory", "Savings",
     "Accounts Payable", "Credit Card", "Loans", "Taxes Payable",
@@ -107,7 +126,7 @@
     if (!from || !to || from === to || !acc || isNaN(amount) || amount <= 0) {
       return alert("Please fill all fields correctly.");
     }
-    if(amount > getLedgerBalance(from) ) return alert("Insufficient funds ")
+    if (amount > getLedgerBalance(from)) return alert("Insufficient funds ")
     const txId = await generateTransactionId(date, amount, desc);
     // Create transaction objects
     const txOut = {
@@ -164,3 +183,49 @@
     transferForm.reset();
     setToday();
   });
+  
+  
+  // Load credential ID
+  function loadCredentialId() {
+    const stored = localStorage.getItem("vaultLedgerCredentialId");
+    if (!stored) return null;
+    return Uint8Array.from(atob(stored), c => c.charCodeAt(0));
+  }
+  
+  
+  // Step 2: Unlock with biometrics (run on app start)
+  async function unlockWithBiometric() {
+    const credId = loadCredentialId();
+    if (!credId) {
+      console.log("No biometric lock set up → opening app normally.");
+      return true; // allow access if not enabled
+    }
+    
+    try {
+      const publicKey = {
+        challenge: new Uint8Array(32),
+        allowCredentials: [{ type: "public-key", id: credId }],
+        userVerification: "required"
+      };
+      
+      const assertion = await navigator.credentials.get({ publicKey });
+      console.log("Biometric unlock success:", assertion);
+      return true;
+    } catch (err) {
+      console.error("Unlock failed:", err);
+      return false;
+    }
+  }
+  
+  window.onload =async () => {
+    const enabled = getSetting("unlockWithBiometric", true);
+    if (!enabled) return;
+    const ok = await unlockWithBiometric();
+    if (!ok) {
+      document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;">
+        <h2>🔒 Access Denied</h2>
+        <p>Biometric unlock failed.</p>
+      </div>`;
+    }
+  }
