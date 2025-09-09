@@ -862,7 +862,7 @@ function exportToExcel() {
   const rowIndex = XLSX.utils.decode_range(ws['!ref']).e.r + 2;
   const cellRef = `A${rowIndex + 1}`;
   ws[cellRef] = {
-    v: `Closing Balance: ₹ ${closingBalance.toFixed(2)}`,
+    v: `Closing Balance:  ${currencySymbol + closingBalance.toFixed(2)}`,
     t: 's',
     s: {
       font: { bold: true, sz: 14 }
@@ -988,9 +988,9 @@ async function exportToPDF() {
   doc.text("Summary", 14, y);
   
   doc.setFontSize(12).setTextColor(textColor);
-  doc.text(`Total Income: ₹${totalIncome}`, 14, y + 8);
-  doc.text(`Total Expense: ₹${totalExpense}`, 14, y + 16);
-  doc.text(`Final Balance: ₹${finalBalance}`, 14, y + 24);
+  doc.text(`Total Income: ${currencySymbol} ${totalIncome}`, 14, y + 8);
+  doc.text(`Total Expense: ${currencySymbol} ${totalExpense}`, 14, y + 16);
+  doc.text(`Final Balance: ${currencySymbol} ${finalBalance}`, 14, y + 24);
   
   y += 40;
   
@@ -1190,9 +1190,9 @@ async function downloadAllLedgers(dnFormat = document.getElementById("exportForm
               doc.text("Summary", 14, y);
               
               doc.setFontSize(12).setTextColor(textColor);
-              doc.text(`Total Income: ₹${totalIncome.toFixed(2)}`, 14, y + 8);
-              doc.text(`Total Expense: ₹${totalExpense.toFixed(2)}`, 14, y + 16);
-              doc.text(`Final Balance: ₹${finalBalance.toFixed(2)}`, 14, y + 24);
+              doc.text(`Total Income: ${currencySymbol} ${totalIncome.toFixed(2)}`, 14, y + 8);
+              doc.text(`Total Expense: ${currencySymbol} ${totalExpense.toFixed(2)}`, 14, y + 16);
+              doc.text(`Final Balance: ${currencySymbol} ${finalBalance.toFixed(2)}`, 14, y + 24);
               
               // ====== FOOTER ======
               doc.setFontSize(10).setTextColor("#666666").setFont(undefined, "italic");
@@ -1918,11 +1918,11 @@ function renderReports(data = ledger) {
   const reports = generateReports(data);
   const reportsDiv = document.getElementById("reportsOutput");
   reportsDiv.innerHTML = `
-    <p class="line"><strong>Daily Avg:</strong> Income ₹${reports.avgDailyIncome.toFixed(2)}, Expense ₹${reports.avgDailyExpense.toFixed(2)}</p>
-    <p class="line"><strong>Monthly Avg:</strong> Income ₹${reports.avgMonthlyIncome.toFixed(2)}, Expense ₹${reports.avgMonthlyExpense.toFixed(2)}</p>
-    <p class="line"><strong>Yearly Avg:</strong> Income ₹${reports.avgYearlyIncome.toFixed(2)}, Expense ₹${reports.avgYearlyExpense.toFixed(2)}</p>
-    <p class="line"><strong>Highest:</strong> Income ₹${reports.highestIncome}, Expense ₹${reports.highestExpense}</p>
-    <p class="line"><strong>Lowest:</strong> Income ₹${reports.lowestIncome}, Expense ₹${reports.lowestExpense}</p>
+    <p class="line"><strong>Daily Avg:</strong> Income ${currencySymbol} ${reports.avgDailyIncome.toFixed(2)}, Expense ${currencySymbol} ${reports.avgDailyExpense.toFixed(2)}</p>
+    <p class="line"><strong>Monthly Avg:</strong> Income ${currencySymbol} ${reports.avgMonthlyIncome.toFixed(2)}, Expense ${currencySymbol} ${reports.avgMonthlyExpense.toFixed(2)}</p>
+    <p class="line"><strong>Yearly Avg:</strong> Income ${currencySymbol} ${reports.avgYearlyIncome.toFixed(2)}, Expense ${currencySymbol} ${reports.avgYearlyExpense.toFixed(2)}</p>
+    <p class="line"><strong>Highest:</strong> Income ${currencySymbol} ${reports.highestIncome}, Expense ${currencySymbol} ${reports.highestExpense}</p>
+    <p class="line"><strong>Lowest:</strong> Income ${currencySymbol} ${reports.lowestIncome}, Expense ${currencySymbol} ${reports.lowestExpense}</p>
   `;
 }
 
@@ -1969,7 +1969,7 @@ function renderAdvancedReports(data = ledger) {
     topIncomes
     .map(
       txn =>
-      `<li>${txn.account} | ${txn.desc} – ₹${txn.amount} on ${txn.date}</li>`
+      `<li>${txn.account} | ${txn.desc} – ${currencySymbol} ${txn.amount} on ${txn.date}</li>`
     )
     .join("") :
     "<li>No transactions found</li>";
@@ -1979,7 +1979,7 @@ function renderAdvancedReports(data = ledger) {
     topExpenses
     .map(
       txn =>
-      `<li>${txn.account} | ${txn.desc} – ₹${txn.amount} on ${txn.date}</li>`
+      `<li>${txn.account} | ${txn.desc} – ${currencySymbol} ${txn.amount} on ${txn.date}</li>`
     )
     .join("") :
     "<li>No transactions found</li>";
@@ -1996,7 +1996,7 @@ function renderAdvancedReports(data = ledger) {
     recurringTransactions
     .map(
       txn =>
-      `<li>${txn.date} | ${txn.account} | ${txn.desc} – ₹${txn.amount} (${txn.count} times)</li>`
+      `<li>${txn.date} | ${txn.account} | ${txn.desc} – ${currencySymbol} ${txn.amount} (${txn.count} times)</li>`
     )
     .join("") :
     "<li>No transactions found</li>";
@@ -2044,7 +2044,7 @@ function renderUpcomingExpectations(data = ledger) {
   const upcoming = generateUpcomingExpectations(data);
   
   document.getElementById("upcomingList").innerHTML = upcoming.length ?
-    upcoming.map(txn => `<li>${txn.desc} – ₹${txn.amount} (${txn.type})</li>`).join("") :
+    upcoming.map(txn => `<li>${txn.desc} – ${currencySymbol} ${txn.amount} (${txn.type})</li>`).join("") :
     "<li>No upcoming expected transactions found</li>";
 }
 
@@ -2063,14 +2063,14 @@ function updateSpecialInsights(data = ledger) {
   let highestIncome = data.filter(t => t.type === "income").sort((a, b) => b.amount - a.amount)[0];
   document.getElementById("highestIncome").innerHTML =
     highestIncome ?
-    `<strong>Highest Income:</strong> ₹${highestIncome.amount} (${highestIncome.desc} on ${highestIncome.date})` :
+    `<strong>Highest Income:</strong> ${currencySymbol} ${highestIncome.amount} (${highestIncome.desc} on ${highestIncome.date})` :
     "<strong>Highest Income:</strong> No data found";
   
   // Highest Expense
   let highestExpense = data.filter(t => t.type === "expense").sort((a, b) => b.amount - a.amount)[0];
   document.getElementById("highestExpense").innerHTML =
     highestExpense ?
-    `<strong>Highest Expense:</strong> ₹${highestExpense.amount} (${highestExpense.desc} on ${highestExpense.date})` :
+    `<strong>Highest Expense:</strong> ${currencySymbol} ${highestExpense.amount} (${highestExpense.desc} on ${highestExpense.date})` :
     "<strong>Highest Expense:</strong> No data found";
   
   // Zero Spent Days (list format)
@@ -2186,7 +2186,7 @@ function showLowBalancePlan(balance) {
         <li>Total Remaining Days: ${remainingDays}</li>
         <li>Daily Allowance: ~${currencySymbol + perDay} per day</li>
       </ul>
-      <p><b>Total Planned ${perDay + " x " + remainingDays}  = ₹${perDay * remainingDays}</b></p>
+      <p><b>Total Planned ${perDay + " x " + remainingDays}  = ${currencySymbol} ${perDay * remainingDays}</b></p>
     `;
     alertDiv.style.display = "block";
   } else {
