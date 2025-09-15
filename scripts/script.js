@@ -2280,9 +2280,12 @@ window.onload = async function() {
   const ok = await unlockWithBiometric();
   if (!ok) {
     document.body.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;">
-        <h2>🔒 Access Denied</h2>
-        <p>Biometric unlock failed.</p>
-      </div>`;
+    <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:10px;">
+      <h2>🔒 Access Denied</h2>
+      <p>Biometric unlock failed.</p>
+      <button class='reload-btn' onclick="location.reload()" style="">
+        Try Again
+      </button>
+    </div>`;
   }
 };

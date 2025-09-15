@@ -140,6 +140,12 @@ body {
 a {
   color: var(--accent-color);
 }
+.reload-btn{
+  width: max-content;
+  padding: 1rem 1.5rem;
+  background: var(--accent-color);
+  color: var(--bg-color);
+}
 
 h1 {
   text-align: center;
