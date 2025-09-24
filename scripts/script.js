@@ -449,7 +449,6 @@ function formatDateForInput(dateString) {
 }
 
 function editEntry(id) {
-  scrollToTop(300);
   // Find entry in ledger by ID
   const entry = ledger.find(tx => tx.id === id);
   if (!entry) {
@@ -468,7 +467,8 @@ function editEntry(id) {
   if (entry.transactionType) document.getElementById("type").disabled = true
   // Store ID instead of index
   editingId = id;
-  
+  focusInput();
+
   // Save state
   saveToLocalStorage();
   saveLastState();
@@ -1577,7 +1577,7 @@ function renderBudgetPlan() {
   const planCard = document.getElementById("budgetPlan");
   // Get settings
   const monthlyBudget = parseFloat(getSetting("monthlyBudget", 0)) || 0;
-  const preferredLedgers = settings.budgetPreferredLedgers.selected || [];
+  const preferredLedgers = settings?.budgetPreferredLedgers?.selected || [];
   // Hide if invalid
   if (monthlyBudget <= 0) {
     planCard.classList.add("hidden");
@@ -2117,10 +2117,11 @@ window.addEventListener("beforeunload", function() {
 
 
 function scrollToTop(top = 0) {
-  document.getElementById("desc").focus()
   window.scrollTo({ top: top, behavior: 'smooth' });
 }
-
+function focusInput() {
+  document.getElementById("desc").focus()
+}
 // Show button only when scrolled down
 window.addEventListener('scroll', () => {
   const btn = document.getElementById('scrollTopBtn');
